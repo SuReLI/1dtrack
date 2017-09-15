@@ -18,6 +18,18 @@ constexpr double TRACK_LEN = 10.;
 constexpr double STDDEV = 1.;
 constexpr double INIT_S = 0.;
 
+/**
+ * @brief Policy parameters
+ * @param {constexpr unsigned} HORIZ; tree horizon
+ * @param {constexpr double} CST; UCT constant factor
+ * @param {constexpr double} MODEL_STDDEV; model noise standard deviation
+ * @param {constexpr double} REUSE; set to true if the policy is able to reuse the tree
+ */
+constexpr unsigned HORIZ = 2;
+constexpr double CST = .7;
+constexpr double MODEL_STDDEV = 1.;
+constexpr bool REUSE = false;
+
 /** @brief Print some informations */
 void print(track &tr, agent &ag) {
     std::cout << "time = " << tr.t;
@@ -42,8 +54,9 @@ void run(track &tr, agent &ag) {
 int main() {
     srand(time(NULL));
 
+    policy_parameters param(HORIZ,CST,MODEL_STDDEV,REUSE);
 	track tr(TRACK_LEN,STDDEV);
-	agent ag(INIT_S);
+	agent ag(INIT_S,param);
 
 	run(tr,ag);
 }
