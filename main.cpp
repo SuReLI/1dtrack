@@ -56,8 +56,23 @@ void run(track &tr, agent &ag) {
 
 void test() {
     root_node v(1.25);
-    v.display_a();
-    v.display_b();
+    v.create_child(1);
+    v.create_child(0);
+    v.create_child(-1);
+
+    v.display();
+    for(auto &elt : v.children) {
+        elt.display();
+    }
+
+    v.children.at(0).create_child(1);
+    v.children.at(0).children.at(0).display();
+
+    root_node w(&v.children.at(0),-4.22);
+    v.children.clear();
+    v.display();
+    w.display();
+    w.children.at(0).display();
 }
 
 int main() {

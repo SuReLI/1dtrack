@@ -24,6 +24,7 @@ struct policy_parameters {
         bool _reuse) :
         h(_h),
         cst(_cst),
+        model_stddev(_model_stddev),
         reuse(_reuse)
     {}
 };
@@ -48,7 +49,9 @@ struct agent {
      * @return Pointer to the new node
      */
     node * expand(node &v) {
+        (void) v; //TRM
         //TODO
+        return nullptr; //TRM
     }
 
     /** @brief Return the best child according to the UCB */
@@ -65,7 +68,7 @@ struct agent {
     /** @brief Sample a new state if not root */
     void sample_new_state(node &v) {
         if(!v.is_root) {
-            v.states.push_back(transition_model(v.parent->states.back(),v.incoming_action));
+            //v.states.push_back(transition_model(v.parent->states.back(),v.incoming_action));
         }
     }
 
