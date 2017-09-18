@@ -4,9 +4,12 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <algorithm>
 #include <utils.hpp>
 #include <agent.hpp>
 #include <track.hpp>
+
+#include <node.hpp> //TRM
 
 /**
  * @brief Simulation parameters
@@ -51,12 +54,20 @@ void run(track &tr, agent &ag) {
     print(tr,ag);
 }
 
+void test() {
+    root_node v(1.25);
+    v.display_a();
+    v.display_b();
+}
+
 int main() {
     srand(time(NULL));
 
-    policy_parameters param(HORIZ,CST,MODEL_STDDEV,REUSE);
-	track tr(TRACK_LEN,STDDEV);
-	agent ag(INIT_S,param);
+    test();
 
-	run(tr,ag);
+    //policy_parameters param(HORIZ,CST,MODEL_STDDEV,REUSE);
+	//track tr(TRACK_LEN,STDDEV);
+	//agent ag(INIT_S,param);
+
+	//run(tr,ag);
 }

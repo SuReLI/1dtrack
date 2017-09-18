@@ -1,6 +1,8 @@
 #ifndef AGENT_HPP_
 #define AGENT_HPP_
 
+#include <node.hpp>
+
 /** @brief Parameters of the policy */
 struct policy_parameters {
     /**
@@ -24,47 +26,6 @@ struct policy_parameters {
         cst(_cst),
         reuse(_reuse)
     {}
-};
-
-/** @brief Node structure */
-struct node {
-    /**
-     * @brief Attributes
-     * @param {double} value; estimate of the nodes value
-     * @param {std::vector<double>} states; different sampled states
-     * @param {double} incoming_action;
-     * @param {node *} parent; pointer to the parent node
-     * @param {std::vector<node*>} children;
-     */
-    double value;
-    unsigned incoming_action;
-    std::vector<double> states;
-    node *parent;
-    std::vector<node*> children;
-    bool is_root;
-
-    /** @brief Constructor */
-    node() {
-        value = 0.;
-        is_root = false;
-    }
-
-    unsigned get_nb_children() {
-        return children.size();
-    }
-};
-
-/** @brief Root node structure */
-struct root_node : node {
-    /**
-     * @brief Attributes
-     * @param {double} s; state
-     */
-    double s;
-
-    root_node(double _s) : s(_s) {
-        is_root = true;
-    }
 };
 
 /** @brief Agent struct */
@@ -141,9 +102,9 @@ struct agent {
     int uct(double s) {
         root_node root(s);
         for(unsigned i=0; i<p.h; ++i) {
-            node *ptr = tree_policy(root);
-            double total_return = default_policy(ptr);
-            backup(total_return,ptr);
+            //node *ptr = tree_policy(root);
+            //double total_return = default_policy(ptr);
+            //backup(total_return,ptr);
         }
         return best_action(root);
     }
