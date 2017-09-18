@@ -114,10 +114,11 @@ struct agent {
 
     /**
      * @brief Take an action based on the current state s and set the action attribute
-     * @note Action must be in {-1, 0, 1}
+     * @note Action must be an integer within {-1, 0, 1}
      */
     void take_action() {
-        a = uct(s);
+        //a = uct(s); //TRM
+        a = 1;
     }
 };
 

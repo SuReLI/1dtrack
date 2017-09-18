@@ -20,7 +20,7 @@ struct base_node {
      */
     base_node (bool _is_root) : is_root(_is_root) {
         actions = std::vector<int>{-1,0,1};
-        std::random_shuffle(actions.begin(),actions.end());
+        shuffle(actions);
     }
 
     /** @brief Display basic informations for debug */

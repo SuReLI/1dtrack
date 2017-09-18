@@ -9,16 +9,17 @@
 #include <agent.hpp>
 #include <track.hpp>
 
-#include <node.hpp> //TRM
-
 /**
  * @brief Simulation parameters
  * @param {constexpr double} TRACK_LEN; track length
  * @param {constexpr double} STDDEV; environment noise standard deviation
+ * @param {constexpr double} FAILURE_PROBABILITY; probability with chich the oposite action
+ * effect is applied
  * @param {constexpr double} INIT_S; initial state
  */
 constexpr double TRACK_LEN = 10.;
-constexpr double STDDEV = 1.;
+constexpr double STDDEV = 0.;
+constexpr double FAILURE_PROBABILITY = .1;
 constexpr double INIT_S = 0.;
 
 /**
@@ -54,35 +55,18 @@ void run(track &tr, agent &ag) {
     print(tr,ag);
 }
 
-void test() {
-    root_node v(1.25);
-    v.create_child(1);
-    v.create_child(0);
-    v.create_child(-1);
+void test() { //TRM
 
-    v.display();
-    for(auto &elt : v.children) {
-        elt.display();
-    }
-
-    v.children.at(0).create_child(1);
-    v.children.at(0).children.at(0).display();
-
-    root_node w(&v.children.at(0),-4.22);
-    v.children.clear();
-    v.display();
-    w.display();
-    w.children.at(0).display();
 }
 
 int main() {
     srand(time(NULL));
 
-    test();
+    //test();
 
-    //policy_parameters param(HORIZ,CST,MODEL_STDDEV,REUSE);
-	//track tr(TRACK_LEN,STDDEV);
-	//agent ag(INIT_S,param);
+    policy_parameters param(HORIZ,CST,MODEL_STDDEV,REUSE);
+	track tr(TRACK_LEN,STDDEV,FAILURE_PROBABILITY);
+	agent ag(INIT_S,param);
 
-	//run(tr,ag);
+	run(tr,ag);
 }

@@ -22,6 +22,36 @@ constexpr bool is_greater_than(T1 a, T2 b) {
     return a>(b+COMPARISON_THRESHOLD);
 }
 
+/** @brief Shuffle the content randomly */
+template <class T>
+inline void shuffle(std::vector<T> &v) {
+    std::random_shuffle(v.begin(), v.end());
+}
+
+/** @brief Generate a uniformly distributed integer */
+int uniform_i(const int &int_min, const int &int_max) {
+    std::random_device rd;
+    std::default_random_engine generator(rd());
+    std::uniform_int_distribution<int> distribution(int_min,int_max);
+    return distribution(generator);
+}
+
+/** @brief Generate a uniformly distributed double */
+double uniform_d(const double &double_min, const double &double_max) {
+    std::random_device rd;
+    std::default_random_engine generator(rd());
+    std::uniform_real_distribution<double> distribution(double_min,double_max);
+    return distribution(generator);
+}
+
+/** @brief Generate a normally distributed double */
+double normal_d(const double &mean, const double &stddev) {
+    std::random_device rd;
+    std::default_random_engine generator(rd());
+    std::normal_distribution<double> distribution(mean,stddev);
+    return distribution(generator);
+}
+
 template <class T>
 void print(T t) {
 	std::cout << t << std::endl;

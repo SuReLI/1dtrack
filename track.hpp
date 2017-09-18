@@ -6,14 +6,24 @@ struct track {
      * @brief Attributes
      * @param {double} len; length of the 1D track
      * @param {double} stddev; noise standard deviation
+     * @param {double} failure_probability; probability with chich the oposite action
+     * effect is applied
      * @param {unsigned} t; time
      */
     double len;
     double stddev;
+    double failure_probability;
     unsigned t;
 
     /** @brief constructor */
-    track(double _len, double _stddev) : len(_len), stddev(_stddev) {
+    track(
+        double _len,
+        double _stddev,
+        double _failure_prob) :
+        len(_len),
+        stddev(_stddev),
+        failure_probability(_failure_prob)
+    {
         t = 0;
     }
 
@@ -26,20 +36,25 @@ struct track {
     void transition(double &s, const int &a) {
         switch(a) {
         case (-1) : {
-            s -= 1.;
+            if(is_less_than(uniform_d(0.,1.),failure_probability)) {
+                s += 1.;
+            } else {
+                s -= 1.;
+            }
             break;
         }
         case (0) : {break;}
         case (1) : {
-            s += 1.;
+            if(is_less_than(uniform_d(0.,1.),failure_probability)) {
+                s -= 1.;
+            } else {
+                s += 1.;
+            }
             break;
         }
         default : {std::cout << "Illegal action" << std::endl;}
         }
-        std::default_random_engine generator;
-        std::normal_distribution<double> distribution(0.,stddev);
-        double noise = distribution(generator);
-        s += noise;
+        s += normal_d(0.,stddev); // add noise
         ++t;
     }
 
