@@ -1,8 +1,5 @@
-# Untracked:
+# Untracked files:
 exe
 edit
 todo.txt
-
-# ignore objects and archives anywhere in the tree
-*.[oa]
 

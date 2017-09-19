@@ -33,7 +33,7 @@ struct track {
     }
 
     /** @brief Change the input state given the taken action */
-    void transition(double &s, const int &a) {
+    /*void transition(double &s, const int &a) {
         switch(a) {
         case (-1) : {
             if(is_less_than(uniform_d(0.,1.),failure_probability)) {
@@ -56,6 +56,17 @@ struct track {
         }
         s += normal_d(0.,stddev); // add noise
         ++t;
+    }*/
+
+    /** @brief Simulate a transition wrt the environment parameters */
+    double transition(const double &s, const int &a) {
+        double noise = normal_d(0.,stddev);
+        double action_effect = (double) a;
+        if(is_less_than(uniform_d(0.,1.),failure_probability)) {
+            action_effect *= (-1.);
+        }
+        ++t;
+        return s + action_effect + noise;
     }
 
     /** @brief Reward function */
