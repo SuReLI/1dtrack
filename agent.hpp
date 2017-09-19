@@ -52,25 +52,9 @@ struct agent {
     }
 
     /**
-     * @brief Expand the node i.e. create a new node
-     * @return Pointer to the new node
+     * @brief Simulate a transition wrt the model parameters
+     * @return The resulting state
      */
-    node * expand(node &v) {
-        if(v.is_root) {
-
-        } else {
-
-        }
-        //v.create_child(state,action);
-        return nullptr; //TRM
-    }
-
-    /** @brief Return the best child according to the UCB */
-    node& ucb_child(node &v) {
-        //TODO
-    }
-
-    /** @brief Simulate a transition wrt the model parameters */
     double transition_model(const double &s, const int &a) {
         double noise = normal_d(0.,p.model_stddev);
         double action_effect = (double) a;
@@ -78,6 +62,27 @@ struct agent {
             action_effect *= (-1.);
         }
         return s + action_effect + noise;
+    }
+
+    /**
+     * @brief Expand the node i.e. create a new node
+     * @return Pointer to the new node
+     */
+    node * expand(node &v) {
+        int inc_ac = v.get_next_expansion_action();
+        double new_state = 0.;
+        if(v.is_root) {
+            new_state = transition_model(v.state,inc_ac);
+        } else {
+            new_state = transition_model(v.get_last_sampled_state(),inc_ac);
+        }
+        v.create_child(new_state,inc_ac);
+        return nullptr;
+    }
+
+    /** @brief Return the best child according to the UCB */
+    node& ucb_child(node &v) {
+        //TODO
     }
 
     /** @brief Sample a new state if not root */
@@ -112,15 +117,16 @@ struct agent {
         //TODO
     }
 
-    int best_action(root_node v) {
+    int best_action(node v) {
+        // check root
         //TODO
     }
 
     /** @brief UCT policy */
     int uct(double s) {
-        root_node root(s);
+        node root(s);
         for(unsigned i=0; i<p.h; ++i) {
-            //node *ptr = tree_policy(root);
+            node *ptr = tree_policy(root);
             //double total_return = default_policy(ptr);
             //backup(total_return,ptr);
         }

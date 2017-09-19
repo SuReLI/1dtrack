@@ -32,33 +32,10 @@ struct track {
         return !is_less_than(std::abs(s),len);
     }
 
-    /** @brief Change the input state given the taken action */
-    /*void transition(double &s, const int &a) {
-        switch(a) {
-        case (-1) : {
-            if(is_less_than(uniform_d(0.,1.),failure_probability)) {
-                s += 1.;
-            } else {
-                s -= 1.;
-            }
-            break;
-        }
-        case (0) : {break;}
-        case (1) : {
-            if(is_less_than(uniform_d(0.,1.),failure_probability)) {
-                s -= 1.;
-            } else {
-                s += 1.;
-            }
-            break;
-        }
-        default : {std::cout << "Illegal action" << std::endl;}
-        }
-        s += normal_d(0.,stddev); // add noise
-        ++t;
-    }*/
-
-    /** @brief Simulate a transition wrt the environment parameters */
+    /**
+     * @brief Simulate a transition wrt the environment parameters
+     * @return The resulting state
+     */
     double transition(const double &s, const int &a) {
         double noise = normal_d(0.,stddev);
         double action_effect = (double) a;
