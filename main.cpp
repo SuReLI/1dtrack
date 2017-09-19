@@ -59,16 +59,39 @@ void run(track &tr, agent &ag, bool do_print) {
     if(do_print){print(tr,ag);}
 }
 
-void test() { }
+void node_test() {
+    std::cout << "###### Root node v + its 3 children\n";
+    node v(0.01);
+    v.create_child(v.get_next_expansion_action(),1.06);
+
+    v.display();
+    v.get_last_child()->display();
+    v.create_child(v.get_next_expansion_action(),2.06);
+    v.get_last_child()->display();
+    v.create_child(v.get_next_expansion_action(),3.06);
+    v.get_last_child()->display();
+
+    std::cout << "###### Add child to last v child, print both:\n";
+    node * ptr = v.get_last_child();
+    ptr->create_child(ptr->get_next_expansion_action(),4.06);
+    ptr->display();
+    ptr->get_last_child()->display();
+
+    std::cout << "###### Last child of v as a root, print tree:\n";
+    node w(v.get_last_child(),-5.05);
+    w.display();
+
+    w.get_last_child()->display();
+}
 
 int main() {
     srand(time(NULL));
 
-    //test();
+    node_test();
 
-    policy_parameters param(HORIZON,CST,MODEL_STDDEV,MODEL_FAILURE_PROBABILITY,REUSE);
-	track tr(TRACK_LEN,STDDEV,FAILURE_PROBABILITY);
-	agent ag(INIT_S,param);
-
-	run(tr,ag,true);
+//    policy_parameters param(HORIZON,CST,MODEL_STDDEV,MODEL_FAILURE_PROBABILITY,REUSE);
+//	track tr(TRACK_LEN,STDDEV,FAILURE_PROBABILITY);
+//	agent ag(INIT_S,param);
+//
+//	run(tr,ag,true);
 }

@@ -102,107 +102,33 @@ struct node {
     // END //////////////////////////////////////////////////////////////////////////////
 
     /** @brief Display basic informations for debug */
-    void display_a() {
-        std::cout << "Root: " << is_root << " ";
+    void display() {
+        if(is_root) {
+            std::cout << "ROOT\nState: " << state << "\n";
+
+            std::cout << "CHECK EMPTY: Parent: " << parent << " ";
+            std::cout << "Val: " << value << " ";
+            std::cout << "IncAction: " << incoming_action << " ";
+            std::cout << "States: ";
+            for(auto & elt : states) {
+                std::cout << elt << " ";
+            }
+        } else {
+            std::cout << "Parent: " << parent << " ";
+            std::cout << "Val: " << value << " ";
+            std::cout << "IncAction: " << incoming_action << " ";
+            std::cout << "States: ";
+            for(auto & elt : states) {
+                std::cout << elt << " ";
+            }
+        }
+        std::cout << "\nAdress: " << this << " ";
         std::cout << "Actions: ";
         for(auto & elt : actions) {
             std::cout << elt << " ";
         }
-        std::cout << std::endl;
-    }
-
-    /** @brief Display basic informations for debug */
-    void display_b() {
-        std::cout << "Adress: " << this << " ";
-        std::cout << "Parent: " << parent << " ";
-        std::cout << "Val: " << value << " ";
-        std::cout << "IncAction: " << incoming_action << " ";
-        for(auto & elt : states) {
-            std::cout << elt << " ";
-        }
-        std::cout << "Children: " << get_nb_children() << "\n";
-    }
-
-    void display() {
-        display_a();
-        display_b();
-        std::cout << std::endl;
+        std::cout << "Children: " << get_nb_children() << "\n\n";
     }
 };
-
-///**
-// * @brief Root node structure
-// * @note Different from a standard node since labeled by a unique state
-// */
-//struct root_node : public node {
-//    /**
-//     * @brief Attributes
-//     * @param {double} state; labelling state
-//     */
-//    double state;
-//
-//    /** @brief Constructor for a new root node */
-//    root_node(node * _parent, int _incoming_action, double _state) : state(_state) {
-//        is_root = true;
-//        actions = std::vector<int>{-1,0,1};
-//        shuffle(actions);
-//    }
-//
-//    /**
-//     * @brief Constructor from a specified node
-//     * @param {node *} ptr; pointer to the node
-//     * @param {double} state; state of the new root node
-//     */
-//    root_node(node *ptr, double _state) : state(_state) {
-//        is_root = true;
-//        actions = ptr->actions;
-//        children = ptr->children;
-//        for(auto &elt : children) {
-//            elt.parent = this;
-//        }
-//    }
-//
-//    // BEGINING /////////////////////////////////////////////////////////////////////////
-//
-//    /** @brief Get the number of children */
-//    unsigned get_nb_children() const {
-//        return children.size();
-//    }
-//
-//    /** @brief Return true if the node is fully expanded */
-//    bool is_fully_expanded() {
-//        return (get_nb_children() == NB_ACTIONS);
-//    }
-//
-//    /** @brief Create a child based on incoming action */
-//    void create_child(int incoming_action, double new_state) {
-//        children.emplace_back(node(this,incoming_action,new_state));
-//    }
-//
-//    /** @brief Return a pointer to the lastly created child */
-//    node * get_last_child() {
-//        return &children.back();
-//    }
-//
-//    /** @brief Return the next expansion actions among the available actions */
-//    int get_next_expansion_action() {
-//        return actions.at(children.size());
-//    }
-//
-//    // END //////////////////////////////////////////////////////////////////////////////
-//
-//    /** @brief Display basic informations for debug */
-//    void display_b() {
-//        std::cout << "Adress: " << this << " ";
-//        std::cout << "State: " << state << " ";
-//        std::cout << "Children: " << get_nb_children() << "\n";
-//    }
-//
-//    void display() {
-//        display_a();
-//        display_b();
-//        std::cout << std::endl;
-//    }
-//};
 
 #endif
