@@ -45,22 +45,33 @@ struct node {
         shuffle(actions);
     }
 
+    // MEMBERS ///////////////////////////////////////////////////////////////////////////////
+
     /**
-     * @brief Root node constructor from a specified node
-     * @param {node *} ptr; pointer to the given node
-     * @param {double} state; state of the new root node
-     * @note Turn a node into a root node
+     * @brief Set the nodes attributes as root nodes attributes
+     * @param {double} new_state; new labelling state
      */
-    node(node *ptr, double _state) : state(_state) {
+    void set_as_root(double new_state) {
         is_root = true;
-        actions = ptr->actions;
-        children = ptr->children;
+        state = new_state;
+        states.clear();
+        value = 0.;
+        parent = nullptr;
+        incoming_action = 0;
+    }
+
+    /**
+     * @brief Move the content of a child to the current node and reroute children parents
+     * @param {unsigned} indice; indice of the moved child
+     * @param {double} new_state; new labelling state
+     */
+    void absorb_child(unsigned indice, double new_state) {
+        *this = std::move(children.at(indice));
+        set_as_root(new_state);
         for(auto &elt : children) {
             elt.parent = this;
         }
     }
-
-    // BEGINING /////////////////////////////////////////////////////////////////////////
 
     /** @brief Get the number of children */
     unsigned get_nb_children() const {
@@ -88,9 +99,7 @@ struct node {
 
     /** @brief Return the last sampled state among the states family */
     double get_last_sampled_state() {
-        if(is_root) {
-            std::cout << "Error: root should not use 'double get_last_sampled_state()' member\n";
-        }
+        assert(!is_root);
         return states.back();
     }
 
@@ -99,7 +108,7 @@ struct node {
         return actions.at(children.size());
     }
 
-    // END //////////////////////////////////////////////////////////////////////////////
+    // END ///////////////////////////////////////////////////////////////////////////////////
 
     /** @brief Display basic informations for debug */
     void display() {
