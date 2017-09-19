@@ -7,7 +7,7 @@ struct track {
      * @param {double} len; length of the 1D track
      * @param {double} stddev; noise standard deviation
      * @param {double} failure_probability; probability with chich the oposite action
-     * effect is applied
+     * effect is applied (randomness of the transition function)
      * @param {unsigned} t; time
      */
     double len;

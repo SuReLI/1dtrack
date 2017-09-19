@@ -14,7 +14,7 @@
  * @param {constexpr double} TRACK_LEN; track length
  * @param {constexpr double} STDDEV; environment noise standard deviation
  * @param {constexpr double} FAILURE_PROBABILITY; probability with chich the oposite action
- * effect is applied
+ * effect is applied (randomness of the transition function)
  * @param {constexpr double} INIT_S; initial state
  */
 constexpr double TRACK_LEN = 10.;
