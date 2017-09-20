@@ -2,7 +2,6 @@
 #define UTILS_HPP_
 
 constexpr double COMPARISON_THRESHOLD = 1e-6;
-constexpr unsigned NB_ACTIONS = 3; // Number of actions: fixed parameter of the simulator
 
 /** @brief Return true if a == b up to a certain precision */
 template <class T1, class T2>

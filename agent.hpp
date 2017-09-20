@@ -17,6 +17,7 @@ struct policy_parameters {
     unsigned trials_count;
     double cst;
     bool reuse;
+    std::vector<int> action_space;
     node root;
 
     /**
@@ -28,11 +29,13 @@ struct policy_parameters {
         unsigned _horizon,
         double _cst,
         bool _reuse,
+        std::vector<int> _action_space,
         double initial_state) :
         horizon(_horizon),
         cst(_cst),
         reuse(_reuse),
-        root(initial_state)
+        action_space(_action_space),
+        root(initial_state,action_space)
     {
         trials_count = 0;
     }
@@ -152,26 +155,16 @@ struct agent {
         if(!v.is_fully_expanded()) { // expand node
             return expand(v);
         } else { // apply tree policy on 'best UCB child'
-            //
-            v.display();
-            for(auto &elt : v.children) {
-                elt.increment_visits_count();
-                elt.display();
-            }
-            //
             node * v_p = uct_child(v);
             sample_new_state(v_p);
-            //
-            v_p->display();
-            assert(false);
-            //
-            //return tree_policy(v_p);
+            return tree_policy(*v_p);
         }
     }
 
     /** @brief Compute the return from running an episode with the default policy */
     double default_policy(node * ptr) {
-        double state = ptr->states.back();
+        double s = ptr->get_last_sampled_state();
+        //TODO
     }
 
     /**
@@ -196,7 +189,7 @@ struct agent {
         p.trials_count = 0;
         for(unsigned i=0; i<p.horizon; ++i) {
             node *ptr = tree_policy(p.root);
-            //double total_return = default_policy(ptr);
+            double total_return = default_policy(ptr);
             //backup(total_return,ptr);
             p.trials_count += 1;
         }

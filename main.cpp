@@ -11,35 +11,7 @@
 #include <utils.hpp>
 #include <agent.hpp>
 #include <track.hpp>
-
-#include <test.hpp> // only for tests
-
-/**
- * @brief Simulation parameters:
- * @param {constexpr double} TRACK_LEN; track length
- * @param {constexpr double} STDDEV; environment noise standard deviation
- * @param {constexpr double} FAILURE_PROBABILITY; probability with chich the oposite action
- * effect is applied (randomness of the transition function)
- * @param {constexpr double} INIT_S; initial state
- *
- * @brief Policy parameters:
- * @param {constexpr unsigned} HORIZON; tree horizon
- * @param {constexpr double} UCT_CST; UCT constant factor
- * @param {constexpr double} MODEL_STDDEV; model noise standard deviation
- * @param {constexpr double} MODEL_FAILURE_PROBABILITY; probability with chich the oposite
- * action effect is applied in the model (randomness of the transition function)
- * @param {constexpr double} REUSE; set to true if the policy is able to reuse the tree
- */
-constexpr double TRACK_LEN = 10.;
-constexpr double STDDEV = 0.;
-constexpr double FAILURE_PROBABILITY = .1;
-constexpr double INIT_S = 0.;
-
-constexpr unsigned HORIZON = 10;
-constexpr double UCT_CST = .7;
-constexpr double MODEL_STDDEV = 0.01;
-constexpr double MODEL_FAILURE_PROBABILITY = 0.;
-constexpr bool REUSE = false;
+#include <test.hpp> // only for testing
 
 /** @brief Print some informations */
 void print(track &tr, agent &ag) {
@@ -50,7 +22,7 @@ void print(track &tr, agent &ag) {
 }
 
 /**
- * @brief Run a simulation
+ * @brief Run a simulation given its parameters
  * @param {track &} tr; environment
  * @param {agent &} ag; agent
  * @param {bool} do_print; if true print some informations
@@ -64,15 +36,52 @@ void run(track &tr, agent &ag, bool do_print) {
     if(do_print){print(tr,ag);}
 }
 
-int main() {
-    srand(time(NULL));
+/**
+ * @brief Basic method initialising the parameters and running one simulation
+ * @note One should modifiy this method in order to change the parameters
+ */
+void run_1dtrack() {
+    /**
+     * @brief Step 1: initialisation
+     * @brief Simulation parameters:
+     * @param {double} TRACK_LEN; track length
+     * @param {double} STDDEV; environment noise standard deviation
+     * @param {double} FAILURE_PROBABILITY; probability with chich the oposite action
+     * effect is applied (randomness of the transition function)
+     * @param {double} INIT_S; initial state
+     *
+     * @brief Policy parameters:
+     * @param {unsigned} HORIZON; tree horizon
+     * @param {double} UCT_CST; UCT constant factor
+     * @param {double} MODEL_STDDEV; model noise standard deviation
+     * @param {double} MODEL_FAILURE_PROBABILITY; probability with chich the oposite
+     * action effect is applied in the model (randomness of the transition function)
+     * @param {double} REUSE; set to true if the policy is able to reuse the tree
+     * @param {std::vector<int>} ACTION_SPACE; action space used by every nodes (bandit arms)
+     */
+    double TRACK_LEN = 10.;
+    double STDDEV = 0.;
+    double FAILURE_PROBABILITY = .1;
+    double INIT_S = 0.;
 
-    // Initialisation
+    unsigned HORIZON = 10;
+    double UCT_CST = .7;
+    double MODEL_STDDEV = 0.01;
+    double MODEL_FAILURE_PROBABILITY = 0.;
+    bool REUSE = false;
+    std::vector<int> ACTION_SPACE = {-1,0,1};
+
     track tr(TRACK_LEN,STDDEV,FAILURE_PROBABILITY);
-    policy_parameters p(HORIZON,UCT_CST,REUSE,INIT_S);
+    policy_parameters p(HORIZON,UCT_CST,REUSE,ACTION_SPACE,INIT_S);
     model m(MODEL_STDDEV,MODEL_FAILURE_PROBABILITY);
     agent ag(INIT_S,p,m);
 
-    // Simulation
+    /** @brief Step 2: run the simulation */
     run(tr,ag,true);
+}
+
+int main() {
+    srand(time(NULL));
+
+    run_1dtrack();
 }

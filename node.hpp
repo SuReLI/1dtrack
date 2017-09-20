@@ -25,11 +25,28 @@ struct node {
     std::vector<int> actions;
     std::vector<node> children;
 
-    /** @brief Node constructor, used during the expansion of the tree */
+    /**
+     * @brief Root node constructor, first node to be created
+     * @param {std::vector<int>} action_space; copied then shuffled in actions of the node
+     * (bandit arms)
+     */
+    node(double _state, std::vector<int> action_space) : state(_state) {
+        is_root = true;
+        actions = action_space;
+        shuffle(actions);
+        visits_count = 0;
+    }
+
+    /**
+     * @brief Standard node constructor, used during the expansion of the tree
+     * @param {std::vector<int>} action_space; copied then shuffled in actions of the node
+     * (bandit arms)
+     */
     node(
         node * _parent,
         int _incoming_action,
-        double _new_state) :
+        double _new_state,
+        std::vector<int> action_space) :
         parent(_parent),
         incoming_action(_incoming_action)
     {
@@ -37,15 +54,7 @@ struct node {
         value = 0.;
         visits_count = 0;
         states.push_back(_new_state);
-        actions = std::vector<int>{-1,0,1};
-        shuffle(actions);
-    }
-
-    /** @brief Root node constructor */
-    node(double _state) : state(_state) {
-        is_root = true;
-        actions = std::vector<int>{-1,0,1};
-        visits_count = 0;
+        actions = action_space;
         shuffle(actions);
     }
 
@@ -86,7 +95,7 @@ struct node {
 
     /** @brief Return true if the node is fully expanded */
     bool is_fully_expanded() const {
-        return (get_nb_children() == NB_ACTIONS);
+        return (get_nb_children() == actions.size());
     }
 
     /**
@@ -95,7 +104,7 @@ struct node {
      * @param {double} new_state; first sampled state of the new child
      */
     void create_child(int inc_ac, double new_state) {
-        children.emplace_back(node(this,inc_ac,new_state));
+        children.emplace_back(node(this,inc_ac,new_state,actions));
     }
 
     /** @brief Return a pointer to the last created child */

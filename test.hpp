@@ -2,11 +2,12 @@
  * @brief Simple unit tests
  * @todo Add assertions
  */
-
 void node_test() {
+    std::vector<int> action_space = {-1,0,1};
+
     std::cout << "#1 ##### Root node v + its 3 children\n";
 
-    node v(0.01);
+    node v(0.01,action_space);
     //std::unique_ptr<node> v(new node(0.01));
     //node *v = new node(0.01);
 
