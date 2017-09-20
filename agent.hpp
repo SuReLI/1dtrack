@@ -126,6 +126,22 @@ struct agent {
     }
 
     /**
+     * @brief Sample a new state
+     * @param {node *} v; pointer to the node
+     */
+    void sample_new_state(node * v) {
+        double s = 0.;
+        if((v->parent)->is_root) {
+            s = (v->parent)->state;
+        } else {
+            s = (v->parent)->get_last_sampled_state();
+        }
+        int a = v->incoming_action;
+        double s_p = m.transition_model(s,a);
+        v->add_to_states(s_p);
+    }
+
+    /**
      * @brief Apply the tree policy
      * @note During the descent, store the sampled leaf states into the nodes parameters
      * @note No terminal node case
@@ -136,8 +152,19 @@ struct agent {
         if(!v.is_fully_expanded()) { // expand node
             return expand(v);
         } else { // apply tree policy on 'best UCB child'
+            //
+            v.display();
+            for(auto &elt : v.children) {
+                elt.increment_visits_count();
+                elt.display();
+            }
+            //
             node * v_p = uct_child(v);
-            //sample_new_state(v_p);
+            sample_new_state(v_p);
+            //
+            v_p->display();
+            assert(false);
+            //
             //return tree_policy(v_p);
         }
     }

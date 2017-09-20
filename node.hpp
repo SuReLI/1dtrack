@@ -126,6 +126,15 @@ struct node {
         state = s;
     }
 
+    /**
+     * @brief Add a new sampled state to the states
+     * @note Node should not be root
+     */
+    void add_to_states(const double &s) {
+        assert(!is_root);
+        states.push_back(s);
+    }
+
     /** @brief Increment the visits counter */
     void increment_visits_count() {
         ++visits_count;
