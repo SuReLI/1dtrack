@@ -34,18 +34,18 @@ void print_node_complete(const node &v) {
 /** @brief print minimum informations about a node */
 void print_node(const node &v) {
     if(v.is_root) {
-        std::cout << "ROOT:  s:" << v.state;
+        std::cout << "ROOT: s:" << v.state;
     } else {
         std::cout << "s:";
         for(auto &elt : v.states) {
             std::cout << elt << " ";
         }
     }
-    std::cout << "a:";
+    std::cout << "  a:";
     for(auto &elt : v.actions) {
         std::cout << elt << " ";
     }
-    std::cout << "v:" << v.value << "\n";
+    std::cout << "   v:" << v.value << "\n";
 }
 
 /** @brief Print a node and its children */
@@ -54,6 +54,7 @@ void print_node_and_children(const node &v) {
     for(auto &elt : v.children) {
         print_node(elt);
     }
+    std::cout << "\n";
 }
 
 /**

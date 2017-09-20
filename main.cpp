@@ -22,8 +22,8 @@
  */
 void run(track &tr, agent &ag, bool do_print) {
 	while(!tr.is_terminal(ag.s)) {
-		if(do_print){print(tr,ag);}
 		ag.take_action(); // take action based on current state
+		if(do_print){print(tr,ag);}
 		ag.s = tr.transition(ag.s, ag.a); // get next state
 	}
     if(do_print){print(tr,ag);}
@@ -60,8 +60,8 @@ void run_1dtrack() {
     double INIT_S = 0.;
 
     std::vector<int> ACTION_SPACE = {-1,1};
-    unsigned BUDGET = 3; // should be higher than the number of actions
-    unsigned HORIZON = 1;
+    unsigned BUDGET = 30; // should be higher than the number of different actions
+    unsigned HORIZON = 10;
     double UCT_CST = .7;
     double DISCOUNT_FACTOR = 1.;
     double MODEL_TRACK_LEN = TRACK_LEN;

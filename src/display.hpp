@@ -14,7 +14,7 @@ void print_track(track &tr, agent &ag) {
             break;
         }
     }
-    if(is_less_than(s,0.)) {pos *= -1;}
+    if(ag.s<0) {pos = -pos;}
     for(int i=-10; i<=10; ++i) {
         if(i == pos) {
             std::cout << "X";

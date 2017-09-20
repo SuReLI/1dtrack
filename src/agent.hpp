@@ -246,10 +246,10 @@ struct agent {
         for(unsigned i=0; i<p.budget; ++i) {
             node *ptr = tree_policy(p.root);
             double total_return = default_policy(ptr);
-            total_return = 1.;
             backup(total_return,ptr);
             p.trials_count += 1;
         }
+        //print_node_and_children(p.root);//TRM
         return best_action(p.root);
     }
 
@@ -260,7 +260,6 @@ struct agent {
      */
     void take_action() {
         a = uct(s);
-        print_node_and_children(p.root);
     }
 };
 
