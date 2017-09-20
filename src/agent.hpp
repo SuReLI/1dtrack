@@ -222,9 +222,19 @@ struct agent {
         }
     }
 
-    int best_action(node v) {
-        // check root
-        //TODO
+    /**
+     * @brief Take the policy decision after the tree construction
+     * @param {const node &} v; root node of the tree
+     * @return The action with the best score (leading to the child with the higher value)
+     */
+    int best_action(const node &v) {
+        assert(v.is_root);
+        std::vector<double> values;
+        for(auto &elt: v.children) {
+            values.push_back(elt.value);
+        }
+        unsigned ind = argmax(values);
+        return v.actions.at(ind);
     }
 
     /** @brief UCT policy */
@@ -238,16 +248,16 @@ struct agent {
             backup(total_return,ptr);
             p.trials_count += 1;
         }
-        return 1; //TODO
+        return best_action(p.root);
     }
 
     /**
      * @brief Take an action based on the current state s and set the action attribute
-     * @note Action must be an integer within {-1, 0, 1}
+     * @note Action must be within p.action_space
+     * @note The current state and the recommended action are attributes of the agent class
      */
     void take_action() {
         a = uct(s);
-        //a = 1;
     }
 };
 
