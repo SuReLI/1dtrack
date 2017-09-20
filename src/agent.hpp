@@ -94,6 +94,7 @@ struct model {
      * @return The resulting reward
      */
     double reward_model(const double &s, const int &a, const double &s_p) {
+        (void) a; (void) s_p; //default
         return is_less_than(std::abs(s),model_track_length) ? 0. : 1.;
     }
 };
@@ -207,13 +208,18 @@ struct agent {
 
     /**
      * @brief Backup function
+     * @param {double &} total_return; return to be backed up, iteratively discounted
+     * @param {node *} ptr; pointer to the node, first the leaf node, then to the parents
      * @note Increment all the visited nodes visits counters and update their values
      * @note Recursive function
      */
-    void backup(double total_return, node * ptr) {
-        // increment visit counters
-        // update the values
-        //TODO
+    void backup(double &total_return, node * ptr) {
+        ptr->increment_visits_count();
+        ptr->add_to_value(total_return);
+        total_return *= p.discount_factor; // apply the discount for the parent node
+        if(!ptr->parent->is_root) {
+            backup(total_return,ptr->parent);
+        }
     }
 
     int best_action(node v) {
@@ -228,7 +234,8 @@ struct agent {
         for(unsigned i=0; i<p.budget; ++i) {
             node *ptr = tree_policy(p.root);
             double total_return = default_policy(ptr);
-            //backup(total_return,ptr);
+            total_return = 1.;
+            backup(total_return,ptr);
             p.trials_count += 1;
         }
         return 1; //TODO

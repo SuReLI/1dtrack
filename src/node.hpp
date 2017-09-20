@@ -149,6 +149,16 @@ struct node {
         ++visits_count;
     }
 
+    /**
+     * @brief Add a value to the nodes value
+     * @param {const double &} r; value to be added
+     * @note Node should not be root
+     */
+    void add_to_value(const double &r) {
+        assert(!is_root);
+        value += r;
+    }
+
     // END ///////////////////////////////////////////////////////////////////////////////////
 
     /** @brief Display basic informations for debug */
