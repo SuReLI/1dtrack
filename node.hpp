@@ -10,6 +10,7 @@ struct node {
      * @param {node *} parent; pointer to the parent node
      * @param {int} incoming_action; action of the parent node that leaded to this node
      * @param {double} state; labelling state for a root node
+     * @param {unsigned} visits_count; number of visits during the tree expansion
      * @param {std::vector<double>} states; sampled states for a standard node
      * @param {std::vector<int>} actions; possible actions at this node (bandit arms)
      * @param {std::vector<node>} children; vector of nodes children
@@ -19,6 +20,7 @@ struct node {
     node *parent;
     int incoming_action;
     double state;
+    unsigned visits_count;
     std::vector<double> states;
     std::vector<int> actions;
     std::vector<node> children;
@@ -33,6 +35,7 @@ struct node {
     {
         is_root = false;
         value = 0.;
+        visits_count = 0;
         states.push_back(_new_state);
         actions = std::vector<int>{-1,0,1};
         shuffle(actions);
@@ -42,6 +45,7 @@ struct node {
     node(double _state) : state(_state) {
         is_root = true;
         actions = std::vector<int>{-1,0,1};
+        visits_count = 0;
         shuffle(actions);
     }
 
@@ -49,6 +53,7 @@ struct node {
 
     /**
      * @brief Set the nodes attributes as root nodes attributes
+     * @note Set the irrelevant attributes to default values (e.g. 'parent' or 'visits_count')
      * @param {double} new_state; new labelling state
      */
     void set_as_root(double new_state) {
@@ -56,6 +61,7 @@ struct node {
         state = new_state;
         states.clear();
         value = 0.;
+        visits_count = 0;
         parent = nullptr;
         incoming_action = 0;
     }
@@ -120,6 +126,11 @@ struct node {
         state = s;
     }
 
+    /** @brief Increment the visits counter */
+    void increment_visits_count() {
+        ++visits_count;
+    }
+
     // END ///////////////////////////////////////////////////////////////////////////////////
 
     /** @brief Display basic informations for debug */
@@ -148,7 +159,8 @@ struct node {
         for(auto & elt : actions) {
             std::cout << elt << " ";
         }
-        std::cout << "Children: " << get_nb_children() << "\n\n";
+        std::cout << "Children: " << get_nb_children() << " ";
+        std::cout << "Visits: " << visits_count << "\n\n";
     }
 };
 

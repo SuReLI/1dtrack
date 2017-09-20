@@ -1,12 +1,13 @@
-#include <cstdlib>
+#include <algorithm>
+#include <cassert>
 #include <cmath>
+#include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include <vector>
-#include <random>
-#include <cassert>
-#include <algorithm>
 #include <memory>
+#include <random>
+#include <vector>
+
 #include <utils.hpp>
 #include <agent.hpp>
 #include <track.hpp>
@@ -23,7 +24,7 @@
  *
  * @brief Policy parameters:
  * @param {constexpr unsigned} HORIZON; tree horizon
- * @param {constexpr double} CST; UCT constant factor
+ * @param {constexpr double} UCT_CST; UCT constant factor
  * @param {constexpr double} MODEL_STDDEV; model noise standard deviation
  * @param {constexpr double} MODEL_FAILURE_PROBABILITY; probability with chich the oposite
  * action effect is applied in the model (randomness of the transition function)
@@ -34,8 +35,8 @@ constexpr double STDDEV = 0.;
 constexpr double FAILURE_PROBABILITY = .1;
 constexpr double INIT_S = 0.;
 
-constexpr unsigned HORIZON = 2;
-constexpr double CST = .7;
+constexpr unsigned HORIZON = 10;
+constexpr double UCT_CST = .7;
 constexpr double MODEL_STDDEV = 0.01;
 constexpr double MODEL_FAILURE_PROBABILITY = 0.;
 constexpr bool REUSE = false;
@@ -65,12 +66,13 @@ void run(track &tr, agent &ag, bool do_print) {
 
 int main() {
     srand(time(NULL));
-    //node_test();
 
+    // Initialisation
     track tr(TRACK_LEN,STDDEV,FAILURE_PROBABILITY);
-    policy_parameters p(HORIZON,CST,REUSE,INIT_S);
+    policy_parameters p(HORIZON,UCT_CST,REUSE,INIT_S);
     model m(MODEL_STDDEV,MODEL_FAILURE_PROBABILITY);
     agent ag(INIT_S,p,m);
 
+    // Simulation
     run(tr,ag,true);
 }

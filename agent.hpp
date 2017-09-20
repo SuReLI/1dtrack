@@ -8,11 +8,13 @@ struct policy_parameters {
     /**
      * @brief Attributes
      * @param {unsigned} horizon; tree horizon
+     * @param {unsigned} trials_count; trial count for the expansion in {0,horizon-1}
      * @param {double} cst; UCT constant factor
      * @param {node} root; root node of the tree
      * @param {bool} reuse; set to true if the policy is able to reuse the tree
      */
     unsigned horizon;
+    unsigned trials_count;
     double cst;
     bool reuse;
     node root;
@@ -31,7 +33,9 @@ struct policy_parameters {
         cst(_cst),
         reuse(_reuse),
         root(initial_state)
-    { }
+    {
+        trials_count = 0;
+    }
 };
 
 /** @brief Model of the environment */
@@ -85,16 +89,23 @@ struct agent {
         a = 0;
     }
 
-    /** @brief Return the best child according to the UCB */
-    node& ucb_child(node &v) {
-        //TODO
-    }
-
-    /** @brief Sample a new state if not root */
-    void sample_new_state(node &v) {
-        if(!v.is_root) {
-            //v.states.push_back(transition_model(v.parent->states.back(),v.incoming_action));
+    /**
+     * @brief UCB selection for the tree policy
+     * @param {node &} v; parent node
+     * @return The selected child according to the UCT formula
+     */
+    node * uct_child(node &v) {
+        std::vector<double> uct_scores;
+        for(auto &elt : v.children) {
+            assert(elt.visits_count != 0);
+            assert(p.trials_count > 0);
+            uct_scores.emplace_back(
+                elt.value + 2 * p.cst *
+                sqrt(log((double) p.trials_count)/ ((double) elt.visits_count))
+            );
         }
+        unsigned ind = argmax(uct_scores);
+        return &v.children.at(ind);
     }
 
     /**
@@ -118,13 +129,14 @@ struct agent {
      * @brief Apply the tree policy
      * @note During the descent, store the sampled leaf states into the nodes parameters
      * @note No terminal node case
+     * @note Recursive function
      * @return A pointer to the created leaf node
      */
     node * tree_policy(node &v) {
         if(!v.is_fully_expanded()) { // expand node
             return expand(v);
         } else { // apply tree policy on 'best UCB child'
-            //node& v_p = ucb_child(v);
+            node * v_p = uct_child(v);
             //sample_new_state(v_p);
             //return tree_policy(v_p);
         }
@@ -135,8 +147,14 @@ struct agent {
         double state = ptr->states.back();
     }
 
-    /** @brief Backup function */
+    /**
+     * @brief Backup function
+     * @note Increment all the visited nodes visits counters and update their values
+     * @note Recursive function
+     */
     void backup(double total_return, node * ptr) {
+        // increment visit counters
+        // update the values
         //TODO
     }
 
@@ -148,10 +166,12 @@ struct agent {
     /** @brief UCT policy */
     int uct(const double &s) {
         p.root.set_state(s);
+        p.trials_count = 0;
         for(unsigned i=0; i<p.horizon; ++i) {
             node *ptr = tree_policy(p.root);
             //double total_return = default_policy(ptr);
             //backup(total_return,ptr);
+            p.trials_count += 1;
         }
         return 1; //TODO
     }
