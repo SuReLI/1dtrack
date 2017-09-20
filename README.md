@@ -1,4 +1,4 @@
-# 1D track simulator.
+# 1D track simulator
 
 The environment is a 1D line onto which an agent can go right or left. The agent
 uses a UCT like policy in order to reach its goal.

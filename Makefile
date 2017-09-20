@@ -1,5 +1,5 @@
 CCC=g++
-CCFLAGS=-std=c++11 -Wall -Wextra -I. -O2 -g
+CCFLAGS=-std=c++11 -Wall -Wextra -I./src -O2 -g
 EXEC=exe
 
 all : clean compile run
