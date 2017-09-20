@@ -30,8 +30,8 @@ struct policy_parameters {
         horizon(_horizon),
         cst(_cst),
         reuse(_reuse),
-        node(initial_state)
-    {}
+        root(initial_state)
+    { }
 };
 
 /** @brief Model of the environment */
@@ -93,9 +93,9 @@ struct agent {
         int inc_ac = v.get_next_expansion_action();
         double new_state = 0.;
         if(v.is_root) {
-            new_state = transition_model(v.state,inc_ac);
+            new_state = m.transition_model(v.state,inc_ac);
         } else {
-            new_state = transition_model(v.get_last_sampled_state(),inc_ac);
+            new_state = m.transition_model(v.get_last_sampled_state(),inc_ac);
         }
         v.create_child(new_state,inc_ac);
         return nullptr;
@@ -159,8 +159,8 @@ struct agent {
      * @note Action must be an integer within {-1, 0, 1}
      */
     void take_action() {
-        //a = uct(s); //TRM
-        a = 1;
+        a = uct(s);
+        //a = 1;
     }
 };
 
