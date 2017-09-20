@@ -11,15 +11,8 @@
 #include <utils.hpp>
 #include <agent.hpp>
 #include <track.hpp>
+#include <display.hpp> // only for displaying
 #include <test.hpp> // only for testing
-
-/** @brief Print some informations */
-void print(track &tr, agent &ag) {
-    std::cout << "time = " << tr.t;
-    std::cout << " state = " << ag.s;
-    std::cout << " action = " << ag.a;
-    std::cout << " reward = " << tr.reward(ag.s) << std::endl;
-}
 
 /**
  * @brief Run a simulation given its parameters
@@ -66,7 +59,7 @@ void run_1dtrack() {
     double FAILURE_PROBABILITY = .1;
     double INIT_S = 0.;
 
-    unsigned BUDGET = 100;
+    unsigned BUDGET = 1000;
     unsigned HORIZON = 100;
     double UCT_CST = .7;
     double DISCOUNT_FACTOR = 1.;

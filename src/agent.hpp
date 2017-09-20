@@ -95,8 +95,7 @@ struct model {
      */
     double reward_model(const double &s, const int &a, const double &s_p) {
         (void) a; (void) s_p; //default
-        //return is_less_than(std::abs(s),model_track_length) ? 0. : 1.;
-        return std::abs(s);
+        return is_less_than(std::abs(s),model_track_length) ? 0. : 1.;
     }
 };
 
