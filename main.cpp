@@ -44,15 +44,17 @@ void run_1dtrack() {
     /**
      * @brief Step 1: initialisation
      * @brief Simulation parameters:
-     * @param {double} TRACK_LEN; track length
+     * @param {double} TRACK_LEN; track length (half of the length)
      * @param {double} STDDEV; environment noise standard deviation
      * @param {double} FAILURE_PROBABILITY; probability with chich the oposite action
      * effect is applied (randomness of the transition function)
      * @param {double} INIT_S; initial state
      *
      * @brief Policy parameters:
-     * @param {unsigned} HORIZON; tree horizon
+     * @param {unsigned} BUDGET; algorithm budget (number of expanded nodes)
+     * @param {unsigned} HORIZON; algorithm horizon for the default policy
      * @param {double} UCT_CST; UCT constant factor
+     * @param {double} DISCOUNT_FACTOR; discount factor for the MDP
      * @param {double} MODEL_STDDEV; model noise standard deviation
      * @param {double} MODEL_FAILURE_PROBABILITY; probability with chich the oposite
      * action effect is applied in the model (randomness of the transition function)
@@ -64,16 +66,19 @@ void run_1dtrack() {
     double FAILURE_PROBABILITY = .1;
     double INIT_S = 0.;
 
-    unsigned HORIZON = 10;
+    unsigned BUDGET = 10;
+    unsigned HORIZON = 15;
     double UCT_CST = .7;
+    double DISCOUNT_FACTOR = 1.;
+    double MODEL_TRACK_LEN = TRACK_LEN;
     double MODEL_STDDEV = 0.01;
     double MODEL_FAILURE_PROBABILITY = 0.;
     bool REUSE = false;
     std::vector<int> ACTION_SPACE = {-1,0,1};
 
     track tr(TRACK_LEN,STDDEV,FAILURE_PROBABILITY);
-    policy_parameters p(HORIZON,UCT_CST,REUSE,ACTION_SPACE,INIT_S);
-    model m(MODEL_STDDEV,MODEL_FAILURE_PROBABILITY);
+    policy_parameters p(BUDGET,HORIZON,UCT_CST,DISCOUNT_FACTOR,REUSE,ACTION_SPACE,INIT_S);
+    model m(MODEL_TRACK_LEN,MODEL_STDDEV,MODEL_FAILURE_PROBABILITY);
     agent ag(INIT_S,p,m);
 
     /** @brief Step 2: run the simulation */

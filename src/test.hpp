@@ -1,5 +1,5 @@
 /**
- * @brief Simple unit tests
+ * @brief Nodes unit tests
  * @todo Add assertions
  */
 void node_test() {

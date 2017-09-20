@@ -7,15 +7,19 @@
 struct policy_parameters {
     /**
      * @brief Attributes
-     * @param {unsigned} horizon; tree horizon
-     * @param {unsigned} trials_count; trial count for the expansion in {0,horizon-1}
-     * @param {double} cst; UCT constant factor
+     * @param {unsigned} budget; algorithm budget (number of expanded nodes)
+     * @param {unsigned} horizon; algorithm horizon for the default policy
+     * @param {unsigned} trials_count; trial count for the expansion in {0,budget-1}
+     * @param {double} uct_cst; UCT constant factor
+     * @param {double} discount_factor; discount factor for the MDP
      * @param {node} root; root node of the tree
      * @param {bool} reuse; set to true if the policy is able to reuse the tree
      */
+    unsigned budget;
     unsigned horizon;
     unsigned trials_count;
-    double cst;
+    double uct_cst;
+    double discount_factor;
     bool reuse;
     std::vector<int> action_space;
     node root;
@@ -26,13 +30,17 @@ struct policy_parameters {
      * 'main.cpp' file (see parameters definition on top)
      */
     policy_parameters(
+        unsigned _budget,
         unsigned _horizon,
-        double _cst,
+        double _uct_cst,
+        double _discount_factor,
         bool _reuse,
         std::vector<int> _action_space,
         double initial_state) :
+        budget(_budget),
         horizon(_horizon),
-        cst(_cst),
+        uct_cst(_uct_cst),
+        discount_factor(_discount_factor),
         reuse(_reuse),
         action_space(_action_space),
         root(initial_state,action_space)
@@ -45,22 +53,28 @@ struct policy_parameters {
 struct model {
     /**
      * @brief Attributes
+     * @param {double} model_track_length; model length of the track (half of the length)
      * @param {double} model_stddev; model noise standard deviation
      * @param {constexpr double} model_failure_probability; probability with chich the
      * oposite action effect is applied in the model (randomness of the transition function)
      */
+    double model_track_length;
     double model_stddev;
     double model_failure_probability;
 
     model(
+        double _model_track_length,
         double _model_stddev,
         double _model_failure_probability) :
+        model_track_length(_model_track_length),
         model_stddev(_model_stddev),
         model_failure_probability(_model_failure_probability)
     {}
 
     /**
-     * @brief Simulate a transition wrt the model parameters
+     * @brief Simulate a state transition wrt the model parameters
+     * @param {const double &} s; state
+     * @param {const int &} a; action
      * @return The resulting state
      */
     double transition_model(const double &s, const int &a) {
@@ -70,6 +84,17 @@ struct model {
             action_effect *= (-1.);
         }
         return s + action_effect + noise;
+    }
+
+    /**
+     * @brief Reward model of the transition (s,a,s_p)
+     * @param {const double &} s; state
+     * @param {const int &} a; action
+     * @param {const double &} s_p; next state
+     * @return The resulting reward
+     */
+    double reward_model(const double &s, const int &a, const double &s_p) {
+        return is_less_than(std::abs(s),model_track_length) ? 0. : 1.;
     }
 };
 
@@ -103,7 +128,7 @@ struct agent {
             assert(elt.visits_count != 0);
             assert(p.trials_count > 0);
             uct_scores.emplace_back(
-                elt.value + 2 * p.cst *
+                elt.value + 2 * p.uct_cst *
                 sqrt(log((double) p.trials_count)/ ((double) elt.visits_count))
             );
         }
@@ -161,10 +186,23 @@ struct agent {
         }
     }
 
-    /** @brief Compute the return from running an episode with the default policy */
+    /**
+     * @brief Compute the total return from running an episode with the default policy
+     * @note The simulation starts from the last sampled state of the input node
+     * @param {node *} ptr; pointer to the input node
+     */
     double default_policy(node * ptr) {
+        double total_return = 0.;
         double s = ptr->get_last_sampled_state();
-        //TODO
+        int a = rand_element(p.action_space);
+        for(unsigned t=0; t<p.horizon; ++t) {
+            double s_p = m.transition_model(s,a);
+            double r = m.reward_model(s,a,s_p);
+            total_return += pow(p.discount_factor,(double)t) * r;
+            s = s_p;
+            a = rand_element(p.action_space);
+        }
+        return total_return;
     }
 
     /**
@@ -187,7 +225,7 @@ struct agent {
     int uct(const double &s) {
         p.root.set_state(s);
         p.trials_count = 0;
-        for(unsigned i=0; i<p.horizon; ++i) {
+        for(unsigned i=0; i<p.budget; ++i) {
             node *ptr = tree_policy(p.root);
             double total_return = default_policy(ptr);
             //backup(total_return,ptr);

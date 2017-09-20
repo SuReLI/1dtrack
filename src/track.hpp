@@ -4,23 +4,23 @@
 struct track {
     /**
      * @brief Attributes
-     * @param {double} len; length of the 1D track
+     * @param {double} track_length; track_lengthgth of the 1D track
      * @param {double} stddev; noise standard deviation
      * @param {double} failure_probability; probability with chich the oposite action
      * effect is applied (randomness of the transition function)
      * @param {unsigned} t; time
      */
-    double len;
+    double track_length;
     double stddev;
     double failure_probability;
     unsigned t;
 
     /** @brief constructor */
     track(
-        double _len,
+        double _track_length,
         double _stddev,
         double _failure_prob) :
-        len(_len),
+        track_length(_track_length),
         stddev(_stddev),
         failure_probability(_failure_prob)
     {
@@ -29,7 +29,7 @@ struct track {
 
     /** @brief Return true if terminal */
     bool is_terminal(const double &s) {
-        return !is_less_than(std::abs(s),len);
+        return !is_less_than(std::abs(s),track_length);
     }
 
     /**
@@ -48,7 +48,7 @@ struct track {
 
     /** @brief Reward function */
     double reward(const double &s) {
-        return is_less_than(std::abs(s),len) ? 0. : 1.;
+        return is_less_than(std::abs(s),track_length) ? 0. : 1.;
     }
 };
 
