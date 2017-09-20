@@ -8,7 +8,7 @@ the model of the agent, the shape of the world, the action space etc. are
 tunable. In order to do so, one should directly modify the source code and
 recompile using the provided Makefile.
 
-# Note
+# Notes
 This is a 'work in progress' version and modifications can be brought from time
 to time.
 

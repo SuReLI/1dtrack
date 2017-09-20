@@ -61,20 +61,20 @@ void run_1dtrack() {
      * @param {double} REUSE; set to true if the policy is able to reuse the tree
      * @param {std::vector<int>} ACTION_SPACE; action space used by every nodes (bandit arms)
      */
-    double TRACK_LEN = 10.;
+    double TRACK_LEN = 5.;
     double STDDEV = 0.;
     double FAILURE_PROBABILITY = .1;
     double INIT_S = 0.;
 
-    unsigned BUDGET = 10;
-    unsigned HORIZON = 15;
+    unsigned BUDGET = 100;
+    unsigned HORIZON = 100;
     double UCT_CST = .7;
     double DISCOUNT_FACTOR = 1.;
     double MODEL_TRACK_LEN = TRACK_LEN;
     double MODEL_STDDEV = 0.01;
     double MODEL_FAILURE_PROBABILITY = 0.;
     bool REUSE = false;
-    std::vector<int> ACTION_SPACE = {-1,0,1};
+    std::vector<int> ACTION_SPACE = {-1,1};
 
     track tr(TRACK_LEN,STDDEV,FAILURE_PROBABILITY);
     policy_parameters p(BUDGET,HORIZON,UCT_CST,DISCOUNT_FACTOR,REUSE,ACTION_SPACE,INIT_S);

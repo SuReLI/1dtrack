@@ -61,6 +61,22 @@ struct node {
     // MEMBERS ///////////////////////////////////////////////////////////////////////////////
 
     /**
+     * @brief Clear the node
+     * @note Do not change the value of 'is_root' attribute, hence the status of the node
+     * @note Do not clear actions vector, hence the available actions still remain in the
+     * same organisation order
+     */
+    void clear_node() {
+        value = 0;
+        parent = nullptr;
+        incoming_action = 0;
+        state = 0.;
+        visits_count = 0;
+        states.clear();
+        children.clear();
+    }
+
+    /**
      * @brief Set the nodes attributes as root nodes attributes
      * @note Set the irrelevant attributes to default values (e.g. 'parent' or 'visits_count')
      * @param {double} new_state; new labelling state
