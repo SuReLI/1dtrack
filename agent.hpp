@@ -85,22 +85,6 @@ struct agent {
         a = 0;
     }
 
-    /**
-     * @brief Expand the node i.e. create a new node
-     * @return Pointer to the new node
-     */
-    node * expand(node &v) {
-        int inc_ac = v.get_next_expansion_action();
-        double new_state = 0.;
-        if(v.is_root) {
-            new_state = m.transition_model(v.state,inc_ac);
-        } else {
-            new_state = m.transition_model(v.get_last_sampled_state(),inc_ac);
-        }
-        v.create_child(new_state,inc_ac);
-        return nullptr;
-    }
-
     /** @brief Return the best child according to the UCB */
     node& ucb_child(node &v) {
         //TODO
@@ -114,17 +98,35 @@ struct agent {
     }
 
     /**
-     * @brief Apply the tree policy and store the sampled leaf states into the parameters
-     * @return A pointer to the created node
+     * @brief Expand the node i.e. create a new leaf node
+     * @return A pointer to the created leaf node
+     */
+    node * expand(node &v) {
+        int nodes_action = v.get_next_expansion_action();
+        double nodes_state = 0.;
+        if(v.is_root) {
+            nodes_state = v.state;
+        } else {
+            nodes_state = v.get_last_sampled_state();
+        }
+        double new_state = m.transition_model(nodes_state,nodes_action);
+        v.create_child(nodes_action,new_state);
+        return v.get_last_child();
+    }
+
+    /**
+     * @brief Apply the tree policy
+     * @note During the descent, store the sampled leaf states into the nodes parameters
      * @note No terminal node case
+     * @return A pointer to the created leaf node
      */
     node * tree_policy(node &v) {
         if(!v.is_fully_expanded()) { // expand node
             return expand(v);
         } else { // apply tree policy on 'best UCB child'
-            node& v_p = ucb_child(v);
-            sample_new_state(v_p);
-            return tree_policy(v_p);
+            //node& v_p = ucb_child(v);
+            //sample_new_state(v_p);
+            //return tree_policy(v_p);
         }
     }
 
@@ -144,14 +146,14 @@ struct agent {
     }
 
     /** @brief UCT policy */
-    int uct(double s) {
-        node root(s);
+    int uct(const double &s) {
+        p.root.set_state(s);
         for(unsigned i=0; i<p.horizon; ++i) {
-            node *ptr = tree_policy(root);
+            node *ptr = tree_policy(p.root);
             //double total_return = default_policy(ptr);
             //backup(total_return,ptr);
         }
-        return best_action(root);
+        return 1; //TODO
     }
 
     /**

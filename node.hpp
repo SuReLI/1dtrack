@@ -97,7 +97,10 @@ struct node {
         return &children.back();
     }
 
-    /** @brief Return the last sampled state among the states family */
+    /**
+     * @brief Return the last sampled state among the states family
+     * @note Node should be root
+     */
     double get_last_sampled_state() {
         assert(!is_root);
         return states.back();
@@ -106,6 +109,15 @@ struct node {
     /** @brief Return the next expansion actions among the available actions */
     int get_next_expansion_action() {
         return actions.at(children.size());
+    }
+
+    /**
+     * @brief Copy the input state to the nodes state
+     * @note Node should be root
+     */
+    void set_state(const double &s) {
+        assert(is_root);
+        state = s;
     }
 
     // END ///////////////////////////////////////////////////////////////////////////////////

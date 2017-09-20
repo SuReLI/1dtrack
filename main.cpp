@@ -36,8 +36,8 @@ constexpr double INIT_S = 0.;
 
 constexpr unsigned HORIZON = 2;
 constexpr double CST = .7;
-constexpr double MODEL_STDDEV = 1.;
-constexpr double MODEL_FAILURE_PROBABILITY = .1;
+constexpr double MODEL_STDDEV = 0.01;
+constexpr double MODEL_FAILURE_PROBABILITY = 0.;
 constexpr bool REUSE = false;
 
 /** @brief Print some informations */
