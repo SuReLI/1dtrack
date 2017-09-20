@@ -1,3 +1,61 @@
+#ifndef TEST_HPP_
+#define TEST_HPP_
+
+/** @brief print many informations about a node */
+void print_node_complete(const node &v) {
+    if(v.is_root) {
+        std::cout << "ROOT\nState: " << v.state << "\n";
+
+        std::cout << "CHECK EMPTY: Parent: " << v.parent << " ";
+        std::cout << "Val: " << v.value << " ";
+        std::cout << "IncAction: " << v.incoming_action << " ";
+        std::cout << "States: ";
+        for(auto & elt : v.states) {
+            std::cout << elt << " ";
+        }
+    } else {
+        std::cout << "Parent: " << v.parent << " ";
+        std::cout << "Val: " << v.value << " ";
+        std::cout << "IncAction: " << v.incoming_action << " ";
+        std::cout << "States: ";
+        for(auto & elt : v.states) {
+            std::cout << elt << " ";
+        }
+    }
+    std::cout << "\nAdress: " << &v << " ";
+    std::cout << "Actions: ";
+    for(auto & elt : v.actions) {
+        std::cout << elt << " ";
+    }
+    std::cout << "Children: " << v.get_nb_children() << " ";
+    std::cout << "Visits: " << v.visits_count << "\n\n";
+}
+
+/** @brief print minimum informations about a node */
+void print_node(const node &v) {
+    if(v.is_root) {
+        std::cout << "ROOT:  s:" << v.state;
+    } else {
+        std::cout << "s:";
+        for(auto &elt : v.states) {
+            std::cout << elt << " ";
+        }
+    }
+    std::cout << "a:";
+    for(auto &elt : v.actions) {
+        std::cout << elt << " ";
+    }
+    std::cout << "v:" << v.value << "\n";
+}
+
+/** @brief Print a node and its children */
+void print_node_and_children(const node &v) {
+    print_node(v);
+    for(auto &elt : v.children) {
+        print_node(elt);
+    }
+}
+
 /**
  * @brief Nodes unit tests
  * @todo Add assertions
@@ -14,10 +72,10 @@ void node_test() {
     v.create_child(v.get_next_expansion_action(),1.06);
     v.create_child(v.get_next_expansion_action(),2.06);
     v.create_child(v.get_next_expansion_action(),3.06);
-    v.display();
-    v.children.at(0).display();
-    v.children.at(1).display();
-    v.children.at(2).display();
+    print_node_complete(v);
+    print_node_complete(v.children.at(0));
+    print_node_complete(v.children.at(1));
+    print_node_complete(v.children.at(2));
 
     std::cout << "#2 ##### Add child to last v child + child to this child, print them:\n";
     node * ptr = v.get_last_child();
@@ -25,16 +83,18 @@ void node_test() {
     node * ptrbis = ptr->get_last_child();
     ptrbis->create_child(ptrbis->get_next_expansion_action(),5.06);
     std::cout << "# v child\n";
-    ptr->display();
+    print_node_complete(*ptr);
     std::cout << "# v child child\n";
-    ptr->get_last_child()->display();
+    print_node_complete(*ptr->get_last_child());
     std::cout << "# v child child child\n";
-    ptrbis->get_last_child()->display();
+    print_node_complete(*ptrbis->get_last_child());
 
     std::cout << "#3 ##### Last child of v as a root, print tree:\n";
     v.absorb_child(2,3.33);
 
-    v.display();
-    v.get_last_child()->display();
-    v.get_last_child()->get_last_child()->display();
+    print_node_complete(v);
+    print_node_complete(*v.get_last_child());
+    print_node_complete(*v.get_last_child()->get_last_child());
 }
+
+#endif // TEST_HPP_

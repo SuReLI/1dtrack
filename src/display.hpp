@@ -1,6 +1,7 @@
-/**
- * @brief Some display methods
- */
+#ifndef DISPLAY_HPP_
+#define DISPLAY_HPP_
+
+/** @brief Some display methods */
 
 /** @brief Print an overview of the track */
 void print_track(track &tr, agent &ag) {
@@ -31,8 +32,11 @@ void print(track &tr, agent &ag) {
 //    std::cout << " action = " << ag.a;
 //    std::cout << " reward = " << tr.reward(ag.s) << std::endl;
     std::cout << "t:" << tr.t << " ";
+    if(tr.t<10){std::cout << " ";}
     print_track(tr,ag);
     std::cout << " s:" << ag.s << " ";
     std::cout << "a:" << ag.a << " ";
     std::cout << "r:" << tr.reward(ag.s) << "\n";
 }
+
+#endif // DISPLAY_HPP_

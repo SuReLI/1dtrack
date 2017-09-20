@@ -58,8 +58,6 @@ struct node {
         shuffle(actions);
     }
 
-    // MEMBERS ///////////////////////////////////////////////////////////////////////////////
-
     /**
      * @brief Clear the node
      * @note Do not change the value of 'is_root' attribute, hence the status of the node
@@ -174,38 +172,6 @@ struct node {
         assert(!is_root);
         value += r;
     }
-
-    // END ///////////////////////////////////////////////////////////////////////////////////
-
-    /** @brief Display basic informations for debug */
-    void display() {
-        if(is_root) {
-            std::cout << "ROOT\nState: " << state << "\n";
-
-            std::cout << "CHECK EMPTY: Parent: " << parent << " ";
-            std::cout << "Val: " << value << " ";
-            std::cout << "IncAction: " << incoming_action << " ";
-            std::cout << "States: ";
-            for(auto & elt : states) {
-                std::cout << elt << " ";
-            }
-        } else {
-            std::cout << "Parent: " << parent << " ";
-            std::cout << "Val: " << value << " ";
-            std::cout << "IncAction: " << incoming_action << " ";
-            std::cout << "States: ";
-            for(auto & elt : states) {
-                std::cout << elt << " ";
-            }
-        }
-        std::cout << "\nAdress: " << this << " ";
-        std::cout << "Actions: ";
-        for(auto & elt : actions) {
-            std::cout << elt << " ";
-        }
-        std::cout << "Children: " << get_nb_children() << " ";
-        std::cout << "Visits: " << visits_count << "\n\n";
-    }
 };
 
-#endif
+#endif // NODE_HPP_

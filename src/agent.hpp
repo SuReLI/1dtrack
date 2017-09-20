@@ -2,6 +2,7 @@
 #define AGENT_HPP_
 
 #include <node.hpp>
+#include <test.hpp> // only for testing
 
 /** @brief Parameters of the policy */
 struct policy_parameters {
@@ -259,7 +260,8 @@ struct agent {
      */
     void take_action() {
         a = uct(s);
+        print_node_and_children(p.root);
     }
 };
 
-#endif
+#endif // AGENT_HPP_

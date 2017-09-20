@@ -52,4 +52,4 @@ struct track {
     }
 };
 
-#endif
+#endif // TRACK_HPP_

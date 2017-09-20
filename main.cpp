@@ -44,6 +44,7 @@ void run_1dtrack() {
      * @param {double} INIT_S; initial state
      *
      * @brief Policy parameters:
+     * @param {std::vector<int>} ACTION_SPACE; action space used by every nodes (bandit arms)
      * @param {unsigned} BUDGET; algorithm budget (number of expanded nodes)
      * @param {unsigned} HORIZON; algorithm horizon for the default policy
      * @param {double} UCT_CST; UCT constant factor
@@ -52,22 +53,21 @@ void run_1dtrack() {
      * @param {double} MODEL_FAILURE_PROBABILITY; probability with chich the oposite
      * action effect is applied in the model (randomness of the transition function)
      * @param {double} REUSE; set to true if the policy is able to reuse the tree
-     * @param {std::vector<int>} ACTION_SPACE; action space used by every nodes (bandit arms)
      */
     double TRACK_LEN = 5.;
     double STDDEV = 0.;
-    double FAILURE_PROBABILITY = .1;
+    double FAILURE_PROBABILITY = 0.;
     double INIT_S = 0.;
 
-    unsigned BUDGET = 1000;
-    unsigned HORIZON = 100;
+    std::vector<int> ACTION_SPACE = {-1,1};
+    unsigned BUDGET = 3; // should be higher than the number of actions
+    unsigned HORIZON = 1;
     double UCT_CST = .7;
     double DISCOUNT_FACTOR = 1.;
     double MODEL_TRACK_LEN = TRACK_LEN;
-    double MODEL_STDDEV = 0.01;
-    double MODEL_FAILURE_PROBABILITY = 0.;
+    double MODEL_STDDEV = STDDEV;
+    double MODEL_FAILURE_PROBABILITY = FAILURE_PROBABILITY;
     bool REUSE = false;
-    std::vector<int> ACTION_SPACE = {-1,1};
 
     track tr(TRACK_LEN,STDDEV,FAILURE_PROBABILITY);
     policy_parameters p(BUDGET,HORIZON,UCT_CST,DISCOUNT_FACTOR,REUSE,ACTION_SPACE,INIT_S);
