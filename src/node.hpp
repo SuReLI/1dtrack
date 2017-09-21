@@ -96,7 +96,7 @@ public :
      * @param {unsigned} indice; indice of the moved child
      * @param {double} new_state; new labelling state
      */
-    void absorb_child(unsigned indice, double new_state) {
+    void move_to_child(unsigned indice, double new_state) {
         *this = std::move(children.at(indice));
         set_as_root(new_state);
         for(auto &elt : children) {

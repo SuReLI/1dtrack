@@ -91,7 +91,7 @@ void node_test() {
     print_node_complete(*ptrbis->get_last_child());
 
     std::cout << "#3 ##### Last child of v as a root, print tree:\n";
-    v.absorb_child(2,3.33);
+    v.move_to_child(2,3.33);
 
     print_node_complete(v);
     print_node_complete(*v.get_last_child());

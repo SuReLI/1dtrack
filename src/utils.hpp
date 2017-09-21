@@ -3,6 +3,21 @@
 
 constexpr double COMPARISON_THRESHOLD = 1e-6;
 
+/** @brief Printing generic method */
+template <class T>
+void print(T t) {
+	std::cout << t << std::endl;
+}
+
+/** @brief Printing generic method for containers */
+template <class T>
+void printv(std::vector<T> v) {
+	for (auto &elt : v) {
+		std::cout << elt << " ";
+	}
+	std::cout << std::endl;
+}
+
 /** @brief Return true if a == b up to a certain precision */
 template <class T1, class T2>
 constexpr bool is_equal_to(T1 a, T2 b) {
@@ -102,19 +117,6 @@ double normal_d(const double &mean, const double &stddev) {
     std::default_random_engine generator(rd());
     std::normal_distribution<double> distribution(mean,stddev);
     return distribution(generator);
-}
-
-template <class T>
-void print(T t) {
-	std::cout << t << std::endl;
-}
-
-template <class T>
-void printv(std::vector<T> v) {
-	for (auto &elt : v) {
-		std::cout << elt << " ";
-	}
-	std::cout << std::endl;
 }
 
 #endif // UTILS_HPP_

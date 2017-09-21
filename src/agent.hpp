@@ -223,22 +223,45 @@ struct agent {
     }
 
     /**
-     * @brief Take the policy decision after the tree construction
+     * @brief See 'max_score' method
      * @param {const node &} v; root node of the tree
-     * @return The action with the best score (leading to the child with the higher value)
+     * @return The indice of the child achieving the best score
      */
-    int best_action(node &v) {
+    unsigned argmax_score(node &v) {
         assert(v.is_root());
         std::vector<double> values;
         for(auto &elt: v.children) {
             values.push_back(elt.get_value());
         }
-        unsigned ind = argmax(values);
-        return v.get_action_at(ind);
+        return argmax(values);
     }
 
-    /** @brief UCT policy */
-    int uct(const double &s) {
+    /**
+     * @brief Take the policy decision after the tree construction
+     * @param {const node &} v; root node of the tree
+     * @return The action with the best score (leading to the child with the higher value)
+     */
+    int max_score(node &v) {
+        return v.get_action_at(argmax_score(v));
+    }
+
+    /**
+     * @brief The decision criterion of keeping the tree or not
+     * @param {const double &} s; the current state of the agent
+     * @return 'true' if tree is kept
+     */
+    bool keeping_criterion(const double &s) {
+        (void) s;
+        return p.root.is_fully_expanded(); // naive implementation: keep the tree if it is built
+    }
+
+    /**
+     * @brief Build a tree starting from the root attribute of the parameters using the
+     * UCT algorithm
+     * @param {const double &} s; current state of the agent
+     * @note 'void' method, the tree is kept in memory
+     */
+    void build_uct_tree(const double &s) {
         p.root.clear_node();
         p.root.set_state(s);
         p.trials_count = 0;
@@ -248,8 +271,28 @@ struct agent {
             backup(total_return,ptr);
             p.trials_count += 1;
         }
-        //print_node_and_children(p.root);//TRM
-        return best_action(p.root);
+    }
+
+    /**
+     * @brief Experimental UCT policy
+     * @param {const double &} s; current state of the agent
+     */
+    int experimental_uct(const double &s) {
+        if(keeping_criterion(s)) { // keep the subtree and use it
+            p.root.move_to_child(argmax_score(p.root),s);
+        } else {
+            build_uct_tree(s);
+        }
+        return max_score(p.root);
+    }
+
+    /**
+     * @brief Vanilla UCT policy
+     * @param {const double &} s; current state of the agent
+     */
+    int vanilla_uct(const double &s) {
+        build_uct_tree(s);
+        return max_score(p.root);
     }
 
     /**
@@ -258,7 +301,11 @@ struct agent {
      * @note The current state and the recommended action are attributes of the agent class
      */
     void take_action() {
-        a = uct(s);
+        if(p.reuse) {
+            a = experimental_uct(s);
+        } else {
+            a = vanilla_uct(s);
+        }
     }
 };
 
