@@ -5,24 +5,26 @@
 struct node {
     /**
      * @brief Attributes
-     * @param {bool} is_root; true if root node i.e. labeled by a particular state;
+     * @param {bool} root; true if root node i.e. labeled by a particular state;
      * @param {double} value; value estimate
-     * @param {node *} parent; pointer to the parent node
      * @param {int} incoming_action; action of the parent node that leaded to this node
-     * @param {double} state; labelling state for a root node
      * @param {unsigned} visits_count; number of visits during the tree expansion
+     * @param {double} state; labelling state for a root node
      * @param {std::vector<double>} states; sampled states for a standard node
      * @param {std::vector<int>} actions; possible actions at this node (bandit arms)
+     * @param {node *} parent; pointer to the parent node
      * @param {std::vector<node>} children; vector of nodes children
      */
-    bool is_root;
+private :
+    bool root;
     double value;
-    node *parent;
     int incoming_action;
-    double state;
     unsigned visits_count;
+    double state;
     std::vector<double> states;
     std::vector<int> actions;
+public :
+    node *parent;
     std::vector<node> children;
 
     /**
@@ -31,7 +33,7 @@ struct node {
      * (bandit arms)
      */
     node(double _state, std::vector<int> action_space) : state(_state) {
-        is_root = true;
+        root = true;
         actions = action_space;
         shuffle(actions);
         visits_count = 0;
@@ -47,10 +49,10 @@ struct node {
         int _incoming_action,
         double _new_state,
         std::vector<int> action_space) :
-        parent(_parent),
-        incoming_action(_incoming_action)
+        incoming_action(_incoming_action),
+        parent(_parent)
     {
-        is_root = false;
+        root = false;
         value = 0.;
         visits_count = 0;
         states.push_back(_new_state);
@@ -60,7 +62,7 @@ struct node {
 
     /**
      * @brief Clear the node
-     * @note Do not change the value of 'is_root' attribute, hence the status of the node
+     * @note Do not change the value of 'root' attribute, hence the status of the node
      * @note Do not clear actions vector, hence the available actions still remain in the
      * same organisation order
      */
@@ -80,7 +82,7 @@ struct node {
      * @param {double} new_state; new labelling state
      */
     void set_as_root(double new_state) {
-        is_root = true;
+        root = true;
         state = new_state;
         states.clear();
         value = 0.;
@@ -103,14 +105,39 @@ struct node {
     }
 
     /** @brief Get the number of children */
-    unsigned get_nb_children() const {
-        return children.size();
-    }
+    unsigned get_nb_children() const {return children.size();}
+
+    /** @brief Return a pointer to the last created child */
+    node * get_last_child() {return &children.back();}
+
+    /** @brief Get the value of the node */
+    double get_value() {return value;}
+
+    /** @brief Get the state of the node (root node) */
+    double get_state() {assert(root); return state;}
+
+    /** @brief Get the states vector of the node (non-root node) */
+    std::vector<double> get_states() {assert(!root); return states;}
+
+    /** @brief Get the incoming action of the node (non-root node) */
+    int get_incoming_action() {assert(!root); return incoming_action;}
+
+    /** @brief Get the visits count of the node (non-root node) */
+    unsigned get_visits_count() {assert(!root); return visits_count;}
+
+    /** @brief Get one action of the node given its indice in the actions vector */
+    int get_action_at(unsigned indice) {return actions.at(indice);}
+
+    /** @brief Get the number of actions (arms of the bandit) */
+    unsigned get_nb_of_actions() {return actions.size();}
 
     /** @brief Return true if the node is fully expanded */
     bool is_fully_expanded() const {
         return (get_nb_children() == actions.size());
     }
+
+    /** @brief Return true if the node is a root node */
+    bool is_root() const {return root;}
 
     /**
      * @brief Create a child based on incoming action
@@ -121,17 +148,12 @@ struct node {
         children.emplace_back(node(this,inc_ac,new_state,actions));
     }
 
-    /** @brief Return a pointer to the last created child */
-    node * get_last_child() {
-        return &children.back();
-    }
-
     /**
      * @brief Return the last sampled state among the states family
      * @note Node should be root
      */
     double get_last_sampled_state() {
-        assert(!is_root);
+        assert(!root);
         return states.back();
     }
 
@@ -145,7 +167,7 @@ struct node {
      * @note Node should be root
      */
     void set_state(const double &s) {
-        assert(is_root);
+        assert(root);
         state = s;
     }
 
@@ -154,7 +176,7 @@ struct node {
      * @note Node should not be root
      */
     void add_to_states(const double &s) {
-        assert(!is_root);
+        assert(!root);
         states.push_back(s);
     }
 
@@ -169,7 +191,7 @@ struct node {
      * @note Node should not be root
      */
     void add_to_value(const double &r) {
-        assert(!is_root);
+        assert(!root);
         value += r;
     }
 };

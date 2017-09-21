@@ -127,11 +127,11 @@ struct agent {
     node * uct_child(node &v) {
         std::vector<double> uct_scores;
         for(auto &elt : v.children) {
-            assert(elt.visits_count != 0);
+            assert(elt.get_visits_count() != 0);
             assert(p.trials_count > 0);
             uct_scores.emplace_back(
-                elt.value + 2 * p.uct_cst *
-                sqrt(log((double) p.trials_count)/ ((double) elt.visits_count))
+                elt.get_value() + 2 * p.uct_cst *
+                sqrt(log((double) p.trials_count)/ ((double) elt.get_visits_count()))
             );
         }
         unsigned ind = argmax(uct_scores);
@@ -145,8 +145,8 @@ struct agent {
     node * expand(node &v) {
         int nodes_action = v.get_next_expansion_action();
         double nodes_state = 0.;
-        if(v.is_root) {
-            nodes_state = v.state;
+        if(v.is_root()) {
+            nodes_state = v.get_state();
         } else {
             nodes_state = v.get_last_sampled_state();
         }
@@ -156,19 +156,18 @@ struct agent {
     }
 
     /**
-     * @brief Sample a new state
+     * @brief Sample a new state and add it to the given node
      * @param {node *} v; pointer to the node
      */
     void sample_new_state(node * v) {
+        int a = v->get_incoming_action();
         double s = 0.;
-        if((v->parent)->is_root) {
-            s = (v->parent)->state;
+        if((v->parent)->is_root()) {
+            s = (v->parent)->get_state();
         } else {
             s = (v->parent)->get_last_sampled_state();
         }
-        int a = v->incoming_action;
-        double s_p = m.transition_model(s,a);
-        v->add_to_states(s_p);
+        v->add_to_states(m.transition_model(s,a));
     }
 
     /**
@@ -218,7 +217,7 @@ struct agent {
         ptr->increment_visits_count();
         ptr->add_to_value(total_return);
         total_return *= p.discount_factor; // apply the discount for the parent node
-        if(!ptr->parent->is_root) {
+        if(!ptr->parent->is_root()) {
             backup(total_return,ptr->parent);
         }
     }
@@ -228,14 +227,14 @@ struct agent {
      * @param {const node &} v; root node of the tree
      * @return The action with the best score (leading to the child with the higher value)
      */
-    int best_action(const node &v) {
-        assert(v.is_root);
+    int best_action(node &v) {
+        assert(v.is_root());
         std::vector<double> values;
         for(auto &elt: v.children) {
-            values.push_back(elt.value);
+            values.push_back(elt.get_value());
         }
         unsigned ind = argmax(values);
-        return v.actions.at(ind);
+        return v.get_action_at(ind);
     }
 
     /** @brief UCT policy */

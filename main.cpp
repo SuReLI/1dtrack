@@ -20,7 +20,7 @@
  * @param {agent &} ag; agent
  * @param {bool} do_print; if true print some informations
  */
-void run(track &tr, agent &ag, bool do_print) {
+void simulate(track &tr, agent &ag, bool do_print) {
 	while(!tr.is_terminal(ag.s)) {
 		ag.take_action(); // take action based on current state
 		if(do_print){print(tr,ag);}
@@ -60,8 +60,8 @@ void run_1dtrack() {
     double INIT_S = 0.;
 
     std::vector<int> ACTION_SPACE = {-1,1};
-    unsigned BUDGET = 30; // should be higher than the number of different actions
-    unsigned HORIZON = 10;
+    unsigned BUDGET = 10; // should be higher than the number of different actions
+    unsigned HORIZON = 5;
     double UCT_CST = .7;
     double DISCOUNT_FACTOR = 1.;
     double MODEL_TRACK_LEN = TRACK_LEN;
@@ -75,7 +75,7 @@ void run_1dtrack() {
     agent ag(INIT_S,p,m);
 
     /** @brief Step 2: run the simulation */
-    run(tr,ag,true);
+    simulate(tr,ag,true);
 }
 
 int main() {

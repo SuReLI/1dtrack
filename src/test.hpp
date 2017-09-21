@@ -2,54 +2,54 @@
 #define TEST_HPP_
 
 /** @brief print many informations about a node */
-void print_node_complete(const node &v) {
-    if(v.is_root) {
-        std::cout << "ROOT\nState: " << v.state << "\n";
+void print_node_complete(node &v) {
+    if(v.is_root()) {
+        std::cout << "ROOT\nState: " << v.get_state() << "\n";
 
         std::cout << "CHECK EMPTY: Parent: " << v.parent << " ";
-        std::cout << "Val: " << v.value << " ";
-        std::cout << "IncAction: " << v.incoming_action << " ";
+        std::cout << "Val: " << v.get_value() << " ";
+        std::cout << "IncAction: " << v.get_incoming_action() << " ";
         std::cout << "States: ";
-        for(auto & elt : v.states) {
+        for(auto & elt : v.get_states()) {
             std::cout << elt << " ";
         }
     } else {
         std::cout << "Parent: " << v.parent << " ";
-        std::cout << "Val: " << v.value << " ";
-        std::cout << "IncAction: " << v.incoming_action << " ";
+        std::cout << "Val: " << v.get_value() << " ";
+        std::cout << "IncAction: " << v.get_incoming_action() << " ";
         std::cout << "States: ";
-        for(auto & elt : v.states) {
+        for(auto & elt : v.get_states()) {
             std::cout << elt << " ";
         }
     }
     std::cout << "\nAdress: " << &v << " ";
     std::cout << "Actions: ";
-    for(auto & elt : v.actions) {
-        std::cout << elt << " ";
+    for(unsigned i=0; i<v.get_nb_of_actions(); ++i) {
+        std::cout << v.get_action_at(i) << " ";
     }
     std::cout << "Children: " << v.get_nb_children() << " ";
-    std::cout << "Visits: " << v.visits_count << "\n\n";
+    std::cout << "Visits: " << v.get_visits_count() << "\n\n";
 }
 
 /** @brief print minimum informations about a node */
-void print_node(const node &v) {
-    if(v.is_root) {
-        std::cout << "ROOT: s:" << v.state;
+void print_node(node &v) {
+    if(v.is_root()) {
+        std::cout << "ROOT: s:" << v.get_state();
     } else {
         std::cout << "s:";
-        for(auto &elt : v.states) {
+        for(auto &elt : v.get_states()) {
             std::cout << elt << " ";
         }
     }
     std::cout << "  a:";
-    for(auto &elt : v.actions) {
-        std::cout << elt << " ";
+    for(unsigned i=0; i<v.get_nb_of_actions(); ++i) {
+        std::cout << v.get_action_at(i) << " ";
     }
-    std::cout << "   v:" << v.value << "\n";
+    std::cout << "   v:" << v.get_value() << "\n";
 }
 
 /** @brief Print a node and its children */
-void print_node_and_children(const node &v) {
+void print_node_and_children(node &v) {
     print_node(v);
     for(auto &elt : v.children) {
         print_node(elt);
