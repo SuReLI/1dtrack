@@ -373,7 +373,7 @@ struct agent {
         if(keeping_criterion(s)) { // keep the subtree and use it
             p.root_node.move_to_child(argmax_score(p.root_node),s);
         } else { // build or rebuild the subtree
-            print("build/rebuild");
+            //print("build/rebuild");
             build_uct_tree(s);
         }
         return max_score(p.root_node);

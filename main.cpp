@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <random>
@@ -13,6 +14,7 @@
 #include <track.hpp>
 #include <display.hpp>
 #include <test.hpp>
+#include <save.hpp>
 
 /**
  * @brief Simulation parameters
@@ -63,17 +65,49 @@ struct simulation_parameters {
  * @brief Simulate a single episode
  *
  * Run a single 1D track simulation given its parameters.
+ * @warning The values should be saved in the same ordering as in the 'get_backup_names'
+ * method (edit 22/09/2017).
  * @param {track &} tr; environment
  * @param {agent &} ag; agent
  * @param {const bool &} prnt; if true, print some informations during the simulation
+ * @param {const bool &} bckp; if true, save some informations in the end of the simulation
+ * @param {std::vector<std::vector<double>>} bckp_vector; backup vector into which each
+ * simulation records its backed up values
  */
-void simulate_episode(track &tr, agent &ag, const bool &prnt) {
+void simulate_episode(
+    track &tr,
+    agent &ag,
+    const bool &prnt,
+    const bool &bckp,
+    std::vector<std::vector<double>> &bckp_vector)
+{
+    std::vector<double> simulation_backup;
 	while(!tr.is_terminal(ag.s)) {
 		ag.take_action(); // take action based on current state
-		if(prnt){print(tr,ag);}
+		if(prnt) {print(tr,ag);}
 		ag.s = tr.transition(ag.s, ag.a); // get next state
 	}
-    if(prnt){print(tr,ag);}
+    if(prnt) {print(tr,ag);}
+    if(bckp) { // warning refers to this section
+        simulation_backup.push_back(tr.time);
+        simulation_backup.push_back(1.1); //todo get computation cost
+        bckp_vector.push_back(simulation_backup);
+    }
+}
+
+/**
+ * @brief Get the backup names
+ *
+ * Get a vector containing the names of the saved values during each simulation.
+ * @warning The values should be saved in the same ordering as in the 'simulate_episode'
+ * method (edit 22/09/2017).
+ * @return Return a vector containing each name in order of appearance
+ */
+std::vector<std::string> get_backup_names() {
+    std::vector<std::string> v;
+    v.emplace_back("time_to_goal");
+    v.emplace_back("computation_cost");
+    return v;
 }
 
 /**
@@ -94,13 +128,22 @@ void run(
     const bool &bckp,
     const std::string &outpth)
 {
-    track tr(sp.TRACK_LEN, sp.STDDEV, sp.FAILURE_PROBABILITY);
-    policy_parameters p(sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.REUSE, sp.ACTION_SPACE, sp.INIT_S);
-    model m(sp.MODEL_TRACK_LEN, sp.MODEL_STDDEV, sp.MODEL_FAILURE_PROBABILITY);
-    agent ag(sp.INIT_S,p,m);
-
+    std::vector<std::vector<double>> bckp_vector;
+    std::string sep = ",";
+    if(bckp) {
+        initialize_backup(get_backup_names(),outpth,sep);
+    }
     for(unsigned i=0; i<nbsim; ++i) {
-        simulate_episode(tr,ag,prnt);
+        std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
+        track tr(sp.TRACK_LEN, sp.STDDEV, sp.FAILURE_PROBABILITY);
+        policy_parameters p(sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.REUSE, sp.ACTION_SPACE, sp.INIT_S);
+        model m(sp.MODEL_TRACK_LEN, sp.MODEL_STDDEV, sp.MODEL_FAILURE_PROBABILITY);
+        agent ag(sp.INIT_S,p,m);
+
+        simulate_episode(tr,ag,prnt,bckp,bckp_vector);
+    }
+    if(bckp) {
+        save_matrix(bckp_vector,outpth,sep,std::ofstream::app);
     }
 }
 
@@ -108,5 +151,5 @@ int main() {
     srand(time(NULL));
 
     simulation_parameters sp;
-    run(sp,1,true,false,"data/test.dat");
+    run(sp,10,false,true,"data/data.csv");
 }

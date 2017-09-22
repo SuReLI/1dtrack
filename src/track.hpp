@@ -10,7 +10,7 @@ struct track {
     double track_length; ///< track_lengthgth of the 1D track
     double stddev; ///< Noise standard deviation
     double failure_probability; ///< Probability with chich the oposite action effect is applied (randomness of the transition function)
-    unsigned t; ///< Time
+    unsigned time; ///< Time
 
     /** @brief constructor */
     track(
@@ -21,7 +21,7 @@ struct track {
         stddev(_stddev),
         failure_probability(_failure_prob)
     {
-        t = 0;
+        time = 0;
     }
 
     /**
@@ -49,7 +49,7 @@ struct track {
         if(is_less_than(uniform_d(0.,1.),failure_probability)) {
             action_effect *= (-1.);
         }
-        ++t;
+        ++time;
         return s + action_effect + noise;
     }
 

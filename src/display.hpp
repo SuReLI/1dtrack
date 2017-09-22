@@ -37,8 +37,8 @@ void print_track(track &tr, agent &ag) {
  * @param {agent &} ag; reference to the agent
  */
 void print(track &tr, agent &ag) {
-    std::cout << "t:" << tr.t << " ";
-    if(tr.t<10){std::cout << " ";}
+    std::cout << "t:" << tr.time << " ";
+    if(tr.time<10){std::cout << " ";}
     print_track(tr,ag);
     std::cout << " s:" << ag.s << " ";
     std::cout << "a:" << ag.a << " ";
