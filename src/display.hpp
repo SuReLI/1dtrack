@@ -36,7 +36,7 @@ void print(track &tr, agent &ag) {
     print_track(tr,ag);
     std::cout << " s:" << ag.s << " ";
     std::cout << "a:" << ag.a << " ";
-    std::cout << "r:" << tr.reward(ag.s) << "\n";
+    std::cout << "r:" << tr.reward(ag.s,0,0.) << "\n";
 }
 
 #endif // DISPLAY_HPP_

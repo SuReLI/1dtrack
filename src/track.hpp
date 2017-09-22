@@ -1,19 +1,16 @@
 #ifndef TRACK_HPP_
 #define TRACK_HPP_
 
+/**
+ * @brief Track class
+ *
+ * Class for the environment including the state transitions and the reward function.
+ */
 struct track {
-    /**
-     * @brief Attributes
-     * @param {double} track_length; track_lengthgth of the 1D track
-     * @param {double} stddev; noise standard deviation
-     * @param {double} failure_probability; probability with chich the oposite action
-     * effect is applied (randomness of the transition function)
-     * @param {unsigned} t; time
-     */
-    double track_length;
-    double stddev;
-    double failure_probability;
-    unsigned t;
+    double track_length; ///< track_lengthgth of the 1D track
+    double stddev; ///< Noise standard deviation
+    double failure_probability; ///< Probability with chich the oposite action effect is applied (randomness of the transition function)
+    unsigned t; ///< Time
 
     /** @brief constructor */
     track(
@@ -28,16 +25,22 @@ struct track {
     }
 
     /**
-     * @brief Test if the state is terminal
+     * @brief Is terminal
+     *
+     * Test if the state is terminal.
      * @param {const double &} s; tested state
-     * @return 'true' if terminal
+     * @return Return 'true' if the state is terminal.
      */
     bool is_terminal(const double &s) {
         return !is_less_than(std::abs(s),track_length);
     }
 
     /**
-     * @brief Simulate a transition wrt the environment parameters
+     * @brief Transition method
+     *
+     * Simulate a transition w.r.t. the environments parameters.
+     * @param {const double &} s; state
+     * @param {const in &} a; action
      * @return The resulting state
      */
     double transition(const double &s, const int &a) {
@@ -50,8 +53,17 @@ struct track {
         return s + action_effect + noise;
     }
 
-    /** @brief Reward function */
-    double reward(const double &s) {
+    /**
+     * @brief Reward method
+     *
+     * Sample a reward w.r.t. the environments parameters. So far, only the current state is
+     * used to get teh reward.
+     * @param {const double &} s; state
+     * @param {const int &} a; action
+     * @param {const double &} s_p; next state
+     */
+    double reward(const double &s, const int &a, const double &s_p) {
+        (void) a; (void) s_p; //default
         return is_less_than(std::abs(s),track_length) ? 0. : 1.;
     }
 };
