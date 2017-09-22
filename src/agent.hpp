@@ -4,31 +4,27 @@
 #include <node.hpp>
 #include <test.hpp> // only for testing
 
-/** @brief Parameters of the policy */
+/**
+ * @brief Parameters of the policy
+ *
+ * This class is a parameters container.
+ */
 struct policy_parameters {
-    /**
-     * @brief Attributes
-     * @param {unsigned} budget; algorithm budget (number of expanded nodes)
-     * @param {unsigned} horizon; algorithm horizon for the default policy
-     * @param {unsigned} trials_count; trial count for the expansion in {0,budget-1}
-     * @param {double} uct_cst; UCT constant factor
-     * @param {double} discount_factor; discount factor for the MDP
-     * @param {node} root_node; root node of the tree
-     * @param {bool} reuse; set to true if the policy is able to reuse the tree
-     */
-    unsigned budget;
-    unsigned horizon;
-    unsigned trials_count;
-    double uct_cst;
-    double discount_factor;
-    bool reuse;
-    std::vector<int> action_space;
-    node root_node;
+    unsigned budget; ///< Algorithm budget (number of expanded nodes)
+    unsigned horizon; ///< Algorithm horizon for the default policy
+    unsigned trials_count; ///< Trial count for the expansion in {0,budget-1}
+    double uct_cst; ///< UCT constant factor
+    double discount_factor; ///< Discount factor for the MDP
+    bool reuse; ///< Set to true if the policy is able to reuse the tree
+    std::vector<int> action_space; ///< Action space used by the policy
+    node root_node; ///< Root node of the tree
 
     /**
      * @brief Constructor
-     * @note The root node constructor is called with the initial state defined in the
-     * 'main.cpp' file (see parameters definition on top)
+     *
+     * Standard constructor. The root node constructor is called with the initial state
+     * defined in the 'main.cpp' file (see parameters definition).
+     * Edit: 22/09/2017
      */
     policy_parameters(
         unsigned _budget,
@@ -50,19 +46,18 @@ struct policy_parameters {
     }
 };
 
-/** @brief Model of the environment */
+/**
+ * @brief Model of the environment
+ *
+ * Class including the methods able to simulate the states transitions of the environment
+ * and the reward function. The accuracy of the model is set with the simulation parameters.
+ */
 struct model {
-    /**
-     * @brief Attributes
-     * @param {double} model_track_length; model length of the track (half of the length)
-     * @param {double} model_stddev; model noise standard deviation
-     * @param {constexpr double} model_failure_probability; probability with chich the
-     * oposite action effect is applied in the model (randomness of the transition function)
-     */
-    double model_track_length;
-    double model_stddev;
-    double model_failure_probability;
+    double model_track_length; ///< Model length of the track (half of the length)
+    double model_stddev; ///< Model noise standard deviation
+    double model_failure_probability; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function)
 
+    /** @brief Constructor */
     model(
         double _model_track_length,
         double _model_stddev,
@@ -73,7 +68,9 @@ struct model {
     {}
 
     /**
-     * @brief Simulate a state transition wrt the model parameters
+     * @brief Transition model
+     *
+     * Simulate a state transition wrt the models parameters.
      * @param {const double &} s; state
      * @param {const int &} a; action
      * @return Return the resulting state
@@ -88,7 +85,9 @@ struct model {
     }
 
     /**
-     * @brief Reward model of the transition (s,a,s_p)
+     * @brief Reward model
+     *
+     * Reward model of the transition (s,a,s_p)
      * @param {const double &} s; state
      * @param {const int &} a; action
      * @param {const double &} s_p; next state
@@ -100,7 +99,9 @@ struct model {
     }
 
     /**
-     * @brief Test if the state is terminal
+     * @brief Terminal state test
+     *
+     * Test if the state is terminal.
      * @param {const double &} s; tested state
      * @return Return 'true' if terminal
      */
@@ -109,19 +110,16 @@ struct model {
     }
 };
 
-/** @brief Agent struct */
+/**
+ * @brief Agent struct
+ *
+ * Agent including its policy, model of the environment and parameters.
+ */
 struct agent {
-    /**
-     * @brief Attributes
-     * @param {double} s; current state: value on the track
-     * @param {unsigned} a; current action in {-1,0,1}
-     * @param {policy_parameters} p; policy parameters
-     * @param {model} m; model of the environment
-     */
-    double s;
-    int a;
-    policy_parameters p;
-    model m;
+    double s; ///< Current state: value on the track.
+    int a; ///< Current action in the action space defined by the parameters.
+    policy_parameters p; ///< Policy parameters
+    model m; ///< Model of the environment
 
     /** @brief Constructor */
     agent(double _s, policy_parameters _p, model _m) : s(_s), p(_p), m(_m) {
@@ -129,9 +127,11 @@ struct agent {
     }
 
     /**
-     * @brief UCB selection for the tree policy
+     * @brief UCT child
+     *
+     * UCT selection method for the tree policy.
      * @param {node &} v; parent node
-     * @return The selected child according to the UCT formula
+     * @return Return the selected child according to the UCT formula
      */
     node * uct_child(node &v) {
         std::vector<double> uct_scores;
@@ -148,8 +148,10 @@ struct agent {
     }
 
     /**
-     * @brief Expand the node i.e. create a new leaf node
-     * @return A pointer to the created leaf node
+     * @brief Expansion method
+     *
+     * Expand the node i.e. create a new leaf node.
+     * @return Return a pointer to the created leaf node
      */
     node * expand(node &v) {
         int nodes_action = v.get_next_expansion_action();
@@ -165,7 +167,10 @@ struct agent {
     }
 
     /**
-     * @brief Sample a new state and add it to the given node
+     * @brief State sampling
+     *
+     * Sample a new state w.r.t. to the incoming action and the parents state and add it to
+     * the node.
      * @param {node *} v; pointer to the node
      */
     void sample_new_state(node * v) {
@@ -181,14 +186,14 @@ struct agent {
     }
 
     /**
-     * @brief Check if a node is terminal.
+     * @brief Terminal node test
      *
      * A node is considered terminal if all of its states are terminal states, however,
      * due to the randomness of the transition function, another state will be sampled in
      * the tree policy method so that the decision criterion becomes more reliable.
      * If the node is root, only the labelling state is tested.
      * @param {node &} v; the tested node
-     * @return true if the node is considered terminal
+     * @return Return 'true' if the node is considered terminal
      */
     bool is_node_terminal(node &v) {
         if(v.is_root()) {
@@ -204,11 +209,11 @@ struct agent {
     }
 
     /**
-     * @brief Apply the tree policy
+     * @brief Tree policy
      *
-     * During the descent, store the sampled leaf states into the nodes parameters.
-     * Recursive function.
-     * @return A pointer to the created leaf node or to the current node if terminal
+     * Apply the tree policy. During the descent, store the sampled leaf states into the
+     * nodes parameters. This is a recursive method.
+     * @return Return a pointer to the created leaf node or to the current node if terminal
      */
     node * tree_policy(node &v) {
         if(is_node_terminal(v)) {
@@ -232,10 +237,12 @@ struct agent {
     }
 
     /**
-     * @brief Compute the total return from running an episode with the default policy
-     * @note The simulation starts from the last sampled state of the input node
-     * @note Specific to the current implementation where the reward only depends on the
-     * state of the agent (edit 22/09/2017).
+     * @brief Default policy
+     *
+     * Compute the total return by running an episode with the default policy which is
+     * random. The simulation starts from the last sampled state of the
+     * input node.This is specific to the current implementation where the reward only
+     * depends on the state of the agent (edit 22/09/2017).
      * @param {node *} ptr; pointer to the input node
      */
     double default_policy(node * ptr) {
@@ -272,11 +279,13 @@ struct agent {
     }
 
     /**
-     * @brief Backup function
+     * @brief Backup method
+     *
+     * Increment all the visited nodes visits counters and update their values w.r.t. the
+     * given discounted return. This method is recursive.
      * @param {double &} total_return; return to be backed up, iteratively discounted
      * @param {node *} ptr; pointer to the node, first the leaf node, then to the parents
-     * @note Increment all the visited nodes visits counters and update their values
-     * @note Recursive function
+     * (recursive method)
      */
     void backup(double &total_return, node * ptr) {
         ptr->increment_visits_count();
@@ -288,9 +297,11 @@ struct agent {
     }
 
     /**
-     * @brief See 'max_score' method
+     * @brief Argmax score
+     *
+     * Get the indice of the child achieving the best score
      * @param {const node &} v; root node of the tree
-     * @return The indice of the child achieving the best score
+     * @return Return the indice of the child achieving the best score.
      */
     unsigned argmax_score(node &v) {
         assert(v.is_root());
@@ -302,19 +313,25 @@ struct agent {
     }
 
     /**
-     * @brief Take the policy decision after the tree construction
+     * @brief Max score
+     *
+     * This is the policy decision after the tree construction (recommended action). It gets
+     * the action leading to the best child w.r.t. the values.
      * @param {const node &} v; root node of the tree
-     * @return The action with the best score (leading to the child with the higher value)
+     * @return Return the action with the best score (leading to the child with the higher
+     * value).
      */
     int max_score(node &v) {
         return v.get_action_at(argmax_score(v));
     }
 
     /**
-     * @brief The decision criterion of keeping the tree or not
-     * @note 'Keeping' the tree means moving the root to its 'best' child (edit 22/09/2017)
+     * @brief Keeping creiterion
+     *
+     * The decision criterion of keeping the tree or not. 'Keeping' the tree means moving the
+     * root to its 'best' child (edit 22/09/2017).
      * @param {const double &} s; the current state of the agent
-     * @return 'true' if tree is kept
+     * @return Return 'true' if the tree is kept.
      */
     bool keeping_criterion(const double &s) {
         (void) s;
@@ -326,10 +343,11 @@ struct agent {
     }
 
     /**
-     * @brief Build a tree starting from the root attribute of the parameters using the
-     * UCT algorithm
+     * @brief Build UCT tree
+     *
+     * Build a tree starting from the root attribute of the parameters using the
+     * vanilla UCT algorithm. This is a 'void' method, the tree is kept in memory.
      * @param {const double &} s; current state of the agent
-     * @note 'void' method, the tree is kept in memory
      */
     void build_uct_tree(const double &s) {
         p.root_node.clear_node();
@@ -344,8 +362,12 @@ struct agent {
     }
 
     /**
-     * @brief Experimental UCT policy
+     * @brief Experimental UCT
+     *
+     * This is the experimental UCT policy whose general idea is to reuse a previously
+     * constructed tree.
      * @param {const double &} s; current state of the agent
+     * @return Return the recommended action.
      */
     int experimental_uct(const double &s) {
         if(keeping_criterion(s)) { // keep the subtree and use it
@@ -358,8 +380,9 @@ struct agent {
     }
 
     /**
-     * @brief Vanilla UCT policy
+     * @brief Vanilla UCT
      * @param {const double &} s; current state of the agent
+     * @return Return the recommended action.
      */
     int vanilla_uct(const double &s) {
         build_uct_tree(s);
@@ -367,9 +390,12 @@ struct agent {
     }
 
     /**
-     * @brief Take an action based on the current state s and set the action attribute
-     * @note Action must be within p.action_space
-     * @note The current state and the recommended action are attributes of the agent class
+     * @brief Take an action
+     *
+     * Take an action based on the current state s and set the action attribute. This is the
+     * main method of the agent.The Action must be within 'p.action_space'. The current state
+     * and the recommended action are attributes of the agent class; hence stored in the
+     * memory.
      */
     void take_action() {
         if(p.reuse) {
