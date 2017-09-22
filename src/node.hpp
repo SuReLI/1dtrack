@@ -1,34 +1,30 @@
 #ifndef NODE_HPP_
 #define NODE_HPP_
 
-/** @brief General node structure, for root and standard nodes */
+/**
+ * @brief Node class
+ *
+ * General node class, for root and standard nodes.
+ */
 struct node {
-    /**
-     * @brief Attributes
-     * @param {bool} root; true if root node i.e. labeled by a particular state;
-     * @param {double} value; value estimate
-     * @param {int} incoming_action; action of the parent node that leaded to this node
-     * @param {unsigned} visits_count; number of visits during the tree expansion
-     * @param {double} state; labelling state for a root node
-     * @param {std::vector<double>} states; sampled states for a standard node
-     * @param {std::vector<int>} actions; possible actions at this node (bandit arms)
-     * @param {node *} parent; pointer to the parent node
-     * @param {std::vector<node>} children; vector of nodes children
-     */
 private :
-    bool root;
-    double value;
-    int incoming_action;
-    unsigned visits_count;
-    double state;
-    std::vector<double> states;
-    std::vector<int> actions;
+    bool root; ///< True if the node is root i.e. labeled by a unique state instead of a family of states
+    double value; ///< Value function estimate
+    int incoming_action; ///< Action of the parent node that leaded to this node
+    unsigned visits_count; ///< Number of visits during the tree expansion
+    double state; ///<Unique labelling state for a root node
+    std::vector<double> states; ///< Sampled states for a standard node
+    std::vector<int> actions; ///< Possible actions at this node (bandit arms)
+
 public :
-    node *parent;
-    std::vector<node> children;
+    node *parent; ///< Pointer to the parent node
+    std::vector<node> children; ///< Vector of nodes children
 
     /**
-     * @brief Root node constructor, first node to be created
+     * @brief Root node constructor
+     *
+     * Usually the first node to be created. The provided action space is a vector containing
+     * all the actions and is shuffled at the nodes creation.
      * @param {std::vector<int>} action_space; copied then shuffled in actions of the node
      * (bandit arms)
      */
@@ -40,7 +36,9 @@ public :
     }
 
     /**
-     * @brief Standard node constructor, used during the expansion of the tree
+     * @brief Standard node constructor
+     *
+     * Used during the expansion of the tree.
      * @param {std::vector<int>} action_space; copied then shuffled in actions of the node
      * (bandit arms)
      */
@@ -61,10 +59,12 @@ public :
     }
 
     /**
-     * @brief Clear the node
-     * @note Do not change the value of 'root' attribute, hence the status of the node
-     * @note Do not clear actions vector, hence the available actions still remain in the
-     * same organisation order
+     * @brief Clear method
+     *
+     * Clear the value; the parent; the incoming action; the state/states; the visit count
+     * and the children vector of the node. Do not change the value of 'root' attribute,
+     * hence the status of the node. Do not clear actions vector, hence the available actions
+     * still remain in the same organisation order.
      */
     void clear_node() {
         value = 0;
@@ -77,8 +77,10 @@ public :
     }
 
     /**
-     * @brief Set the nodes attributes as root nodes attributes
-     * @note Set the irrelevant attributes to default values (e.g. 'parent' or 'visits_count')
+     * @brief Set as root
+     *
+     * Set the nodes attributes as root nodes attributes. Set the irrelevant attributes to
+     * default values (e.g. 'parent' to nullptr or 'visits_count' to 0)
      * @param {double} new_state; new labelling state
      */
     void set_as_root(double new_state) {
@@ -92,7 +94,9 @@ public :
     }
 
     /**
-     * @brief Move the content of a child to the current node and reroute children parents
+     * @brief Move to child
+     *
+     * Move the content of a child to the current node and reroute children parents
      * @param {unsigned} indice; indice of the moved child
      * @param {double} new_state; new labelling state
      */
@@ -140,14 +144,16 @@ public :
     /** @brief Get the number of actions (arms of the bandit) */
     unsigned get_nb_of_actions() const {return actions.size();}
 
-    /** @brief Return true if the node is fully expanded */
+    /** @brief Is fully expanded @return Return true if the node is fully expanded */
     bool is_fully_expanded() const {return (get_nb_children() == get_nb_of_actions());}
 
-    /** @brief Return true if the node is a root node */
+    /** @brief Is root @return Return true if the node is a root node */
     bool is_root() const {return root;}
 
     /**
-     * @brief Create a child based on incoming action
+     * @brief Create a child
+     *
+     * Create a child based on the incoming action.
      * @param {int} inc_ac; incoming action of the new child
      * @param {double} new_state; first sampled state of the new child
      */
@@ -156,7 +162,9 @@ public :
     }
 
     /**
-     * @brief Copy the input state to the nodes state
+     * @brief Set state
+     *
+     * Copy the given state to the nodes state.
      * @note Node should be root
      */
     void set_state(const double &s) {
@@ -165,23 +173,29 @@ public :
     }
 
     /**
-     * @brief Add a new sampled state to the states
-     * @note Node should not be root
+     * @brief Add to state
+     *
+     * Add a new sampled state to the states. Node should not be root.
      */
     void add_to_states(const double &s) {
         assert(!root);
         states.push_back(s);
     }
 
-    /** @brief Increment the visits counter */
+    /**
+     * @brief Visit count increment
+     *
+     * Increment the visits counter
+     */
     void increment_visits_count() {
         ++visits_count;
     }
 
     /**
-     * @brief Add a value to the nodes value
+     * @brief Add to value
+     *
+     * Add a value to the nodes value. Node should not be root.
      * @param {const double &} r; value to be added
-     * @note Node should not be root
      */
     void add_to_value(const double &r) {
         assert(!root);
