@@ -1,9 +1,13 @@
 #ifndef DISPLAY_HPP_
 #define DISPLAY_HPP_
 
-/** @brief Some display methods */
-
-/** @brief Print an overview of the track */
+/**
+ * @brief Print track
+ *
+ * Print a nice overview of the track with the agents position.
+ * @param {track &} tr; reference to the track
+ * @param {agent &} ag; reference to the agent
+ */
 void print_track(track &tr, agent &ag) {
     double s = std::abs(ag.s);
     double m = tr.track_length / 10.;
@@ -25,12 +29,14 @@ void print_track(track &tr, agent &ag) {
     }
 }
 
-/** @brief Print some informations */
+/**
+ * @brief Print
+ *
+ * Print some informations about the state, action and reward. Also print the track.
+ * @param {track &} tr; reference to the track
+ * @param {agent &} ag; reference to the agent
+ */
 void print(track &tr, agent &ag) {
-//    std::cout << "time = " << tr.t;
-//    std::cout << " state = " << ag.s;
-//    std::cout << " action = " << ag.a;
-//    std::cout << " reward = " << tr.reward(ag.s) << std::endl;
     std::cout << "t:" << tr.t << " ";
     if(tr.t<10){std::cout << " ";}
     print_track(tr,ag);
