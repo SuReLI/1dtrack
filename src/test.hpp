@@ -1,7 +1,12 @@
 #ifndef TEST_HPP_
 #define TEST_HPP_
 
-/** @brief print many informations about a node */
+/**
+ * @brief Print node
+ *
+ * Print some informations about a node.
+ * @param {node &} v; reference to the node
+ */
 void print_node_complete(node &v) {
     if(v.is_root()) {
         std::cout << "ROOT\nState: " << v.get_state() << "\n";
@@ -31,7 +36,12 @@ void print_node_complete(node &v) {
     std::cout << "Visits: " << v.get_visits_count() << "\n\n";
 }
 
-/** @brief print minimum informations about a node */
+/**
+ * @brief Print node
+ *
+ * Print minimum informations about a node.
+ * @param {node &} v; reference to the node
+ */
 void print_node(node &v) {
     if(v.is_root()) {
         std::cout << "ROOT: s:" << v.get_state();
@@ -48,7 +58,12 @@ void print_node(node &v) {
     std::cout << "   v:" << v.get_value() << "\n";
 }
 
-/** @brief Print a node and its children */
+/**
+ * @brief Print node and children
+ *
+ * Print minimum informations about a node and its children.
+ * @param {node &} v; reference to the node
+ */
 void print_node_and_children(node &v) {
     print_node(v);
     for(auto &elt : v.children) {
@@ -59,6 +74,8 @@ void print_node_and_children(node &v) {
 
 /**
  * @brief Nodes unit tests
+ *
+ * Nodes unit tests. To be improved with assertions.
  * @todo Add assertions
  */
 void node_test() {
