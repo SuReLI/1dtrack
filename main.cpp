@@ -15,7 +15,9 @@
 #include <test.hpp> // only for testing
 
 /**
- * @brief Run a simulation given its parameters
+ * @brief Simulate
+ *
+ * Run a single 1D track simulation given its parameters.
  * @param {track &} tr; environment
  * @param {agent &} ag; agent
  * @param {bool} do_print; if true print some informations
@@ -30,8 +32,10 @@ void simulate(track &tr, agent &ag, bool do_print) {
 }
 
 /**
- * @brief Basic method initialising the parameters and running one simulation
- * @note One should modifiy this method in order to change the parameters
+ * @brief Set parameters and run single 1D track
+ *
+ * Basic method initialising the parameters and running one simulation. One should modifiy
+ * this method in order to change the parameters
  */
 void run_1dtrack() {
     /**
