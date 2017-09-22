@@ -27,7 +27,11 @@ struct track {
         t = 0;
     }
 
-    /** @brief Return true if terminal */
+    /**
+     * @brief Test if the state is terminal
+     * @param {const double &} s; tested state
+     * @return 'true' if terminal
+     */
     bool is_terminal(const double &s) {
         return !is_less_than(std::abs(s),track_length);
     }

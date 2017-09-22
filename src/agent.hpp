@@ -76,7 +76,7 @@ struct model {
      * @brief Simulate a state transition wrt the model parameters
      * @param {const double &} s; state
      * @param {const int &} a; action
-     * @return The resulting state
+     * @return Return the resulting state
      */
     double transition_model(const double &s, const int &a) {
         double noise = normal_d(0.,model_stddev);
@@ -92,11 +92,20 @@ struct model {
      * @param {const double &} s; state
      * @param {const int &} a; action
      * @param {const double &} s_p; next state
-     * @return The resulting reward
+     * @return Return the resulting reward
      */
     double reward_model(const double &s, const int &a, const double &s_p) {
         (void) a; (void) s_p; //default
         return is_less_than(std::abs(s),model_track_length) ? 0. : 1.;
+    }
+
+    /**
+     * @brief Test if the state is terminal
+     * @param {const double &} s; tested state
+     * @return Return 'true' if terminal
+     */
+    bool is_terminal(const double &s) {
+        return !is_less_than(std::abs(s),model_track_length);
     }
 };
 
@@ -160,6 +169,7 @@ struct agent {
      * @param {node *} v; pointer to the node
      */
     void sample_new_state(node * v) {
+        assert(!v->is_root());
         int a = v->get_incoming_action();
         double s = 0.;
         if((v->parent)->is_root()) {
@@ -171,20 +181,54 @@ struct agent {
     }
 
     /**
+     * @brief Check if a node is terminal.
+     *
+     * A node is considered terminal if all of its states are terminal states, however,
+     * due to the randomness of the transition function, another state will be sampled in
+     * the tree policy method so that the decision criterion becomes more reliable.
+     * If the node is root, only the labelling state is tested.
+     * @param {node &} v; the tested node
+     * @return true if the node is considered terminal
+     */
+    bool is_node_terminal(node &v) {
+        if(v.is_root()) {
+            return m.is_terminal(v.get_state());
+        } else {
+            for(auto &elt: v.get_states()) {
+                if(!m.is_terminal(elt)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    /**
      * @brief Apply the tree policy
-     * @note During the descent, store the sampled leaf states into the nodes parameters
-     * @note No terminal node case
-     * @note Recursive function
-     * @return A pointer to the created leaf node
+     *
+     * During the descent, store the sampled leaf states into the nodes parameters.
+     * Recursive function.
+     * @return A pointer to the created leaf node or to the current node if terminal
      */
     node * tree_policy(node &v) {
-        if(!v.is_fully_expanded()) { // expand node
+        if(is_node_terminal(v)) {
+            sample_new_state(&v);
+            return &v;
+        } else if(!v.is_fully_expanded()) { // expand node
             return expand(v);
         } else { // apply tree policy on 'best UCB child'
             node * v_p = uct_child(v);
             sample_new_state(v_p);
             return tree_policy(*v_p);
         }
+//        // Previous method without terminal case:
+//        if(!v.is_fully_expanded()) { // expand node
+//            return expand(v);
+//        } else { // apply tree policy on 'best UCB child'
+//            node * v_p = uct_child(v);
+//            sample_new_state(v_p);
+//            return tree_policy(*v_p);
+//        }
     }
 
     /**
