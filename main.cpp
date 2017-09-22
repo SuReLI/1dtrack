@@ -11,79 +11,102 @@
 #include <utils.hpp>
 #include <agent.hpp>
 #include <track.hpp>
-#include <display.hpp> // only for displaying
-#include <test.hpp> // only for testing
+#include <display.hpp>
+#include <test.hpp>
 
 /**
- * @brief Simulate
+ * @brief Simulation parameters
+ *
+ * Parameters container for a simulation
+ */
+struct simulation_parameters {
+    double TRACK_LEN = 5.; ///< Track length (half of the length of the track).
+    double STDDEV = 0.; ///< Environment noise standard deviation.
+    double FAILURE_PROBABILITY = 0.; ///< Probability with chich the oposite action effect is applied (randomness of the transition function)
+    double INIT_S = 0.; ///< Initial state.
+
+    std::vector<int> ACTION_SPACE = {-1,1}; ///< Action space used by every nodes (bandit arms).
+    unsigned BUDGET = 10; ///< Algorithm budget (number of expanded nodes).
+    unsigned HORIZON = 5; ///< Algorithm horizon for the default policy.
+    double UCT_CST = .7; ///< UCT constant factor.
+    double DISCOUNT_FACTOR = 1.; ///< Discount factor for the MDP.
+    double MODEL_TRACK_LEN = TRACK_LEN; ///< Model track length (half of the length of the track).
+    double MODEL_STDDEV = STDDEV; ///< Model noise standard deviation.
+    double MODEL_FAILURE_PROBABILITY = FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function).
+    bool REUSE = true; ///< Set to true if the policy is able to reuse the tree.
+
+    /**
+     * @brief Simulation parameters constructor
+     *
+     * The parameters are set to the values defined in this constructor. In order to change
+     * them, one should modify this 'cpp' file.
+     */
+    simulation_parameters() {
+        TRACK_LEN = 5.;
+        STDDEV = 0.;
+        FAILURE_PROBABILITY = 0.;
+        INIT_S = 0.;
+
+        ACTION_SPACE = std::vector<int>{-1,1};
+        BUDGET = 10;
+        HORIZON = 5;
+        UCT_CST = .7;
+        DISCOUNT_FACTOR = 1.;
+        MODEL_TRACK_LEN = TRACK_LEN;
+        MODEL_STDDEV = STDDEV;
+        MODEL_FAILURE_PROBABILITY = FAILURE_PROBABILITY;
+        REUSE = true;
+    }
+};
+
+/**
+ * @brief Simulate a single episode
  *
  * Run a single 1D track simulation given its parameters.
  * @param {track &} tr; environment
  * @param {agent &} ag; agent
- * @param {bool} do_print; if true print some informations
+ * @param {const bool &} prnt; if true, print some informations during the simulation
  */
-void simulate(track &tr, agent &ag, bool do_print) {
+void simulate_episode(track &tr, agent &ag, const bool &prnt) {
 	while(!tr.is_terminal(ag.s)) {
 		ag.take_action(); // take action based on current state
-		if(do_print){print(tr,ag);}
+		if(prnt){print(tr,ag);}
 		ag.s = tr.transition(ag.s, ag.a); // get next state
 	}
-    if(do_print){print(tr,ag);}
+    if(prnt){print(tr,ag);}
 }
 
 /**
- * @brief Set parameters and run single 1D track
+ * @brief Run method
  *
  * Basic method initialising the parameters and running one simulation. One should modifiy
  * this method in order to change the parameters
+ * @param {const simulation_parameters &} sp; parameters used for all the simulations
+ * @param {const unsigned &} nbsim; number of simulations
+ * @param {const bool &} prnt; if true, print some informations during the simulation
+ * @param {const bool &} bckp; if true, save some informations in the end of the simulation
+ * @param {const std::string &} outpth; output saving path is backup
  */
-void run_1dtrack() {
-    /**
-     * @brief Step 1: initialisation
-     * @brief Simulation parameters:
-     * @param {double} TRACK_LEN; track length (half of the length)
-     * @param {double} STDDEV; environment noise standard deviation
-     * @param {double} FAILURE_PROBABILITY; probability with chich the oposite action
-     * effect is applied (randomness of the transition function)
-     * @param {double} INIT_S; initial state
-     *
-     * @brief Policy parameters:
-     * @param {std::vector<int>} ACTION_SPACE; action space used by every nodes (bandit arms)
-     * @param {unsigned} BUDGET; algorithm budget (number of expanded nodes)
-     * @param {unsigned} HORIZON; algorithm horizon for the default policy
-     * @param {double} UCT_CST; UCT constant factor
-     * @param {double} DISCOUNT_FACTOR; discount factor for the MDP
-     * @param {double} MODEL_STDDEV; model noise standard deviation
-     * @param {double} MODEL_FAILURE_PROBABILITY; probability with chich the oposite
-     * action effect is applied in the model (randomness of the transition function)
-     * @param {double} REUSE; set to true if the policy is able to reuse the tree
-     */
-    double TRACK_LEN = 5.;
-    double STDDEV = 0.;
-    double FAILURE_PROBABILITY = 0.;
-    double INIT_S = 0.;
+void run(
+    const simulation_parameters &sp,
+    const unsigned &nbsim,
+    const bool &prnt,
+    const bool &bckp,
+    const std::string &outpth)
+{
+    track tr(sp.TRACK_LEN, sp.STDDEV, sp.FAILURE_PROBABILITY);
+    policy_parameters p(sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.REUSE, sp.ACTION_SPACE, sp.INIT_S);
+    model m(sp.MODEL_TRACK_LEN, sp.MODEL_STDDEV, sp.MODEL_FAILURE_PROBABILITY);
+    agent ag(sp.INIT_S,p,m);
 
-    std::vector<int> ACTION_SPACE = {-1,1};
-    unsigned BUDGET = 10; // should be higher than the number of different actions
-    unsigned HORIZON = 5;
-    double UCT_CST = .7;
-    double DISCOUNT_FACTOR = 1.;
-    double MODEL_TRACK_LEN = TRACK_LEN;
-    double MODEL_STDDEV = STDDEV;
-    double MODEL_FAILURE_PROBABILITY = FAILURE_PROBABILITY;
-    bool REUSE = true;
-
-    track tr(TRACK_LEN,STDDEV,FAILURE_PROBABILITY);
-    policy_parameters p(BUDGET,HORIZON,UCT_CST,DISCOUNT_FACTOR,REUSE,ACTION_SPACE,INIT_S);
-    model m(MODEL_TRACK_LEN,MODEL_STDDEV,MODEL_FAILURE_PROBABILITY);
-    agent ag(INIT_S,p,m);
-
-    /** @brief Step 2: run the simulation */
-    simulate(tr,ag,true);
+    for(unsigned i=0; i<nbsim; ++i) {
+        simulate_episode(tr,ag,prnt);
+    }
 }
 
 int main() {
     srand(time(NULL));
 
-    run_1dtrack();
+    simulation_parameters sp;
+    run(sp,1,true,false,"data/test.dat");
 }

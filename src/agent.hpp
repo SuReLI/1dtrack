@@ -2,7 +2,7 @@
 #define AGENT_HPP_
 
 #include <node.hpp>
-#include <test.hpp> // only for testing
+#include <test.hpp>
 
 /**
  * @brief Parameters of the policy
