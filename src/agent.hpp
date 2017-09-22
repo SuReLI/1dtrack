@@ -234,9 +234,15 @@ struct agent {
     /**
      * @brief Compute the total return from running an episode with the default policy
      * @note The simulation starts from the last sampled state of the input node
+     * @note Specific to the current implementation where the reward only depends on the
+     * state of the agent (edit 22/09/2017).
      * @param {node *} ptr; pointer to the input node
      */
     double default_policy(node * ptr) {
+        if(is_node_terminal(*ptr)) {
+            double s = ptr->get_last_sampled_state();
+            return m.reward_model(s,0,0.);
+        }
         double total_return = 0.;
         double s = ptr->get_last_sampled_state();
         int a = rand_element(p.action_space);
@@ -244,10 +250,25 @@ struct agent {
             double s_p = m.transition_model(s,a);
             double r = m.reward_model(s,a,s_p);
             total_return += pow(p.discount_factor,(double)t) * r;
+            if(m.is_terminal(s)) { // Termination criterion
+                break;
+            }
             s = s_p;
             a = rand_element(p.action_space);
         }
         return total_return;
+//        // Previous method without terminal case:
+//        double total_return = 0.;
+//        double s = ptr->get_last_sampled_state();
+//        int a = rand_element(p.action_space);
+//        for(unsigned t=0; t<p.horizon; ++t) {
+//            double s_p = m.transition_model(s,a);
+//            double r = m.reward_model(s,a,s_p);
+//            total_return += pow(p.discount_factor,(double)t) * r;
+//            s = s_p;
+//            a = rand_element(p.action_space);
+//        }
+//        return total_return;
     }
 
     /**
