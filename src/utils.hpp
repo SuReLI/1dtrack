@@ -3,13 +3,21 @@
 
 constexpr double COMPARISON_THRESHOLD = 1e-6;
 
-/** @brief Printing generic method */
+/**
+ * @brief Print
+ *
+ * Generic printing method. Template method.
+ */
 template <class T>
 void print(T t) {
 	std::cout << t << std::endl;
 }
 
-/** @brief Printing generic method for containers */
+/**
+ * @brief Print
+ *
+ * Generic printing method for containers. Template method.
+ */
 template <class T>
 void printv(std::vector<T> v) {
 	for (auto &elt : v) {
@@ -18,36 +26,55 @@ void printv(std::vector<T> v) {
 	std::cout << std::endl;
 }
 
-/** @brief Return true if a == b up to a certain precision */
+/**
+ * @brief Equality comparison
+ *
+ * Template method.
+ * @return Return true if a == b up to a certain precision
+ */
 template <class T1, class T2>
 constexpr bool is_equal_to(T1 a, T2 b) {
     return std::fabs(a-b)<COMPARISON_THRESHOLD;
 }
 
-/** @brief Return true if a < b  up to a certain precision */
+/**
+ * @brief Strict inferiority comparison
+ *
+ * Template method.
+ * @return Return true if a < b up to a certain precision
+ */
 template <class T1, class T2>
 constexpr bool is_less_than(T1 a, T2 b) {
     return a<(b-COMPARISON_THRESHOLD);
 }
 
-/** @brief Return true if a > b  up to a certain precision */
+/**
+ * @brief Strict superiority comparison
+ *
+ * Template method.
+ * @return Return true if a > b up to a certain precision
+ */
 template <class T1, class T2>
 constexpr bool is_greater_than(T1 a, T2 b) {
     return a>(b+COMPARISON_THRESHOLD);
 }
 
-/** @brief Shuffle the content randomly */
+/** @brief Shuffle
+ *
+ * Shuffle the content of the vector randomly. Template method.
+ */
 template <class T>
 inline void shuffle(std::vector<T> &v) {
     std::random_shuffle(v.begin(), v.end());
 }
 
 /**
- * @brief Pick a random indice of the input vector
+ * @brief Random indice
+ *
+ * Pick a random indice of the input vector. You should initialize a random seed when
+ * executing your program. Template method.
  * @param {const std::vector<T> &} v; input vector
- * @return {unsigned} a random indice
- * @note Initialize a random seed when executing your program
- * @note Template method, independent of the content type
+ * @return Return a random indice.
  */
 template <class T>
 inline unsigned rand_indice(const std::vector<T> &v) {
@@ -56,11 +83,12 @@ inline unsigned rand_indice(const std::vector<T> &v) {
 }
 
 /**
- * @brief Pick a random element of the input vector
+ * @brief Random element
+ *
+ * Pick a random element of the input vector. You should initialize a random seed when
+ * executing your program. Template method.
  * @param {const std::vector<T> &} v; input vector
- * @return {int} a random indice
- * @note initialize a random seed when executing your program
- * @note template method, independent of the content type
+ * @return Return a random element.
  */
 template <class T>
 inline T rand_element(const std::vector<T> &v) {
@@ -68,11 +96,12 @@ inline T rand_element(const std::vector<T> &v) {
 }
 
 /**
- * @brief Get the indice of the maximum element in the input vector, ties are
- * broken arbitrarily
+ * @brief Argmax
+ *
+ * Get the indice of the maximum element in the input vector, ties are broken arbitrarily.
+ * Template method.
  * @param {const std::vector<T> &} v; input vector
- * @return Indice of the maximum element in the input vector
- * @note template method
+ * @return Return the indice of the maximum element in the input vector.
  */
 template <class T>
 inline unsigned argmax(const std::vector<T> &v) {
@@ -84,7 +113,11 @@ inline unsigned argmax(const std::vector<T> &v) {
     return rand_element(up_ind);
 }
 
-/** @brief See 'argmax' method */
+/**
+ * @brief Argmin
+ *
+ * See 'argmax' method. Template method.
+ */
 template <class T>
 inline unsigned argmin(const std::vector<T> &v) {
     double minval = *std::min_element(v.begin(),v.end());
@@ -95,7 +128,12 @@ inline unsigned argmin(const std::vector<T> &v) {
     return rand_element(lo_ind);
 }
 
-/** @brief Generate a uniformly distributed integer */
+/**
+ * @brief Uniformly distributed integer
+ *
+ * Generate a uniformly distributed integer
+ * @return Return the sample
+ */
 int uniform_i(const int &int_min, const int &int_max) {
     std::random_device rd;
     std::default_random_engine generator(rd());
@@ -103,7 +141,12 @@ int uniform_i(const int &int_min, const int &int_max) {
     return distribution(generator);
 }
 
-/** @brief Generate a uniformly distributed double */
+/**
+ * @brief Uniformly distributed double
+ *
+ * Generate a uniformly distributed double
+ * @return Return the sample
+ */
 double uniform_d(const double &double_min, const double &double_max) {
     std::random_device rd;
     std::default_random_engine generator(rd());
@@ -111,7 +154,12 @@ double uniform_d(const double &double_min, const double &double_max) {
     return distribution(generator);
 }
 
-/** @brief Generate a normally distributed double */
+/**
+ * @brief Normally distributed double
+ *
+ * Generate a normally distributed double
+ * @return Return the sample
+ */
 double normal_d(const double &mean, const double &stddev) {
     std::random_device rd;
     std::default_random_engine generator(rd());
