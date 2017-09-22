@@ -13,7 +13,7 @@ struct policy_parameters {
      * @param {unsigned} trials_count; trial count for the expansion in {0,budget-1}
      * @param {double} uct_cst; UCT constant factor
      * @param {double} discount_factor; discount factor for the MDP
-     * @param {node} root; root node of the tree
+     * @param {node} root_node; root node of the tree
      * @param {bool} reuse; set to true if the policy is able to reuse the tree
      */
     unsigned budget;
@@ -23,7 +23,7 @@ struct policy_parameters {
     double discount_factor;
     bool reuse;
     std::vector<int> action_space;
-    node root;
+    node root_node;
 
     /**
      * @brief Constructor
@@ -44,7 +44,7 @@ struct policy_parameters {
         discount_factor(_discount_factor),
         reuse(_reuse),
         action_space(_action_space),
-        root(initial_state,action_space)
+        root_node(initial_state,action_space)
     {
         trials_count = 0;
     }
@@ -247,12 +247,17 @@ struct agent {
 
     /**
      * @brief The decision criterion of keeping the tree or not
+     * @note 'Keeping' the tree means moving the root to its 'best' child (edit 22/09/2017)
      * @param {const double &} s; the current state of the agent
      * @return 'true' if tree is kept
      */
     bool keeping_criterion(const double &s) {
         (void) s;
-        return p.root.is_fully_expanded(); // naive implementation: keep the tree if it is built
+        if(!p.root_node.is_fully_expanded()) {
+            return false;
+        }
+        node * ptr = p.root_node.get_child_at(argmax_score(p.root_node));
+        return ptr->is_fully_expanded(); // naive implementation: keep the tree if it is built
     }
 
     /**
@@ -262,11 +267,11 @@ struct agent {
      * @note 'void' method, the tree is kept in memory
      */
     void build_uct_tree(const double &s) {
-        p.root.clear_node();
-        p.root.set_state(s);
+        p.root_node.clear_node();
+        p.root_node.set_state(s);
         p.trials_count = 0;
         for(unsigned i=0; i<p.budget; ++i) {
-            node *ptr = tree_policy(p.root);
+            node *ptr = tree_policy(p.root_node);
             double total_return = default_policy(ptr);
             backup(total_return,ptr);
             p.trials_count += 1;
@@ -279,11 +284,12 @@ struct agent {
      */
     int experimental_uct(const double &s) {
         if(keeping_criterion(s)) { // keep the subtree and use it
-            p.root.move_to_child(argmax_score(p.root),s);
-        } else {
+            p.root_node.move_to_child(argmax_score(p.root_node),s);
+        } else { // build or rebuild the subtree
+            print("build/rebuild");
             build_uct_tree(s);
         }
-        return max_score(p.root);
+        return max_score(p.root_node);
     }
 
     /**
@@ -292,7 +298,7 @@ struct agent {
      */
     int vanilla_uct(const double &s) {
         build_uct_tree(s);
-        return max_score(p.root);
+        return max_score(p.root_node);
     }
 
     /**

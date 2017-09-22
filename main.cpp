@@ -67,7 +67,7 @@ void run_1dtrack() {
     double MODEL_TRACK_LEN = TRACK_LEN;
     double MODEL_STDDEV = STDDEV;
     double MODEL_FAILURE_PROBABILITY = FAILURE_PROBABILITY;
-    bool REUSE = false;
+    bool REUSE = true;
 
     track tr(TRACK_LEN,STDDEV,FAILURE_PROBABILITY);
     policy_parameters p(BUDGET,HORIZON,UCT_CST,DISCOUNT_FACTOR,REUSE,ACTION_SPACE,INIT_S);

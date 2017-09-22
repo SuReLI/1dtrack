@@ -107,34 +107,41 @@ public :
     /** @brief Get the number of children */
     unsigned get_nb_children() const {return children.size();}
 
-    /** @brief Return a pointer to the last created child */
+    /** @brief Get a pointer to the last created child */
     node * get_last_child() {return &children.back();}
 
+    /** @brief Get a pointer to a certain child given its indice */
+    node * get_child_at(const unsigned &indice) {return &children.at(indice);}
+
     /** @brief Get the value of the node */
-    double get_value() {return value;}
+    double get_value() const {return value;}
 
     /** @brief Get the state of the node (root node) */
-    double get_state() {assert(root); return state;}
+    double get_state() const {assert(root); return state;}
 
-    /** @brief Get the states vector of the node (non-root node) */
-    std::vector<double> get_states() {assert(!root); return states;}
+    /** @brief Get a copy of the states vector of the node (non-root node) */
+    std::vector<double> get_states() const {assert(!root); return states;}
+
+    /** @brief Get a copy of the last sampled state among the states family (non-root node) */
+    double get_last_sampled_state() const {assert(!root); return states.back();}
 
     /** @brief Get the incoming action of the node (non-root node) */
-    int get_incoming_action() {assert(!root); return incoming_action;}
+    int get_incoming_action() const {assert(!root); return incoming_action;}
 
     /** @brief Get the visits count of the node (non-root node) */
-    unsigned get_visits_count() {assert(!root); return visits_count;}
+    unsigned get_visits_count() const {assert(!root); return visits_count;}
 
     /** @brief Get one action of the node given its indice in the actions vector */
-    int get_action_at(unsigned indice) {return actions.at(indice);}
+    int get_action_at(const unsigned &indice) const {return actions.at(indice);}
+
+    /** @brief Get the next expansion actions among the available actions */
+    int get_next_expansion_action() const {return actions.at(children.size());}
 
     /** @brief Get the number of actions (arms of the bandit) */
-    unsigned get_nb_of_actions() {return actions.size();}
+    unsigned get_nb_of_actions() const {return actions.size();}
 
     /** @brief Return true if the node is fully expanded */
-    bool is_fully_expanded() const {
-        return (get_nb_children() == actions.size());
-    }
+    bool is_fully_expanded() const {return (get_nb_children() == get_nb_of_actions());}
 
     /** @brief Return true if the node is a root node */
     bool is_root() const {return root;}
@@ -146,20 +153,6 @@ public :
      */
     void create_child(int inc_ac, double new_state) {
         children.emplace_back(node(this,inc_ac,new_state,actions));
-    }
-
-    /**
-     * @brief Return the last sampled state among the states family
-     * @note Node should be root
-     */
-    double get_last_sampled_state() {
-        assert(!root);
-        return states.back();
-    }
-
-    /** @brief Return the next expansion actions among the available actions */
-    int get_next_expansion_action() {
-        return actions.at(children.size());
     }
 
     /**
