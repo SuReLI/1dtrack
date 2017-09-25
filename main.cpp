@@ -108,8 +108,8 @@ void simulate_episode(
  */
 std::vector<std::string> get_backup_names() {
     std::vector<std::string> v;
-    v.emplace_back("time_to_goal");
-    v.emplace_back("computation_cost");
+    v.emplace_back("score");
+    v.emplace_back("computational_cost");
     return v;
 }
 
@@ -137,7 +137,7 @@ void run(
         initialize_backup(get_backup_names(),outpth,sep);
     }
     for(unsigned i=0; i<nbsim; ++i) {
-        std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
+        //std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
         track tr(sp.TRACK_LEN, sp.STDDEV, sp.FAILURE_PROBABILITY);
         policy_parameters p(sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.REUSE, sp.ACTION_SPACE, sp.INIT_S);
         model m(sp.MODEL_TRACK_LEN, sp.MODEL_STDDEV, sp.MODEL_FAILURE_PROBABILITY);
@@ -150,9 +150,27 @@ void run(
     }
 }
 
+/**
+ * @brief Bunch of run
+ *
+ * Run a bunch of run for plotting purpose
+ */
+void bunch_of_run() {
+    for(unsigned i=0; i<=10; ++i) {
+        simulation_parameters sp;
+        sp.FAILURE_PROBABILITY = (double) i * .1;
+        std::string path = "data/exp_failproba";
+        path += std::to_string(i);
+        path += ".csv";
+        std::cout << path << std::endl;
+        run(sp,10,false,true,path);
+    }
+}
+
 int main() {
     srand(time(NULL));
 
-    simulation_parameters sp;
-    run(sp,10,false,true,"data/data.csv");
+    bunch_of_run();
+    //simulation_parameters sp;
+    //run(sp,1e3,false,true,"data/data2.csv");
 }
