@@ -44,7 +44,7 @@ struct simulation_parameters {
      * them, one should modify this 'cpp' file.
      */
     simulation_parameters() {
-        TRACK_LEN = 5.;
+        TRACK_LEN = 25.;
         STDDEV = 0.;
         FAILURE_PROBABILITY = 0.;
         INIT_S = 0.;
@@ -81,6 +81,7 @@ void simulate_episode(
     const bool &bckp,
     std::vector<std::vector<double>> &bckp_vector)
 {
+	std::clock_t c_start = std::clock();
     std::vector<double> simulation_backup;
 	while(!tr.is_terminal(ag.s)) {
 		ag.take_action(); // take action based on current state
@@ -89,8 +90,10 @@ void simulate_episode(
 	}
     if(prnt) {print(tr,ag);}
     if(bckp) { // warning refers to this section
+        std::clock_t c_end = std::clock();
+        double time_elapsed_ms = 1000. * (c_end-c_start) / CLOCKS_PER_SEC;
         simulation_backup.push_back(tr.time);
-        simulation_backup.push_back(1.1); //todo get computation cost
+        simulation_backup.push_back(time_elapsed_ms);
         bckp_vector.push_back(simulation_backup);
     }
 }
