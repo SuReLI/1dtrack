@@ -1,6 +1,6 @@
 
 """
-Plot the reached scores and computational costs for 2 groups of simulations, the first one
+Plot the reached losses and computational costs for 2 groups of simulations, the first one
 being vanilla UCT and the second one an experimental UCT.
 
 edit: 26/09/2017
@@ -17,7 +17,7 @@ ORANGE = '#ff6600';
 GREEN = '#00cc66';
 
 repo = "data/backup/"
-fp = "06"
+fp = "06" # Failure probability
 path1 = repo+"0_25_0_"+fp+"_20_50_07_09.csv"
 path2 = repo+"1_25_0_"+fp+"_20_50_07_09.csv"
 
@@ -30,7 +30,7 @@ cpu2 = d2["computational_cost"]
 
 f, (ax1, ax2) = plt.subplots(2, 1, sharey=True)
 
-lg = False
+lg = True
 if lg:
     scr1 = np.log(scr1)
     scr2 = np.log(scr2)
