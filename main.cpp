@@ -44,16 +44,16 @@ struct simulation_parameters {
      * them, one should modify this 'cpp' file.
      */
     simulation_parameters() {
-        TRACK_LEN = 2.;
+        TRACK_LEN = 25.;
         STDDEV = 0.;
         FAILURE_PROBABILITY = 0.;
         INIT_S = 0.;
 
         ACTION_SPACE = std::vector<int>{-1,1};
-        BUDGET = 10;
-        HORIZON = 5;
+        BUDGET = 20;
+        HORIZON = 50;
         UCT_CST = .7;
-        DISCOUNT_FACTOR = 1.;
+        DISCOUNT_FACTOR = .9;
         MODEL_TRACK_LEN = TRACK_LEN;
         MODEL_STDDEV = STDDEV;
         MODEL_FAILURE_PROBABILITY = FAILURE_PROBABILITY;
@@ -160,9 +160,10 @@ void bunch_of_run() {
     for(unsigned i=0; i<10; ++i) {
         simulation_parameters sp;
         sp.FAILURE_PROBABILITY = (double) i * .1;
-        std::string path = "data/1_2_0_0";
+        sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
+        std::string path = "data/1_25_0_0";
         path += std::to_string(i);
-        path += "_10_5_07_1.csv";
+        path += "_20_50_07_09.csv";
         std::cout << path << std::endl;
         run(sp,nbsim,false,true,path);
     }
