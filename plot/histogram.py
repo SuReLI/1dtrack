@@ -1,6 +1,9 @@
 
 """
-Plot the reached scores and computational costs
+Plot the reached scores and computational costs for 2 groups of simulations, the first one
+being vanilla UCT and the second one an experimental UCT.
+
+edit: 26/09/2017
 """
 
 import matplotlib.pyplot as plt
@@ -38,4 +41,3 @@ ax2.set_xlabel('Computational cost')
 ax2.set_ylabel('Frequency')
 
 plt.show()
-

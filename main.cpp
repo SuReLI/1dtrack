@@ -22,20 +22,20 @@
  * Parameters container for a simulation
  */
 struct simulation_parameters {
-    double TRACK_LEN = 5.; ///< Track length (half of the length of the track).
-    double STDDEV = 0.; ///< Environment noise standard deviation.
-    double FAILURE_PROBABILITY = 0.; ///< Probability with chich the oposite action effect is applied (randomness of the transition function)
-    double INIT_S = 0.; ///< Initial state.
+    double TRACK_LEN; ///< Track length (half of the length of the track).
+    double STDDEV; ///< Environment noise standard deviation.
+    double FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied (randomness of the transition function)
+    double INIT_S; ///< Initial state.
 
-    std::vector<int> ACTION_SPACE = {-1,1}; ///< Action space used by every nodes (bandit arms).
-    unsigned BUDGET = 10; ///< Algorithm budget (number of expanded nodes).
-    unsigned HORIZON = 5; ///< Algorithm horizon for the default policy.
-    double UCT_CST = .7; ///< UCT constant factor.
-    double DISCOUNT_FACTOR = 1.; ///< Discount factor for the MDP.
-    double MODEL_TRACK_LEN = TRACK_LEN; ///< Model track length (half of the length of the track).
-    double MODEL_STDDEV = STDDEV; ///< Model noise standard deviation.
-    double MODEL_FAILURE_PROBABILITY = FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function).
-    bool REUSE = true; ///< Set to true if the policy is able to reuse the tree.
+    std::vector<int> ACTION_SPACE; ///< Action space used by every nodes (bandit arms).
+    unsigned BUDGET; ///< Algorithm budget (number of expanded nodes).
+    unsigned HORIZON; ///< Algorithm horizon for the default policy.
+    double UCT_CST; ///< UCT constant factor.
+    double DISCOUNT_FACTOR; ///< Discount factor for the MDP.
+    double MODEL_TRACK_LEN; ///< Model track length (half of the length of the track).
+    double MODEL_STDDEV; ///< Model noise standard deviation.
+    double MODEL_FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function).
+    bool REUSE; ///< Set to true if the policy is able to reuse the tree.
 
     /**
      * @brief Simulation parameters constructor
@@ -44,7 +44,7 @@ struct simulation_parameters {
      * them, one should modify this 'cpp' file.
      */
     simulation_parameters() {
-        TRACK_LEN = 25.;
+        TRACK_LEN = 2.;
         STDDEV = 0.;
         FAILURE_PROBABILITY = 0.;
         INIT_S = 0.;
@@ -156,14 +156,15 @@ void run(
  * Run a bunch of run for plotting purpose
  */
 void bunch_of_run() {
-    for(unsigned i=0; i<=10; ++i) {
+    unsigned nbsim = 1000;
+    for(unsigned i=0; i<10; ++i) {
         simulation_parameters sp;
         sp.FAILURE_PROBABILITY = (double) i * .1;
-        std::string path = "data/exp_failproba";
+        std::string path = "data/1_2_0_0";
         path += std::to_string(i);
-        path += ".csv";
+        path += "_10_5_07_1.csv";
         std::cout << path << std::endl;
-        run(sp,10,false,true,path);
+        run(sp,nbsim,false,true,path);
     }
 }
 
