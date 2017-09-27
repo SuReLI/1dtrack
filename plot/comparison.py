@@ -18,9 +18,10 @@ GREE = '#00cc66';
 
 take_log = True # Take the log of the data or not
 repo = "data/backup/" # Path to the saved data
-fp_range = [ # Different failure probabilities
+fp_range = [ # Different failure probabilities (wrt the files names)
     "00", "01", "02", "03",
     "04", "05"]
+pl_range = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5] # Same with real values for plotting
 
 # Initialisation
 loss1_means = [] # List of the means, to be completed
@@ -62,14 +63,16 @@ for fp in fp_range:
     cput2_stdev.append(cput2.std())
 
 f, (ax1, ax2) = plt.subplots(2, 1, sharey=True)
-ax1.errorbar(fp_range, loss1_means, color=BLUE, yerr=loss1_stdev, fmt='o')
-ax1.errorbar(fp_range, loss2_means, color=ORNG, yerr=loss2_stdev, fmt='o')
-ax1.set_xlabel('Failure probabilities x1e1')
+l1 = ax1.errorbar(pl_range, loss1_means, color=BLUE, yerr=loss1_stdev, fmt='o')
+l2 = ax1.errorbar(pl_range, loss2_means, color=ORNG, yerr=loss2_stdev, fmt='o')
+ax1.set_xlabel('Transition failure probability')
 ax1.set_ylabel('Loss')
+ax1.legend([l1, l2], ['Vanilla UCT', 'Experimental UCT'],numpoints=1,loc='lower right')
 
-ax2.errorbar(fp_range, cput1_means, color=BLUE, yerr=cput1_stdev, fmt='o')
-ax2.errorbar(fp_range, cput2_means, color=ORNG, yerr=cput2_stdev, fmt='o')
-ax2.set_xlabel('Failure probabilities x1e1')
-ax2.set_ylabel('Loss')
+l1 = ax2.errorbar(pl_range, cput1_means, color=BLUE, yerr=cput1_stdev, fmt='o')
+l2 = ax2.errorbar(pl_range, cput2_means, color=ORNG, yerr=cput2_stdev, fmt='o')
+ax2.set_xlabel('Transition failure probability')
+ax2.set_ylabel('Computational cost')
+ax2.legend([l1, l2], ['Vanilla UCT', 'Experimental UCT'],numpoints=1,loc='lower right')
 
 plt.show()
