@@ -25,25 +25,36 @@ struct simulation_parameters {
     /**
      * @brief Simulation parameters default constructor
      *
-     * The parameters are set to the values defined in this constructor. In order to change
-     * them, one should modify this 'cpp' file or use the other constructor.
+     * The parameters are set to the values defined in this constructor.
      */
-    simulation_parameters() {
-        TRACK_LEN = 2.;
-        STDDEV = 0.;
-        FAILURE_PROBABILITY = 0.;
-        INIT_S = 0.;
-
-        ACTION_SPACE = std::vector<int>{-1,1};
-        BUDGET = 20;
-        HORIZON = 50;
-        UCT_CST = .7;
-        DISCOUNT_FACTOR = .9;
-        MODEL_TRACK_LEN = TRACK_LEN;
-        MODEL_STDDEV = STDDEV;
-        MODEL_FAILURE_PROBABILITY = FAILURE_PROBABILITY;
-        REUSE = true;
-    }
+    simulation_parameters(
+        double track_len = 2.,
+        double stddev = 0.,
+        double failure_probability = .1,
+        double init_s = 0.,
+        std::vector<int> action_space = std::vector<int>{-1,1},
+        unsigned budget = 20,
+        unsigned horizon = 50,
+        double uct_cst = .7,
+        double discount_factor = .9,
+        double model_track_len = 2.,
+        double model_stddev = 0.,
+        double model_failure_probability = .1,
+        bool reuse = false) :
+        TRACK_LEN(track_len),
+        STDDEV(stddev),
+        FAILURE_PROBABILITY(failure_probability),
+        INIT_S(init_s),
+        ACTION_SPACE(action_space),
+        BUDGET(budget),
+        HORIZON(horizon),
+        UCT_CST(uct_cst),
+        DISCOUNT_FACTOR(discount_factor),
+        MODEL_TRACK_LEN(model_track_len),
+        MODEL_STDDEV(model_stddev),
+        MODEL_FAILURE_PROBABILITY(model_failure_probability),
+        REUSE(reuse)
+    {}
 };
 
 #endif // SIMULATION_PARAMETERS_HPP_
