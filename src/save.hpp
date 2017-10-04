@@ -1,6 +1,11 @@
 #ifndef SAVE_HPP_
 #define SAVE_HPP_
 
+#include <cassert>
+
+#include <utils.hpp>
+#include <simulation_parameters.hpp>
+
 /**
  * @brief Save a vector
  *
@@ -88,6 +93,21 @@ std::vector<std::string> get_saved_values_names() {
     return v;
 }
 
+void append_double(std::string &path, double d, std::string sep) {
+    assert(!is_less_than(d,0.));
+    if(is_equal_to(d,0.)) {
+        path += "0";
+    } else if(is_less_than(d,.1)) {
+        path += "00";
+        d = 100.*d;
+    } else if (is_less_than(d,1.)) {
+        path += "0";
+        d = 10.*d;
+    }
+    path += std::to_string((int) d);
+    path += sep;
+}
+
 /**
  * @brief Get the backup path
  *
@@ -100,26 +120,18 @@ std::string get_backup_path(const simulation_parameters &sp) {
     std::string path = "data/";
     path += std::to_string(sp.REUSE);
     path += sep;
-    path += std::to_string(sp.TRACK_LEN);
-    path += sep;
-    path += std::to_string(sp.STDDEV);
-    path += sep;
-    path += std::to_string(sp.FAILURE_PROBABILITY);
-    path += sep;
+    append_double(path,sp.TRACK_LEN,sep);
+    append_double(path,sp.STDDEV,sep);
+    append_double(path,sp.FAILURE_PROBABILITY,sep);
     path += std::to_string(sp.BUDGET);
     path += sep;
     path += std::to_string(sp.HORIZON);
     path += sep;
-    path += std::to_string(sp.UCT_CST);
-    path += sep;
-    path += std::to_string(sp.DISCOUNT_FACTOR);
-    path += sep;
-    path += std::to_string(sp.MODEL_TRACK_LEN);
-    path += sep;
-    path += std::to_string(sp.MODEL_STDDEV);
-    path += sep;
-    path += std::to_string(sp.MODEL_FAILURE_PROBABILITY);
-    path += ".csv";
+    append_double(path,sp.UCT_CST,sep);
+    append_double(path,sp.DISCOUNT_FACTOR,sep);
+    append_double(path,sp.MODEL_TRACK_LEN,sep);
+    append_double(path,sp.MODEL_STDDEV,sep);
+    append_double(path,sp.MODEL_FAILURE_PROBABILITY,".csv");
     return path;
 }
 
