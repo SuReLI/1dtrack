@@ -44,7 +44,7 @@ struct simulation_parameters {
      * them, one should modify this 'cpp' file.
      */
     simulation_parameters() {
-        TRACK_LEN = 25.;
+        TRACK_LEN = 2.;
         STDDEV = 0.;
         FAILURE_PROBABILITY = 0.;
         INIT_S = 0.;
@@ -65,7 +65,7 @@ struct simulation_parameters {
  * @brief Simulate a single episode
  *
  * Run a single 1D track simulation given its parameters.
- * @warning The values should be saved in the same ordering as in the 'get_backup_names'
+ * @warning The values should be saved in the same ordering as in the 'get_saved_values_names'
  * method (edit 22/09/2017).
  * @param {track &} tr; environment
  * @param {agent &} ag; agent
@@ -99,21 +99,6 @@ void simulate_episode(
 }
 
 /**
- * @brief Get the backup names
- *
- * Get a vector containing the names of the saved values during each simulation.
- * @warning The values should be saved in the same ordering as in the 'simulate_episode'
- * method (edit 22/09/2017).
- * @return Return a vector containing each name in order of appearance
- */
-std::vector<std::string> get_backup_names() {
-    std::vector<std::string> v;
-    v.emplace_back("score");
-    v.emplace_back("computational_cost");
-    return v;
-}
-
-/**
  * @brief Run method
  *
  * Basic method initialising the parameters and running one simulation. One should modifiy
@@ -134,7 +119,7 @@ void run(
     std::vector<std::vector<double>> bckp_vector;
     std::string sep = ",";
     if(bckp) {
-        initialize_backup(get_backup_names(),outpth,sep);
+        initialize_backup(get_saved_values_names(),outpth,sep);
     }
     for(unsigned i=0; i<nbsim; ++i) {
         //std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
@@ -154,16 +139,14 @@ void run(
  * @brief Bunch of run
  *
  * Run a bunch of run for plotting purpose
+ * @param {const unsigned &} nbsim; number of simulations
  */
-void bunch_of_run() {
-    unsigned nbsim = 1000;
+void bunch_of_run(unsigned &nbsim) {
     for(unsigned i=0; i<10; ++i) {
         simulation_parameters sp;
         sp.FAILURE_PROBABILITY = (double) i * .1;
         sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
-        std::string path = "data/1_25_0_0";
-        path += std::to_string(i);
-        path += "_20_50_07_09.csv";
+        std::string path = get_backup_path(sp);
         std::cout << path << std::endl;
         run(sp,nbsim,false,true,path);
     }
@@ -172,7 +155,7 @@ void bunch_of_run() {
 int main() {
     srand(time(NULL));
 
-    bunch_of_run();
+    bunch_of_run(10);
     //simulation_parameters sp;
     //run(sp,1e3,false,true,"data/data2.csv");
 }

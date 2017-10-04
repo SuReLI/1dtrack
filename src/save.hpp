@@ -73,4 +73,65 @@ void initialize_backup(
     save_vector(names,output_path,separator,std::ofstream::out);
 }
 
+/**
+ * @brief Get the saved values names
+ *
+ * Get a vector containing the names of the saved values during each simulation.
+ * @warning The values should be saved in the same ordering as in the 'simulate_episode'
+ * method (edit 22/09/2017).
+ * @return Return a vector containing each name in order of appearance
+ */
+std::vector<std::string> get_saved_values_names() {
+    std::vector<std::string> v;
+    v.emplace_back("score");
+    v.emplace_back("computational_cost");
+    return v;
+}
+
+/**
+ * @brief Get the backup path
+ *
+ * Get a string with the path of the saved file wrt the parameters values
+ * (see data/readme.txt).
+ * @return Return backup path.
+ */
+std::string get_backup_path(const simulation_parameters &sp) {
+    std::string sep = "_";
+    std::string path = "data/";
+    path += std::to_string(sp.REUSE);
+    path += sep;
+    path += std::to_string(sp.TRACK_LEN);
+    path += sep;
+    path += std::to_string(sp.STDDEV);
+    path += sep;
+    path += std::to_string(sp.FAILURE_PROBABILITY);
+    path += sep;
+    path += std::to_string(sp.BUDGET);
+    path += sep;
+    path += std::to_string(sp.HORIZON);
+    path += sep;
+    path += std::to_string(sp.UCT_CST);
+    path += sep;
+    path += std::to_string(sp.DISCOUNT_FACTOR);
+    path += sep;
+    path += std::to_string(sp.MODEL_TRACK_LEN);
+    path += sep;
+    path += std::to_string(sp.MODEL_STDDEV);
+    path += sep;
+    path += std::to_string(sp.MODEL_FAILURE_PROBABILITY);
+    path += ".csv";
+    return path;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 #endif // SAVE_HPP_
