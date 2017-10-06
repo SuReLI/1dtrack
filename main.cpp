@@ -38,27 +38,28 @@ void simulate_episode(
     std::vector<std::vector<double>> &bckp_vector)
 {
 	std::clock_t c_start = std::clock();
-    std::vector<double> simulation_backup;
 	while(!tr.is_terminal(ag.s)) {
-		ag.take_action(); // take action based on current state
+		ag.take_action(); // take action based on current state (attribute of the agent)
 		if(prnt) {print(tr,ag);}
 		ag.s = tr.transition(ag.s, ag.a); // get next state
 	}
+    std::clock_t c_end = std::clock();
     if(prnt) {print(tr,ag);}
     if(bckp) { // warning refers to this section
-        std::clock_t c_end = std::clock();
         double time_elapsed_ms = 1000. * (c_end-c_start) / CLOCKS_PER_SEC;
-        simulation_backup.push_back(tr.time);
-        simulation_backup.push_back(time_elapsed_ms);
+        std::vector<double> simulation_backup = { //
+            (double) tr.time,
+            time_elapsed_ms,
+            (double) ag.get_nb_calls()
+        };
         bckp_vector.push_back(simulation_backup);
     }
 }
 
 /**
- * @brief Run method
+ * @brief Bunch of run with the same parameters
  *
- * Basic method initialising the parameters and running one simulation. One should modifiy
- * this method in order to change the parameters
+ * Bunch of run with the same parameters.
  * @param {const parameters &} sp; parameters used for all the simulations
  * @param {const unsigned &} nbsim; number of simulations
  * @param {const bool &} prnt; if true, print some informations during the simulation
@@ -92,9 +93,9 @@ void run(
 }
 
 /**
- * @brief Bunch of run
+ * @brief Bunch of run with different parameters
  *
- * Run a bunch of run for plotting purpose
+ * Run a bunch of run with different parameters.
  * @param {const unsigned &} nbsim; number of simulations
  */
 void bunch_of_run(unsigned nbsim) {
