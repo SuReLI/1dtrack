@@ -114,6 +114,8 @@ int main() {
 
     //bunch_of_run(10);
     parameters sp;
-    sp.REUSE = true;
-    run(sp,1,true,true,"data/test.csv");
+    sp.REUSE = false;
+    sp.FAILURE_PROBABILITY = .3;
+    sp.UCT_CST = 10.;
+    run(sp,10000,true,true,"data/test_false.csv");
 }

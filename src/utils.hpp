@@ -59,6 +59,17 @@ constexpr bool is_greater_than(T1 a, T2 b) {
     return a>(b+COMPARISON_THRESHOLD);
 }
 
+/**
+ * @brief Sign function
+ *
+ * Template method.
+ * @return Return -1. if x < 0., +1. else
+ */
+template <class T>
+double sign(T x) {
+    return (is_less_than(x,0.)) ? -1. : 1.;
+}
+
 /** @brief Shuffle
  *
  * Shuffle the content of the vector randomly. Template method.

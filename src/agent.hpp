@@ -259,7 +259,8 @@ struct agent {
         }
         double total_return = 0.;
         double s = ptr->get_last_sampled_state();
-        int a = rand_element(p.action_space);
+        //int a = rand_element(p.action_space);
+        int a = ((int)sign(s));
         for(unsigned t=0; t<p.horizon; ++t) {
             double s_p = m.transition_model(s,a);
             double r = m.reward_model(s,a,s_p);
@@ -268,7 +269,8 @@ struct agent {
                 break;
             }
             s = s_p;
-            a = rand_element(p.action_space);
+            //a = rand_element(p.action_space);
+            a = ((int)sign(s));
         }
         return total_return;
 //        // Previous method without terminal case:
@@ -304,9 +306,9 @@ struct agent {
     }
 
     /**
-     * @brief Argmax score
+     * @brief Argmax of the score score
      *
-     * Get the indice of the child achieving the best score
+     * Get the indice of the child achieving the best score.
      * @param {const node &} v; root node of the tree
      * @return Return the indice of the child achieving the best score.
      */
@@ -320,16 +322,17 @@ struct agent {
     }
 
     /**
-     * @brief Recommended action score
+     * @brief Get the recommended action at a certain node
      *
      * This is the policy decision after the tree construction (recommended action). It gets
-     * the action leading to the best child w.r.t. the values.
+     * the greedy action wrt the values of the subsequent nodes.
      * @param {const node &} v; root node of the tree
      * @return Return the action with the best score (leading to the child with the higher
      * value).
      */
-    int max_score(node &v) {
-        return v.get_action_at(argmax_score(v));
+    int get_recommended_action(node &v) {
+        return v.get_child_at(argmax_score(v))->get_incoming_action();
+        //return v.get_action_at(argmax_score(v));
     }
 
     /**
@@ -371,22 +374,27 @@ struct agent {
     /**
      * @brief Open Loop UCT
      *
-     * This is the experimental UCT policy whose general idea is to reuse a previously
-     * constructed tree.
+     * Open Loop UCT policy which has the possibility to reuse a sub-tree.
      * @param {const double &} s; current state of the agent
      * @return Return the recommended action.
      */
-    int ol_uct(const double &s) {
+    int oluct(const double &s) {
         if(plain_keeping_criterion(s)) { // keep the subtree and use it
+            std::cout << "Move to child nb " << argmax_score(p.root_node); //TRM
+            std::cout << " v=" << p.root_node.get_child_at(argmax_score(p.root_node))->get_value();
             p.root_node.move_to_child(argmax_score(p.root_node),s);
+            std::cout << " print new children:\n"; //TRM
+            for(auto &ch : p.root_node.children) { //TRM
+                print_node_bis(ch);
+            }
         } else { // build or rebuild the subtree
             build_uct_tree(s);
-            print("# BUILD"); //TRM
+            std::cout << "### Build plan: "; //TRM
             print_best_plan(p.root_node); //TRM
             std::cout << std::endl; //TRM
-            print_tree(); //TRM
+            print_three_layers(p.root_node); //TRM
         }
-        return max_score(p.root_node);
+        return get_recommended_action(p.root_node);
     }
 
     /**
@@ -396,7 +404,7 @@ struct agent {
      */
     int vanilla_uct(const double &s) {
         build_uct_tree(s);
-        return max_score(p.root_node);
+        return get_recommended_action(p.root_node);
     }
 
     /**
@@ -406,62 +414,10 @@ struct agent {
      */
     void print_best_plan(node v) {
         if(v.is_fully_expanded()) {
-            std::cout << max_score(v) << " ";
+            std::cout << get_recommended_action(v) << " ";
             print_best_plan(v.children.at(argmax_score(v)));
         }
     }
-
-    //// test TRM
-    void prtl(node &v) {
-        std::cout << "s:" << v.get_last_sampled_state();
-        std::cout << " a:" << v.get_incoming_action();
-        std::cout << " v:" << v.get_value();
-        std::cout << " nc:" << v.get_nb_children();
-        std::cout << " ns:" << v.get_nb_sampled_states();
-        std::cout << std::endl;
-    }
-
-    void print_tree() {
-        std::cout << "d = 0 ------------------------\n";
-        std::cout << "s0:" << p.root_node.get_state() << "\n\n";
-
-        std::cout << "d = 1 ------------------------\n";
-        prtl(p.root_node.children.at(0));
-        prtl(p.root_node.children.at(1));
-        std::cout << std::endl;
-
-        std::cout << "d = 2 ------------------------\n";
-        prtl(p.root_node.children.at(0).children.at(0));
-        prtl(p.root_node.children.at(0).children.at(1));
-        std::cout << std::endl;
-        //prtl(p.root_node.children.at(1).children.at(0));
-        //prtl(p.root_node.children.at(1).children.at(1));
-
-        std::cout << "d = 3 ------------------------\n";
-        prtl(p.root_node.children.at(0).children.at(0).children.at(0));
-        prtl(p.root_node.children.at(0).children.at(0).children.at(1));
-        /*
-        std::cout << "d = 0 ------------------------\n";
-        std::cout << "s0:" << p.root_node.get_state() << std::endl;
-        std::cout << std::endl;
-
-        std::cout << "d = 1 ------------------------\n";
-        for(auto &ch: p.root_node.children) {
-            prtl(ch);
-        }
-        std::cout << std::endl;
-
-        std::cout << "d = 2 ------------------------\n";
-        for(auto &ch: p.root_node.children) {
-            for(auto &chch: ch.children) {
-                prtl(chch);
-            }
-            std::cout << std::endl;
-        }
-        */
-    }
-
-    //// end test
 
     /**
      * @brief Take an action
@@ -473,7 +429,7 @@ struct agent {
      */
     void take_action() {
         if(p.reuse) {
-            a = ol_uct(s);
+            a = oluct(s);
         } else {
             a = vanilla_uct(s);
         }

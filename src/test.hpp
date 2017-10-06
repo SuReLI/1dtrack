@@ -58,6 +58,50 @@ void print_node(node &v) {
     std::cout << "   v:" << v.get_value() << "\n";
 }
 
+void print_node_bis(node &v) {
+    std::cout << "nc:" << v.get_nb_children();
+    std::cout << "  ns:" << v.get_nb_sampled_states();
+    std::cout << "  inc_a:" << v.get_incoming_action();
+    std::cout << " a:" << v.get_action_at(0) << v.get_action_at(1);
+    std::cout << "  v:" << v.get_value();
+    std::cout << "  s:";
+    for(auto &si : v.get_states()) {
+        std::cout << si;
+    }
+    std::cout << std::endl;
+}
+
+void print_three_layers(node &root_node) {
+    std::cout << "d = 0 ------------------------\n";
+    std::cout << "s0:" << root_node.get_state();
+    std::cout << " a:" << root_node.get_action_at(0);
+    std::cout << root_node.get_action_at(1)<<"\n\n";
+
+    std::cout << "d = 1 ------------------------\n";
+    for(auto &ch : root_node.children) {
+        print_node_bis(ch);
+    }
+    std::cout << std::endl;
+
+    std::cout << "d = 2 ------------------------\n";
+    for(auto &ch : root_node.children) {
+        for(auto &chch : ch.children) {
+            print_node_bis(chch);
+        }
+    }
+    std::cout << std::endl;
+
+    std::cout << "d = 3 ------------------------\n";
+    for(auto &ch : root_node.children) {
+        for(auto &chch : ch.children) {
+            for(auto &chchch : chch.children) {
+                print_node_bis(chchch);
+            }
+        }
+    }
+    std::cout << std::endl;
+}
+
 /**
  * @brief Print node and children
  *
