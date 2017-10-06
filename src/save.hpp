@@ -4,7 +4,7 @@
 #include <cassert>
 
 #include <utils.hpp>
-#include <simulation_parameters.hpp>
+#include <parameters.hpp>
 
 /**
  * @brief Save a vector
@@ -115,7 +115,7 @@ void append_double(std::string &path, double d, std::string sep) {
  * (see data/readme.txt).
  * @return Return backup path.
  */
-std::string get_backup_path(const simulation_parameters &sp) {
+std::string get_backup_path(const parameters &sp) {
     std::string sep = "_";
     std::string path = "data/";
     path += std::to_string(sp.REUSE);

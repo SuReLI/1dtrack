@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <utils.hpp>
-#include <simulation_parameters.hpp>
+#include <parameters.hpp>
 #include <agent.hpp>
 #include <track.hpp>
 #include <display.hpp>
@@ -59,14 +59,14 @@ void simulate_episode(
  *
  * Basic method initialising the parameters and running one simulation. One should modifiy
  * this method in order to change the parameters
- * @param {const simulation_parameters &} sp; parameters used for all the simulations
+ * @param {const parameters &} sp; parameters used for all the simulations
  * @param {const unsigned &} nbsim; number of simulations
  * @param {const bool &} prnt; if true, print some informations during the simulation
  * @param {const bool &} bckp; if true, save some informations in the end of the simulation
  * @param {const std::string &} outpth; output saving path is backup
  */
 void run(
-    const simulation_parameters &sp,
+    const parameters &sp,
     const unsigned &nbsim,
     const bool &prnt,
     const bool &bckp,
@@ -99,7 +99,7 @@ void run(
  */
 void bunch_of_run(unsigned nbsim) {
     for(unsigned i=0; i<10; ++i) {
-        simulation_parameters sp;
+        parameters sp;
         sp.FAILURE_PROBABILITY = (double) i * .1;
         sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
         std::string path = get_backup_path(sp);
@@ -111,7 +111,8 @@ void bunch_of_run(unsigned nbsim) {
 int main() {
     srand(time(NULL));
 
-    bunch_of_run(10);
-    //simulation_parameters sp;
-    //run(sp,1e3,false,true,"data/data2.csv");
+    //bunch_of_run(10);
+    parameters sp;
+    sp.REUSE = true;
+    run(sp,1,true,true,"data/test.csv");
 }

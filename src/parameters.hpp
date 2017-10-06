@@ -1,12 +1,12 @@
-#ifndef SIMULATION_PARAMETERS_HPP_
-#define SIMULATION_PARAMETERS_HPP_
+#ifndef PARAMETERS_HPP_
+#define PARAMETERS_HPP_
 
 /**
  * @brief Simulation parameters
  *
  * Parameters container for a simulation
  */
-struct simulation_parameters {
+struct parameters {
     double TRACK_LEN; ///< Track length (half of the length of the track).
     double STDDEV; ///< Environment noise standard deviation.
     double FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied (randomness of the transition function)
@@ -27,7 +27,7 @@ struct simulation_parameters {
      *
      * The parameters are set to the values defined in this constructor.
      */
-    simulation_parameters(
+    parameters(
         double track_len = 2.,
         double stddev = 0.,
         double failure_probability = .1,
@@ -57,4 +57,4 @@ struct simulation_parameters {
     {}
 };
 
-#endif // SIMULATION_PARAMETERS_HPP_
+#endif // PARAMETERS_HPP_
