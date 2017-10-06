@@ -76,38 +76,6 @@ public :
         children.clear();
     }
 
-    /**
-     * @brief Set as root
-     *
-     * Set the nodes attributes as root nodes attributes. Set the irrelevant attributes to
-     * default values (e.g. 'parent' to nullptr or 'visits_count' to 0)
-     * @param {double} new_state; new labelling state
-     */
-    void set_as_root(double new_state) {
-        root = true;
-        state = new_state;
-        states.clear();
-        value = 0.;
-        visits_count = 0;
-        parent = nullptr;
-        incoming_action = 0;
-    }
-
-    /**
-     * @brief Move to child
-     *
-     * Move the content of a child to the current node and reroute children parents
-     * @param {unsigned} indice; indice of the moved child
-     * @param {double} new_state; new labelling state
-     */
-    void move_to_child(unsigned indice, double new_state) {
-        *this = std::move(children.at(indice));
-        set_as_root(new_state);
-        for(auto &elt : children) {
-            elt.parent = this;
-        }
-    }
-
     /** @brief Get the number of children */
     unsigned get_nb_children() const {return children.size();}
 
@@ -200,6 +168,54 @@ public :
     void add_to_value(const double &r) {
         assert(!root);
         value += r;
+    }
+
+    /**
+     * @brief Set as root
+     *
+     * Set the nodes attributes as root nodes attributes. Set the irrelevant attributes to
+     * default values (e.g. 'parent' to nullptr or 'visits_count' to 0).
+     * @param {double} new_state; new labelling state
+     * @deprecated This method is no more used. The operation is included in 'move_to_child'
+     * method.
+     */
+    /*
+    void set_as_root(double new_state) {
+        root = true;
+        state = new_state;
+        states.clear();
+        value = 0.;
+        visits_count = 0;
+        parent = nullptr;
+        incoming_action = 0;
+    }
+    */
+
+    /**
+     * @brief Move to child
+     *
+     * The current root node takes the children of one of its children and update its
+     * state.
+     * @param {unsigned} indice; indice of the moved child
+     * @param {double} new_state; new labelling state
+     */
+    void move_to_child(unsigned indice, double new_state) {
+        assert(is_root());
+        auto tmp = std::move(children[indice].children);
+        // Temporary variable to prevent from overwriting
+        for(auto &elt : tmp) {
+            elt.parent = this;
+        }
+        children = std::move(tmp);
+        state = new_state;
+
+        /*
+        *this = std::move(children.at(indice));
+        set_as_root(new_state);
+        for(auto &elt : children) {
+            elt.parent = this;
+        }
+        */
     }
 };
 
