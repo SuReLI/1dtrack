@@ -56,6 +56,7 @@ struct model {
     double model_track_length; ///< Model length of the track (half of the length)
     double model_stddev; ///< Model noise standard deviation
     double model_failure_probability; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function)
+    unsigned nb_calls; ///< Tracked number of calls to the model
 
     /** @brief Constructor */
     model(
@@ -65,7 +66,9 @@ struct model {
         model_track_length(_model_track_length),
         model_stddev(_model_stddev),
         model_failure_probability(_model_failure_probability)
-    {}
+    {
+        nb_calls = 0;
+    }
 
     /**
      * @brief Transition model
@@ -76,6 +79,7 @@ struct model {
      * @return Return the resulting state
      */
     double transition_model(const double &s, const int &a) {
+        nb_calls++;
         double noise = normal_d(0.,model_stddev);
         double action_effect = (double) a;
         if(is_less_than(uniform_d(0.,1.),model_failure_probability)) {
@@ -125,6 +129,9 @@ struct agent {
     agent(double _s, policy_parameters _p, model _m) : s(_s), p(_p), m(_m) {
         a = 0;
     }
+
+    /** \brief Get the number of calls */
+    unsigned get_nb_calls() {return m.nb_calls;}
 
     /**
      * @brief UCT child

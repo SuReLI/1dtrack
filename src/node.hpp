@@ -208,7 +208,6 @@ public :
         }
         children = std::move(tmp);
         state = new_state;
-
         /*
         *this = std::move(children.at(indice));
         set_as_root(new_state);

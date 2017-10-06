@@ -90,6 +90,7 @@ std::vector<std::string> get_saved_values_names() {
     std::vector<std::string> v;
     v.emplace_back("score");
     v.emplace_back("computational_cost");
+    v.emplace_back("nb_calls");
     return v;
 }
 
