@@ -15,7 +15,7 @@ struct policy_parameters {
     unsigned trials_count; ///< Trial count for the expansion in {0,budget-1}
     double uct_cst; ///< UCT constant factor
     double discount_factor; ///< Discount factor for the MDP
-    bool reuse; ///< Set to true if the policy is able to reuse the tree
+    bool reuse; ///< Set to true if open loop
     std::vector<int> action_space; ///< Action space used by the policy
     node root_node; ///< Root node of the tree
 
@@ -311,7 +311,7 @@ struct agent {
      * @return Return the indice of the child achieving the best score.
      */
     unsigned argmax_score(node &v) {
-        assert(v.is_root());
+        //assert(v.is_root());
         std::vector<double> values;
         for(auto &elt: v.children) {
             values.push_back(elt.get_value());
@@ -320,7 +320,7 @@ struct agent {
     }
 
     /**
-     * @brief Max score
+     * @brief Recommended action score
      *
      * This is the policy decision after the tree construction (recommended action). It gets
      * the action leading to the best child w.r.t. the values.
@@ -333,14 +333,14 @@ struct agent {
     }
 
     /**
-     * @brief Keeping creiterion
+     * @brief Plain keeping criterion
      *
      * The decision criterion of keeping the tree or not. 'Keeping' the tree means moving the
      * root to its 'best' child (edit 22/09/2017).
      * @param {const double &} s; the current state of the agent
-     * @return Return 'true' if the tree is kept.
+     * @return Return 'true' if the sub-tree is kept.
      */
-    bool keeping_criterion(const double &s) {
+    bool plain_keeping_criterion(const double &s) {
         (void) s;
         if(!p.root_node.is_fully_expanded()) {
             return false;
@@ -369,19 +369,22 @@ struct agent {
     }
 
     /**
-     * @brief Experimental UCT
+     * @brief Open Loop UCT
      *
      * This is the experimental UCT policy whose general idea is to reuse a previously
      * constructed tree.
      * @param {const double &} s; current state of the agent
      * @return Return the recommended action.
      */
-    int experimental_uct(const double &s) {
-        if(keeping_criterion(s)) { // keep the subtree and use it
+    int ol_uct(const double &s) {
+        if(plain_keeping_criterion(s)) { // keep the subtree and use it
             p.root_node.move_to_child(argmax_score(p.root_node),s);
         } else { // build or rebuild the subtree
-            //print("build/rebuild");
             build_uct_tree(s);
+            print("# BUILD"); //TRM
+            print_best_plan(p.root_node); //TRM
+            std::cout << std::endl; //TRM
+            print_tree(); //TRM
         }
         return max_score(p.root_node);
     }
@@ -397,6 +400,70 @@ struct agent {
     }
 
     /**
+     * @brief Print best plan
+     *
+     * Print the best plan as a standard output wrt the current tree.
+     */
+    void print_best_plan(node v) {
+        if(v.is_fully_expanded()) {
+            std::cout << max_score(v) << " ";
+            print_best_plan(v.children.at(argmax_score(v)));
+        }
+    }
+
+    //// test TRM
+    void prtl(node &v) {
+        std::cout << "s:" << v.get_last_sampled_state();
+        std::cout << " a:" << v.get_incoming_action();
+        std::cout << " v:" << v.get_value();
+        std::cout << " nc:" << v.get_nb_children();
+        std::cout << " ns:" << v.get_nb_sampled_states();
+        std::cout << std::endl;
+    }
+
+    void print_tree() {
+        std::cout << "d = 0 ------------------------\n";
+        std::cout << "s0:" << p.root_node.get_state() << "\n\n";
+
+        std::cout << "d = 1 ------------------------\n";
+        prtl(p.root_node.children.at(0));
+        prtl(p.root_node.children.at(1));
+        std::cout << std::endl;
+
+        std::cout << "d = 2 ------------------------\n";
+        prtl(p.root_node.children.at(0).children.at(0));
+        prtl(p.root_node.children.at(0).children.at(1));
+        std::cout << std::endl;
+        //prtl(p.root_node.children.at(1).children.at(0));
+        //prtl(p.root_node.children.at(1).children.at(1));
+
+        std::cout << "d = 3 ------------------------\n";
+        prtl(p.root_node.children.at(0).children.at(0).children.at(0));
+        prtl(p.root_node.children.at(0).children.at(0).children.at(1));
+        /*
+        std::cout << "d = 0 ------------------------\n";
+        std::cout << "s0:" << p.root_node.get_state() << std::endl;
+        std::cout << std::endl;
+
+        std::cout << "d = 1 ------------------------\n";
+        for(auto &ch: p.root_node.children) {
+            prtl(ch);
+        }
+        std::cout << std::endl;
+
+        std::cout << "d = 2 ------------------------\n";
+        for(auto &ch: p.root_node.children) {
+            for(auto &chch: ch.children) {
+                prtl(chch);
+            }
+            std::cout << std::endl;
+        }
+        */
+    }
+
+    //// end test
+
+    /**
      * @brief Take an action
      *
      * Take an action based on the current state s and set the action attribute. This is the
@@ -406,7 +473,7 @@ struct agent {
      */
     void take_action() {
         if(p.reuse) {
-            a = experimental_uct(s);
+            a = ol_uct(s);
         } else {
             a = vanilla_uct(s);
         }

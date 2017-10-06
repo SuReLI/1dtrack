@@ -91,6 +91,9 @@ public :
     /** @brief Get the state of the node (root node) */
     double get_state() const {assert(root); return state;}
 
+    /** @brief Get the number of sampled states (non-root node) */
+    unsigned get_nb_sampled_states() const {assert(!root); return states.size();}
+
     /** @brief Get a copy of the states vector of the node (non-root node) */
     std::vector<double> get_states() const {assert(!root); return states;}
 
