@@ -66,7 +66,7 @@ void simulate_episode(
  * @param {const bool &} bckp; if true, save some informations in the end of the simulation
  * @param {const std::string &} outpth; output saving path is backup
  */
-void run(
+void run_with(
     const parameters &sp,
     const unsigned &nbsim,
     const bool &prnt,
@@ -105,7 +105,7 @@ void bunch_of_run(unsigned nbsim) {
         sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
         std::string path = get_backup_path(sp);
         std::cout << path << std::endl;
-        run(sp,nbsim,false,true,path);
+        run_with(sp,nbsim,false,true,path);
     }
 }
 
@@ -117,5 +117,5 @@ int main() {
     sp.REUSE = true;
     sp.FAILURE_PROBABILITY = .2;
     sp.UCT_CST = 10.;
-    run(sp,1e3,true,true,"data/test_false.csv");
+    run_with(sp,1e3,true,true,"data/test_false.csv");
 }
