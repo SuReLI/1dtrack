@@ -223,24 +223,16 @@ struct agent {
      * @return Return a pointer to the created leaf node or to the current node if terminal
      */
     node * tree_policy(node &v) {
-        if(is_node_terminal(v)) {
+        if(is_node_terminal(v)) { // terminal
             sample_new_state(&v);
             return &v;
         } else if(!v.is_fully_expanded()) { // expand node
             return expand(v);
-        } else { // apply tree policy on 'best UCB child'
+        } else { // apply UCT tree policy
             node * v_p = uct_child(v);
             sample_new_state(v_p);
             return tree_policy(*v_p);
         }
-//        // Previous method without terminal case:
-//        if(!v.is_fully_expanded()) { // expand node
-//            return expand(v);
-//        } else { // apply tree policy on 'best UCB child'
-//            node * v_p = uct_child(v);
-//            sample_new_state(v_p);
-//            return tree_policy(*v_p);
-//        }
     }
 
     /**
@@ -326,7 +318,7 @@ struct agent {
      * This is the policy decision after the tree construction (recommended action). It gets
      * the greedy action wrt the values of the subsequent nodes.
      * @param {const node &} v; root node of the tree
-     * @return Return the action with the best score (leading to the child with the higher
+     * @return Return the action with the highest score (leading to the child with the higher
      * value).
      */
     int get_recommended_action(const node &v) {
