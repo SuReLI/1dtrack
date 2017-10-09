@@ -112,7 +112,7 @@ public :
     /** @brief Get one action of the node given its indice in the actions vector */
     int get_action_at(const unsigned &indice) const {return actions.at(indice);}
 
-    /** @brief Get the next expansion actions among the available actions */
+    /** @brief Get the next expansion action among the available actions */
     int get_next_expansion_action() const {return actions.at(children.size());}
 
     /** @brief Get the number of actions (arms of the bandit) */
