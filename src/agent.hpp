@@ -379,19 +379,9 @@ struct agent {
      */
     int oluct(const double &s) {
         if(plain_keeping_criterion(s)) { // keep the subtree and use it
-            std::cout << "Move to child nb " << argmax_score(p.root_node); //TRM
-            std::cout << " v=" << p.root_node.get_child_at(argmax_score(p.root_node))->get_value();
             p.root_node.move_to_child(argmax_score(p.root_node),s);
-            std::cout << " print new children:\n"; //TRM
-            for(auto &ch : p.root_node.children) { //TRM
-                print_node_bis(ch);
-            }
         } else { // build or rebuild the subtree
             build_uct_tree(s);
-            std::cout << "### Build plan: "; //TRM
-            print_best_plan(p.root_node); //TRM
-            std::cout << std::endl; //TRM
-            print_three_layers(p.root_node); //TRM
         }
         return get_recommended_action(p.root_node);
     }
