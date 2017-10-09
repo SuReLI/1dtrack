@@ -309,7 +309,7 @@ struct agent {
      * @brief Argmax of the score
      *
      * Get the indice of the child achieving the best score.
-     * @param {const node &} v; root node of the tree
+     * @param {const node &} v; node of the tree
      * @return Return the indice of the child achieving the best score.
      */
     unsigned argmax_score(const node &v) {
@@ -329,7 +329,7 @@ struct agent {
      * @return Return the action with the best score (leading to the child with the higher
      * value).
      */
-    int get_recommended_action(node &v) {
+    int get_recommended_action(const node &v) {
         //return v.get_child_at(argmax_score(v))->get_incoming_action();
         return v.get_action_at(argmax_score(v));
     }
