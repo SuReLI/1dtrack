@@ -106,6 +106,9 @@ public :
     /** @brief Get the visits count of the node (non-root node) */
     unsigned get_visits_count() const {assert(!root); return visits_count;}
 
+    /** @brief Get a copy of the actions vector */
+    std::vector<int> get_actions() const {return actions;}
+
     /** @brief Get one action of the node given its indice in the actions vector */
     int get_action_at(const unsigned &indice) const {return actions.at(indice);}
 
@@ -197,13 +200,14 @@ public :
     /**
      * @brief Move to child
      *
-     * The current root node takes the children of one of its children and update its
-     * state.
+     * The current root node takes the children and action vector of one of its children and
+     * updates its state.
      * @param {unsigned} indice; indice of the moved child
      * @param {double} new_state; new labelling state
      */
     void move_to_child(unsigned indice, double new_state) {
         assert(is_root());
+        actions = children[indice].get_actions();
         auto tmp = std::move(children[indice].children);
         // Temporary variable to prevent from overwriting
         for(auto &elt : tmp) {

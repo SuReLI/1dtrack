@@ -72,6 +72,7 @@ void print_node_bis(node &v) {
 }
 
 void print_three_layers(node &root_node) {
+    std::cout << "TREE ==================================================================\n";
     std::cout << "d = 0 ------------------------\n";
     std::cout << "s0:" << root_node.get_state();
     std::cout << " a:" << root_node.get_action_at(0);
@@ -99,7 +100,7 @@ void print_three_layers(node &root_node) {
             }
         }
     }
-    std::cout << std::endl;
+    std::cout << "END ===================================================================\n";
 }
 
 /**

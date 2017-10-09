@@ -79,7 +79,7 @@ void run(
         initialize_backup(get_saved_values_names(),outpth,sep);
     }
     for(unsigned i=0; i<nbsim; ++i) {
-        //std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
+        std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
         track tr(sp.TRACK_LEN, sp.STDDEV, sp.FAILURE_PROBABILITY);
         policy_parameters p(sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.REUSE, sp.ACTION_SPACE, sp.INIT_S);
         model m(sp.MODEL_TRACK_LEN, sp.MODEL_STDDEV, sp.MODEL_FAILURE_PROBABILITY);
@@ -114,8 +114,8 @@ int main() {
 
     //bunch_of_run(10);
     parameters sp;
-    sp.REUSE = false;
-    sp.FAILURE_PROBABILITY = .3;
+    sp.REUSE = true;
+    sp.FAILURE_PROBABILITY = .2;
     sp.UCT_CST = 10.;
-    run(sp,10000,true,true,"data/test_false.csv");
+    run(sp,1e3,true,true,"data/test_false.csv");
 }

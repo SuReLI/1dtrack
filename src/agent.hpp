@@ -306,17 +306,16 @@ struct agent {
     }
 
     /**
-     * @brief Argmax of the score score
+     * @brief Argmax of the score
      *
      * Get the indice of the child achieving the best score.
      * @param {const node &} v; root node of the tree
      * @return Return the indice of the child achieving the best score.
      */
-    unsigned argmax_score(node &v) {
-        //assert(v.is_root());
+    unsigned argmax_score(const node &v) {
         std::vector<double> values;
-        for(auto &elt: v.children) {
-            values.push_back(elt.get_value());
+        for(auto &ch: v.children) {
+            values.push_back(ch.get_value());
         }
         return argmax(values);
     }
@@ -331,8 +330,8 @@ struct agent {
      * value).
      */
     int get_recommended_action(node &v) {
-        return v.get_child_at(argmax_score(v))->get_incoming_action();
-        //return v.get_action_at(argmax_score(v));
+        //return v.get_child_at(argmax_score(v))->get_incoming_action();
+        return v.get_action_at(argmax_score(v));
     }
 
     /**
