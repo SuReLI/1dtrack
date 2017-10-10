@@ -136,15 +136,4 @@ std::string get_backup_path(const parameters &sp) {
     return path;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 #endif // SAVE_HPP_

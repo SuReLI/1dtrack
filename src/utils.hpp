@@ -30,7 +30,8 @@ void printv(std::vector<T> v) {
  * @brief Equality comparison
  *
  * Template method.
- * @return Return true if a == b up to a certain precision
+ * @return Return true if a < b up to a certain precision defined with COMPARISON_THRESHOLD
+ * variable.
  */
 template <class T1, class T2>
 constexpr bool is_equal_to(T1 a, T2 b) {
@@ -41,7 +42,8 @@ constexpr bool is_equal_to(T1 a, T2 b) {
  * @brief Strict inferiority comparison
  *
  * Template method.
- * @return Return true if a < b up to a certain precision
+ * @return Return true if a < b up to a certain precision defined with COMPARISON_THRESHOLD
+ * variable.
  */
 template <class T1, class T2>
 constexpr bool is_less_than(T1 a, T2 b) {
@@ -52,7 +54,8 @@ constexpr bool is_less_than(T1 a, T2 b) {
  * @brief Strict superiority comparison
  *
  * Template method.
- * @return Return true if a > b up to a certain precision
+ * @return Return true if a < b up to a certain precision defined with COMPARISON_THRESHOLD
+ * variable.
  */
 template <class T1, class T2>
 constexpr bool is_greater_than(T1 a, T2 b) {
@@ -70,7 +73,8 @@ double sign(T x) {
     return (is_less_than(x,0.)) ? -1. : 1.;
 }
 
-/** @brief Shuffle
+/**
+ * @brief Shuffle
  *
  * Shuffle the content of the vector randomly. Template method.
  */
