@@ -81,7 +81,7 @@ void run_with(
     for(unsigned i=0; i<nbsim; ++i) {
         std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
         track tr(sp.TRACK_LEN, sp.STDDEV, sp.FAILURE_PROBABILITY);
-        policy_parameters p(sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.REUSE, sp.ACTION_SPACE, sp.INIT_S);
+        policy_parameters p(sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.EPSILON, sp.REUSE, sp.ACTION_SPACE, sp.INIT_S);
         model m(sp.MODEL_TRACK_LEN, sp.MODEL_STDDEV, sp.MODEL_FAILURE_PROBABILITY);
         agent ag(sp.INIT_S,p,m);
 
@@ -115,7 +115,9 @@ int main() {
     //bunch_of_run(10);
     parameters sp;
     sp.REUSE = true;
-    sp.FAILURE_PROBABILITY = .2;
+    sp.FAILURE_PROBABILITY = 0.;
+    sp.MODEL_FAILURE_PROBABILITY = 0.;
+    sp.EPSILON = 0.;
     sp.UCT_CST = 10.;
-    run_with(sp,1e3,true,true,"data/test_false.csv");
+    run_with(sp,1e2,true,true,"data/test_false.csv");
 }
