@@ -149,7 +149,7 @@ inline unsigned argmin(const std::vector<T> &v) {
  * Generate a uniformly distributed integer
  * @return Return the sample
  */
-int uniform_i(int int_min, int int_max) {
+int uniform_integer(int int_min, int int_max) {
     std::random_device rd;
     std::default_random_engine generator(rd());
     std::uniform_int_distribution<int> distribution(int_min,int_max);
@@ -162,7 +162,7 @@ int uniform_i(int int_min, int int_max) {
  * Generate a uniformly distributed double
  * @return Return the sample
  */
-double uniform_d(double double_min, double double_max) {
+double uniform_double(double double_min, double double_max) {
     std::random_device rd;
     std::default_random_engine generator(rd());
     std::uniform_real_distribution<double> distribution(double_min,double_max);
@@ -175,7 +175,7 @@ double uniform_d(double double_min, double double_max) {
  * Generate a normally distributed double
  * @return Return the sample
  */
-double normal_d(double mean, double stddev) {
+double normal_double(double mean, double stddev) {
     std::random_device rd;
     std::default_random_engine generator(rd());
     std::normal_distribution<double> distribution(mean,stddev);

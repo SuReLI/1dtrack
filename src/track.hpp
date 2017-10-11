@@ -44,9 +44,9 @@ struct track {
      * @return The resulting state
      */
     double transition(const double &s, const int &a) {
-        double noise = normal_d(0.,stddev);
+        double noise = normal_double(0.,stddev);
         double action_effect = (double) a;
-        if(is_less_than(uniform_d(0.,1.),failure_probability)) {
+        if(is_less_than(uniform_double(0.,1.),failure_probability)) {
             action_effect *= (-1.);
         }
         ++time;

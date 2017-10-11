@@ -80,9 +80,9 @@ struct model {
      */
     double transition_model(const double &s, const int &a) {
         nb_calls++;
-        double noise = normal_d(0.,model_stddev);
+        double noise = normal_double(0.,model_stddev);
         double action_effect = (double) a;
-        if(is_less_than(uniform_d(0.,1.),model_failure_probability)) {
+        if(is_less_than(uniform_double(0.,1.),model_failure_probability)) {
             action_effect *= (-1.);
         }
         return s + action_effect + noise;
@@ -235,6 +235,10 @@ struct agent {
         }
     }
 
+    int epsilon_optimal_policy(double s) {
+        return 1;
+    }
+
     /**
      * @brief Default policy
      *
@@ -252,7 +256,8 @@ struct agent {
         double total_return = 0.;
         double s = ptr->get_last_sampled_state();
         //int a = rand_element(p.action_space);
-        int a = ((int)sign(s));
+        //int a = ((int)sign(s));
+        int a = epsilon_optimal_policy(s);
         for(unsigned t=0; t<p.horizon; ++t) {
             double s_p = m.transition_model(s,a);
             double r = m.reward_model(s,a,s_p);
@@ -261,22 +266,11 @@ struct agent {
                 break;
             }
             s = s_p;
+            a = epsilon_optimal_policy(s);
             //a = rand_element(p.action_space);
-            a = ((int)sign(s));
+            //a = ((int)sign(s));
         }
         return total_return;
-//        // Previous method without terminal case:
-//        double total_return = 0.;
-//        double s = ptr->get_last_sampled_state();
-//        int a = rand_element(p.action_space);
-//        for(unsigned t=0; t<p.horizon; ++t) {
-//            double s_p = m.transition_model(s,a);
-//            double r = m.reward_model(s,a,s_p);
-//            total_return += pow(p.discount_factor,(double)t) * r;
-//            s = s_p;
-//            a = rand_element(p.action_space);
-//        }
-//        return total_return;
     }
 
     /**
