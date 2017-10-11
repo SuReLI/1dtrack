@@ -120,7 +120,7 @@ inline T rand_element(const std::vector<T> &v) {
  */
 template <class T>
 inline unsigned argmax(const std::vector<T> &v) {
-    double maxval = *std::max_element(v.begin(),v.end());
+    auto maxval = *std::max_element(v.begin(),v.end());
     std::vector<unsigned> up_ind;
     for (unsigned j=0; j<v.size(); ++j) {
         if(!is_less_than(v[j],maxval)) {up_ind.push_back(j);}
@@ -135,7 +135,7 @@ inline unsigned argmax(const std::vector<T> &v) {
  */
 template <class T>
 inline unsigned argmin(const std::vector<T> &v) {
-    double minval = *std::min_element(v.begin(),v.end());
+    auto minval = *std::min_element(v.begin(),v.end());
     std::vector<unsigned> lo_ind;
     for (unsigned j=0; j<v.size(); ++j) {
         if(!is_greater_than(v[j],minval)) {lo_ind.push_back(j);}

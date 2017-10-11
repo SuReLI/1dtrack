@@ -17,6 +17,7 @@ struct parameters {
     unsigned HORIZON; ///< Algorithm horizon for the default policy.
     double UCT_CST; ///< UCT constant factor.
     double DISCOUNT_FACTOR; ///< Discount factor for the MDP.
+    double EPSILON; ///< Epsilon for the epsilon-optimal default policy.
     double MODEL_TRACK_LEN; ///< Model track length (half of the length of the track).
     double MODEL_STDDEV; ///< Model noise standard deviation.
     double MODEL_FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function).
@@ -37,6 +38,7 @@ struct parameters {
         unsigned horizon = 50,
         double uct_cst = .7,
         double discount_factor = .9,
+        double epsilon = 1.,
         double model_track_len = 2.,
         double model_stddev = 0.,
         double model_failure_probability = .1,
@@ -50,6 +52,7 @@ struct parameters {
         HORIZON(horizon),
         UCT_CST(uct_cst),
         DISCOUNT_FACTOR(discount_factor),
+        EPSILON(epsilon),
         MODEL_TRACK_LEN(model_track_len),
         MODEL_STDDEV(model_stddev),
         MODEL_FAILURE_PROBABILITY(model_failure_probability),
