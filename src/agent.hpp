@@ -10,14 +10,15 @@
  * This class is a parameters container.
  */
 struct policy_parameters {
-    unsigned budget; ///< Algorithm budget (number of expanded nodes)
-    unsigned horizon; ///< Algorithm horizon for the default policy
-    unsigned trials_count; ///< Trial count for the expansion in {0,budget-1}
-    double uct_cst; ///< UCT constant factor
-    double discount_factor; ///< Discount factor for the MDP
-    bool reuse; ///< Set to true if open loop
-    std::vector<int> action_space; ///< Action space used by the policy
-    node root_node; ///< Root node of the tree
+    unsigned budget; ///< Algorithm budget (number of expanded nodes).
+    unsigned horizon; ///< Algorithm horizon for the default policy.
+    unsigned trials_count; ///< Trial count for the expansion in {0,budget-1}.
+    double uct_cst; ///< UCT constant factor.
+    double discount_factor; ///< Discount factor for the MDP.
+    double epsilon; ///< Epsilon for the epsilon-optimal default policy.
+    bool reuse; ///< Set to true if open loop.
+    std::vector<int> action_space; ///< Action space used by the policy.
+    node root_node; ///< Root node of the tree.
 
     /**
      * @brief Constructor
@@ -31,6 +32,7 @@ struct policy_parameters {
         unsigned _horizon,
         double _uct_cst,
         double _discount_factor,
+        double _epsilon,
         bool _reuse,
         std::vector<int> _action_space,
         double initial_state) :
@@ -38,6 +40,7 @@ struct policy_parameters {
         horizon(_horizon),
         uct_cst(_uct_cst),
         discount_factor(_discount_factor),
+        epsilon(_epsilon),
         reuse(_reuse),
         action_space(_action_space),
         root_node(initial_state,action_space)
@@ -235,8 +238,27 @@ struct agent {
         }
     }
 
+    /**
+     * @brief Epsilon optimal policy
+     *
+     * Compute the optimal action at given state with probability (1-p.epsilon). Otherwise,
+     * acte randomly without excluding the optimal action.
+     * @param {double} s; input state
+     * @return Return the epsilon-optimal action.
+     */
     int epsilon_optimal_policy(double s) {
-        return 1;
+        assert(!is_less_than(uniform_double(0.,1.),p.epsilon)); //TRM
+        if(is_less_than(uniform_double(0.,1.),p.epsilon)) { // random action
+            return rand_element(p.action_space);
+        } else { // optimal action
+            int sgn = ((int)sign(s));
+            if(!is_less_than(m.model_failure_probability,.5)) {
+                sgn *= -1;
+                std::cout << sgn << std::endl;
+            }
+            int mgn = (*std::max_element(p.action_space.begin(),p.action_space.end()));
+            return sgn * mgn;
+        }
     }
 
     /**
@@ -255,8 +277,6 @@ struct agent {
         }
         double total_return = 0.;
         double s = ptr->get_last_sampled_state();
-        //int a = rand_element(p.action_space);
-        //int a = ((int)sign(s));
         int a = epsilon_optimal_policy(s);
         for(unsigned t=0; t<p.horizon; ++t) {
             double s_p = m.transition_model(s,a);
@@ -267,8 +287,6 @@ struct agent {
             }
             s = s_p;
             a = epsilon_optimal_policy(s);
-            //a = rand_element(p.action_space);
-            //a = ((int)sign(s));
         }
         return total_return;
     }
@@ -403,11 +421,14 @@ struct agent {
      * memory.
      */
     void take_action() {
+        a = epsilon_optimal_policy(s);
+        /*
         if(p.reuse) {
             a = oluct(s);
         } else {
             a = vanilla_uct(s);
         }
+        */
     }
 };
 
