@@ -4,5 +4,6 @@ todo.txt
 *.sh
 
 outdated/
-data/*
+data/*.csv
+data/backup/*
 

@@ -130,6 +130,7 @@ std::string get_backup_path(const parameters &sp) {
     path += sep;
     append_double(path,sp.UCT_CST,sep);
     append_double(path,sp.DISCOUNT_FACTOR,sep);
+    append_double(path,sp.EPSILON,sep);
     append_double(path,sp.MODEL_TRACK_LEN,sep);
     append_double(path,sp.MODEL_STDDEV,sep);
     append_double(path,sp.MODEL_FAILURE_PROBABILITY,".csv");
