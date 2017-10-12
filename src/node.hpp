@@ -82,8 +82,8 @@ public :
     /** @brief Get a pointer to the last created child */
     node * get_last_child() {return &children.back();}
 
-    /** @brief Get a pointer to a certain child given its indice */
-    node * get_child_at(const unsigned &indice) {return &children.at(indice);}
+    /** @brief Get a pointer to a child given its indice */
+    node * get_child_at(unsigned indice) {return &children.at(indice);}
 
     /** @brief Get the value of the node */
     double get_value() const {return value;}
@@ -110,7 +110,7 @@ public :
     std::vector<int> get_actions() const {return actions;}
 
     /** @brief Get one action of the node given its indice in the actions vector */
-    int get_action_at(const unsigned &indice) const {return actions.at(indice);}
+    int get_action_at(unsigned indice) const {return actions.at(indice);}
 
     /** @brief Get the next expansion action among the available actions */
     int get_next_expansion_action() const {return actions.at(children.size());}
@@ -138,10 +138,10 @@ public :
     /**
      * @brief Set state
      *
-     * Copy the given state to the nodes state.
-     * @note Node should be root
+     * Copy the given state to the nodes state. Node should be root.
+     * @param {double} s; copied state
      */
-    void set_state(const double &s) {
+    void set_state(double s) {
         assert(root);
         state = s;
     }
@@ -150,8 +150,9 @@ public :
      * @brief Add to state
      *
      * Add a new sampled state to the states. Node should not be root.
+     * @param {double} s; added state
      */
-    void add_to_states(const double &s) {
+    void add_to_states(double s) {
         assert(!root);
         states.push_back(s);
     }
@@ -159,7 +160,7 @@ public :
     /**
      * @brief Visit count increment
      *
-     * Increment the visits counter
+     * Increment the node's visits counter.
      */
     void increment_visits_count() {
         ++visits_count;
@@ -169,33 +170,12 @@ public :
      * @brief Add to value
      *
      * Add a value to the nodes value. Node should not be root.
-     * @param {const double &} r; value to be added
+     * @param {double} r; value to be added
      */
-    void add_to_value(const double &r) {
+    void add_to_value(double r) {
         assert(!root);
         value += r;
     }
-
-    /**
-     * @brief Set as root
-     *
-     * Set the nodes attributes as root nodes attributes. Set the irrelevant attributes to
-     * default values (e.g. 'parent' to nullptr or 'visits_count' to 0).
-     * @param {double} new_state; new labelling state
-     * @deprecated This method is no more used. The operation is included in 'move_to_child'
-     * method.
-     */
-    /*
-    void set_as_root(double new_state) {
-        root = true;
-        state = new_state;
-        states.clear();
-        value = 0.;
-        visits_count = 0;
-        parent = nullptr;
-        incoming_action = 0;
-    }
-    */
 
     /**
      * @brief Move to child
