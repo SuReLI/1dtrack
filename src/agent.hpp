@@ -253,7 +253,6 @@ struct agent {
             int sgn = ((int)sign(s));
             if(!is_less_than(m.model_failure_probability,.5)) {
                 sgn *= -1;
-                std::cout << sgn << std::endl;
             }
             int mgn = (*std::max_element(p.action_space.begin(),p.action_space.end()));
             return sgn * mgn;
@@ -320,6 +319,8 @@ struct agent {
         for(auto &ch: v.children) {
             values.push_back(ch.get_value());
         }
+        //std::cout << "argmax_score among "; //TRM
+        //printv(values); //TRM
         return argmax(values);
     }
 
@@ -333,23 +334,36 @@ struct agent {
      * value).
      */
     int get_recommended_action(const node &v) {
+        /*
+        std::cout << "START recommended action ------>" << std::endl; //TRM
+        std::cout << "nb child of v: " << v.get_nb_children() << std::endl;
+        int ac = v.get_action_at(argmax_score(v)); //TRM
+        std::cout << "END   recommended action <------" << std::endl; //TRM
+        return ac; //TRM
+        */
         return v.get_action_at(argmax_score(v));
     }
 
     /**
-     * @brief Plain keeping criterion
+     * @brief Plain decision criterion
      *
      * The decision criterion of keeping the tree or not. 'Keeping' the tree means moving the
-     * root to its 'best' child (edit 22/09/2017).
-     * @param {const double &} s; the current state of the agent
+     * root to its 'best' child (edit 22/09/2017). The method also set the given indice
+     * argument to the value of the indice of the potential future root node.
+     * @param {double} s; the current state of the agent
+     * @param {unsigned &} ind; indice of the potential future root node, set by this method
      * @return Return 'true' if the sub-tree is kept.
      */
-    bool plain_keeping_criterion(const double &s) {
+    bool plain_decision_criterion(double s, unsigned &ind) {
         (void) s;
         if(!p.root_node.is_fully_expanded()) {
             return false;
+        } else {
+            ind = argmax_score(p.root_node);
         }
-        node * ptr = p.root_node.get_child_at(argmax_score(p.root_node));
+        node * ptr = p.root_node.get_child_at(ind);
+        //std::cout << "new root nb child: " << ptr->get_nb_children() << std::endl; //TRM
+        //std::cout << "new root nb ac   : " << ptr->get_nb_of_actions() << std::endl; //TRM
         return ptr->is_fully_expanded(); // naive implementation: keep the tree if it is built
     }
 
@@ -358,9 +372,9 @@ struct agent {
      *
      * Build a tree starting from the root attribute of the parameters using the
      * vanilla UCT algorithm. This is a 'void' method, the tree is kept in memory.
-     * @param {const double &} s; current state of the agent
+     * @param {double} s; current state of the agent
      */
-    void build_uct_tree(const double &s) {
+    void build_uct_tree(double s) {
         p.root_node.clear_node();
         p.root_node.set_state(s);
         p.trials_count = 0;
@@ -376,24 +390,30 @@ struct agent {
      * @brief Open Loop UCT
      *
      * Open Loop UCT policy which has the possibility to reuse a sub-tree.
-     * @param {const double &} s; current state of the agent
+     * @param {double} s; current state of the agent
      * @return Return the recommended action.
      */
-    int oluct(const double &s) {
-        if(plain_keeping_criterion(s)) { // keep the subtree and use it
-            p.root_node.move_to_child(argmax_score(p.root_node),s);
+    int oluct(double s) {
+        unsigned new_root_indice = 0; // defalut
+        if(plain_decision_criterion(s,new_root_indice)) { // keep the subtree and use it
+            //std::cout << "case keep" << std::endl; //TRM
+            //std::cout << "root nbch = " << p.root_node.get_nb_children() << std::endl; //TRM
+            p.root_node.move_to_child(new_root_indice,s);
+            //std::cout << "root nbch = " << p.root_node.get_nb_children() << std::endl; //TRM
         } else { // build or rebuild the subtree
+            //std::cout << "case build" << std::endl; //TRM
             build_uct_tree(s);
         }
+        //std::cout << "root nbch = " << p.root_node.get_nb_children() << std::endl; //TRM
         return get_recommended_action(p.root_node);
     }
 
     /**
      * @brief Vanilla UCT
-     * @param {const double &} s; current state of the agent
+     * @param {double} s; current state of the agent
      * @return Return the recommended action.
      */
-    int vanilla_uct(const double &s) {
+    int vanilla_uct(double s) {
         build_uct_tree(s);
         return get_recommended_action(p.root_node);
     }
@@ -420,6 +440,7 @@ struct agent {
      */
     void take_action() {
         if(p.reuse) {
+            //std::cout << std::endl; //TRM
             a = oluct(s);
         } else {
             a = vanilla_uct(s);

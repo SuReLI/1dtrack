@@ -110,6 +110,7 @@ void bunch_of_run(unsigned nbsim) {
     }
     */
     parameters sp;
+    sp.REUSE = true;
     sp.FAILURE_PROBABILITY = .1;
     sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
     sp.EPSILON = 1.;
