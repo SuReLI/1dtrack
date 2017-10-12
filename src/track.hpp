@@ -39,11 +39,11 @@ struct track {
      * @brief Transition method
      *
      * Simulate a transition w.r.t. the environments parameters.
-     * @param {const double &} s; state
-     * @param {const in &} a; action
+     * @param {double} s; state
+     * @param {int} a; action
      * @return The resulting state
      */
-    double transition(const double &s, const int &a) {
+    double transition(double s, int a) {
         double noise = normal_double(0.,stddev);
         double action_effect = (double) a;
         if(is_less_than(uniform_double(0.,1.),failure_probability)) {
@@ -58,11 +58,11 @@ struct track {
      *
      * Sample a reward w.r.t. the environments parameters. So far, only the current state is
      * used to get teh reward.
-     * @param {const double &} s; state
-     * @param {const int &} a; action
-     * @param {const double &} s_p; next state
+     * @param {double} s; state
+     * @param {int} a; action
+     * @param {double} s_p; next state
      */
-    double reward(const double &s, const int &a, const double &s_p) {
+    double reward(double s, int a, double s_p) {
         (void) a; (void) s_p; //default
         return is_less_than(std::abs(s),track_length) ? 0. : 1.;
     }

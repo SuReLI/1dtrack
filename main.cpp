@@ -25,16 +25,16 @@
  * method (edit 22/09/2017).
  * @param {track &} tr; environment
  * @param {agent &} ag; agent
- * @param {const bool &} prnt; if true, print some informations during the simulation
- * @param {const bool &} bckp; if true, save some informations in the end of the simulation
+ * @param {bool} prnt; if true, print some informations during the simulation
+ * @param {bool} bckp; if true, save some informations in the end of the simulation
  * @param {std::vector<std::vector<double>>} bckp_vector; backup vector into which each
  * simulation records its backed up values
  */
 void simulate_episode(
     track &tr,
     agent &ag,
-    const bool &prnt,
-    const bool &bckp,
+    bool prnt,
+    bool bckp,
     std::vector<std::vector<double>> &bckp_vector)
 {
 	std::clock_t c_start = std::clock();
@@ -61,16 +61,16 @@ void simulate_episode(
  *
  * Bunch of run with the same parameters.
  * @param {const parameters &} sp; parameters used for all the simulations
- * @param {const unsigned &} nbsim; number of simulations
- * @param {const bool &} prnt; if true, print some informations during the simulation
- * @param {const bool &} bckp; if true, save some informations in the end of the simulation
+ * @param {unsigned} nbsim; number of simulations
+ * @param {bool} prnt; if true, print some informations during the simulation
+ * @param {bool} bckp; if true, save some informations in the end of the simulation
  * @param {const std::string &} outpth; output saving path is backup
  */
 void run_with(
     const parameters &sp,
-    const unsigned &nbsim,
-    const bool &prnt,
-    const bool &bckp,
+    unsigned nbsim,
+    bool prnt,
+    bool bckp,
     const std::string &outpth)
 {
     std::vector<std::vector<double>> bckp_vector;

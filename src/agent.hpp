@@ -77,11 +77,11 @@ struct model {
      * @brief Transition model
      *
      * Simulate a state transition wrt the models parameters.
-     * @param {const double &} s; state
-     * @param {const int &} a; action
+     * @param {double} s; state
+     * @param {int} a; action
      * @return Return the resulting state
      */
-    double transition_model(const double &s, const int &a) {
+    double transition_model(double s, int a) {
         nb_calls++;
         double noise = normal_double(0.,model_stddev);
         double action_effect = (double) a;
@@ -95,12 +95,12 @@ struct model {
      * @brief Reward model
      *
      * Reward model of the transition (s,a,s_p)
-     * @param {const double &} s; state
-     * @param {const int &} a; action
-     * @param {const double &} s_p; next state
+     * @param {double} s; state
+     * @param {int} a; action
+     * @param {double} s_p; next state
      * @return Return the resulting reward
      */
-    double reward_model(const double &s, const int &a, const double &s_p) {
+    double reward_model(double s, int a, double s_p) {
         (void) a; (void) s_p; //default
         return is_less_than(std::abs(s),model_track_length) ? 0. : 1.;
     }
@@ -109,10 +109,10 @@ struct model {
      * @brief Terminal state test
      *
      * Test if the state is terminal.
-     * @param {const double &} s; tested state
+     * @param {double} s; tested state
      * @return Return 'true' if terminal
      */
-    bool is_terminal(const double &s) {
+    bool is_terminal(double s) {
         return !is_less_than(std::abs(s),model_track_length);
     }
 };
