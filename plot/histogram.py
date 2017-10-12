@@ -13,15 +13,13 @@ import sys
 
 plt.close('all')
 BLUE = '#333399';
-ORANGE = '#ff6600'; #JC
+ORANGE = '#ff6600';
 GREEN = '#00cc66';
 
-repo = "data/backup/"
-fp = "06" # Failure probability
-#path1 = repo+"0_25_0_"+fp+"_20_50_07_09.csv"
-#path2 = repo+"1_25_0_"+fp+"_20_50_07_09.csv"
-path1 = "data/0_2_00_03_20_50_10_1_00_2_00_03.csv"
-path2 = "data/1_2_00_03_20_50_10_1_00_2_00_03.csv"
+#path = "data/backup/short_track/"
+path = "data/"
+path1 = path + "0_2_00_02_20_10_2_09_00_2_00_02.csv"
+path2 = path + "1_2_00_02_20_10_2_09_00_2_00_02.csv"
 
 d1 = pd.read_csv(path1,sep = ',')
 scr1 = d1["score"]

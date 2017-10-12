@@ -79,7 +79,7 @@ void run_with(
         initialize_backup(get_saved_values_names(),outpth,sep);
     }
     for(unsigned i=0; i<nbsim; ++i) {
-        std::cout << "\nSimulation " << i+1 << "/" << nbsim << std::endl;
+        //std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
         track tr(sp.TRACK_LEN, sp.STDDEV, sp.FAILURE_PROBABILITY);
         policy_parameters p(sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.EPSILON, sp.REUSE, sp.ACTION_SPACE, sp.INIT_S);
         model m(sp.MODEL_TRACK_LEN, sp.MODEL_STDDEV, sp.MODEL_FAILURE_PROBABILITY);
@@ -99,26 +99,18 @@ void run_with(
  * @param {const unsigned &} nbsim; number of simulations
  */
 void bunch_of_run(unsigned nbsim) {
+    parameters sp("main.cfg");
     /*
-    for(unsigned i=0; i<10; ++i) {
-        parameters sp;
-        sp.FAILURE_PROBABILITY = (double) i * .1;
-        sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
-        std::string path = get_backup_path(sp);
-        std::cout << path << std::endl;
-        run_with(sp,nbsim,false,true,path);
-    }
-    */
-    parameters sp;
     sp.REUSE = false;
-    sp.FAILURE_PROBABILITY = 0.;
+    sp.FAILURE_PROBABILITY = .4;
     sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
     sp.DISCOUNT_FACTOR = .9;
     sp.EPSILON = 0.;
     sp.UCT_CST = 2.;
+    */
     std::string path = get_backup_path(sp);
     std::cout << path << std::endl;
-    run_with(sp,nbsim,true,true,path);
+    run_with(sp,nbsim,false,true,path);
 }
 
 int main() {

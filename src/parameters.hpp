@@ -1,30 +1,33 @@
 #ifndef PARAMETERS_HPP_
 #define PARAMETERS_HPP_
 
+//#include <string>
+#include <libconfig.h++>
+
 /**
  * @brief Simulation parameters
  *
  * Parameters container for a simulation
  */
 struct parameters {
-    double TRACK_LEN; ///< Track length (half of the length of the track).
-    double STDDEV; ///< Environment noise standard deviation.
+    double TRACK_LEN; ///< Track length (half of the length of the track)
+    double STDDEV; ///< Environment noise standard deviation
     double FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied (randomness of the transition function)
-    double INIT_S; ///< Initial state.
+    double INIT_S; ///< Initial state
 
-    std::vector<int> ACTION_SPACE; ///< Action space used by every nodes (bandit arms).
-    unsigned BUDGET; ///< Algorithm budget (number of expanded nodes).
-    unsigned HORIZON; ///< Algorithm horizon for the default policy.
-    double UCT_CST; ///< UCT constant factor.
-    double DISCOUNT_FACTOR; ///< Discount factor for the MDP.
-    double EPSILON; ///< Epsilon for the epsilon-optimal default policy.
-    double MODEL_TRACK_LEN; ///< Model track length (half of the length of the track).
-    double MODEL_STDDEV; ///< Model noise standard deviation.
-    double MODEL_FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function).
-    bool REUSE; ///< Set to true if the policy is able to reuse the tree.
+    std::vector<int> ACTION_SPACE; ///< Action space used by every nodes (bandit arms)
+    unsigned BUDGET; ///< Algorithm budget (number of expanded nodes)
+    unsigned HORIZON; ///< Algorithm horizon for the default policy
+    double UCT_CST; ///< UCT constant factor
+    double DISCOUNT_FACTOR; ///< Discount factor for the MDP
+    double EPSILON; ///< Epsilon for the epsilon-optimal default policy
+    double MODEL_TRACK_LEN; ///< Model track length (half of the length of the track)
+    double MODEL_STDDEV; ///< Model noise standard deviation
+    double MODEL_FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function)
+    bool REUSE; ///< Set to true if the policy is able to reuse the tree
 
     /**
-     * @brief Simulation parameters default constructor
+     * @brief Simulation parameters 'default' constructor
      *
      * The parameters are set to the values defined in this constructor.
      */
@@ -58,6 +61,49 @@ struct parameters {
         MODEL_FAILURE_PROBABILITY(model_failure_probability),
         REUSE(reuse)
     {}
+
+    /**
+     * @brief Simulation parameters 'from-configuration-file' constructor
+     *
+     * The parameters are taken into the config file whose path is given as an argument.
+     * The used library for parsing is libconfig.
+     * @param {const char *} cfg_path; path of the configuration file
+     */
+    parameters(const char *cfg_path) {
+        libconfig::Config cfg;
+        cfg.readFile(cfg_path);
+        unsigned nbac= 0;
+        if(cfg.lookupValue("track_len",TRACK_LEN)
+        && cfg.lookupValue("stddev",STDDEV)
+        && cfg.lookupValue("failure_probability",FAILURE_PROBABILITY)
+        && cfg.lookupValue("init_s",INIT_S)
+        //&& cfg.lookupValue("...",ACTION_SPACE)
+        && cfg.lookupValue("nb_actions",nbac)
+        && cfg.lookupValue("budget",BUDGET)
+        && cfg.lookupValue("horizon",HORIZON)
+        && cfg.lookupValue("uct_cst",UCT_CST)
+        && cfg.lookupValue("discount_factor",DISCOUNT_FACTOR)
+        && cfg.lookupValue("epsilon",EPSILON)
+        && cfg.lookupValue("model_track_len",MODEL_TRACK_LEN)
+        && cfg.lookupValue("model_stddev",MODEL_STDDEV)
+        && cfg.lookupValue("model_failure_probability",MODEL_FAILURE_PROBABILITY)
+        && cfg.lookupValue("reuse",REUSE)) {
+            for(unsigned i=0; i<nbac; ++i) { // actions parsing
+                std::string name = "a";
+                name += std::to_string(i);
+                int action = 0;
+                if(cfg.lookupValue(name,action)) {
+                    ACTION_SPACE.push_back(action);
+                    //std::cout << name << " " << action << std::endl;
+                } else { // Error in action names syntax
+                    std::cout << "Error in config file: actions names do not match.\n";
+                }
+            }
+        }
+        else { // Error in config file
+            std::cout << "Error in config file: please make sure that the syntaxes match.\n";
+        }
+    }
 };
 
 #endif // PARAMETERS_HPP_
