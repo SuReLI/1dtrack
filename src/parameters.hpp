@@ -37,7 +37,7 @@ struct parameters {
         unsigned budget = 20,
         unsigned horizon = 50,
         double uct_cst = .7,
-        double discount_factor = .9,
+        double discount_factor = 1.,
         double epsilon = 1.,
         double model_track_len = 2.,
         double model_stddev = 0.,

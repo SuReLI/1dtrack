@@ -247,7 +247,6 @@ struct agent {
      * @return Return the epsilon-optimal action.
      */
     int epsilon_optimal_policy(double s) {
-        assert(!is_less_than(uniform_double(0.,1.),p.epsilon)); //TRM
         if(is_less_than(uniform_double(0.,1.),p.epsilon)) { // random action
             return rand_element(p.action_space);
         } else { // optimal action
@@ -334,7 +333,6 @@ struct agent {
      * value).
      */
     int get_recommended_action(const node &v) {
-        //return v.get_child_at(argmax_score(v))->get_incoming_action();
         return v.get_action_at(argmax_score(v));
     }
 
@@ -421,14 +419,11 @@ struct agent {
      * memory.
      */
     void take_action() {
-        a = epsilon_optimal_policy(s);
-        /*
         if(p.reuse) {
             a = oluct(s);
         } else {
             a = vanilla_uct(s);
         }
-        */
     }
 };
 

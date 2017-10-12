@@ -95,10 +95,11 @@ void run_with(
 /**
  * @brief Bunch of run with different parameters
  *
- * Run a bunch of run with different parameters.
+ * Run a bunch of run with different parameters. The latter are set in this function.
  * @param {const unsigned &} nbsim; number of simulations
  */
 void bunch_of_run(unsigned nbsim) {
+    /*
     for(unsigned i=0; i<10; ++i) {
         parameters sp;
         sp.FAILURE_PROBABILITY = (double) i * .1;
@@ -107,17 +108,20 @@ void bunch_of_run(unsigned nbsim) {
         std::cout << path << std::endl;
         run_with(sp,nbsim,false,true,path);
     }
+    */
+    parameters sp;
+    sp.FAILURE_PROBABILITY = .1;
+    sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
+    sp.EPSILON = 1.;
+    sp.UCT_CST = 10.;
+    std::string path = get_backup_path(sp);
+    std::cout << path << std::endl;
+    run_with(sp,nbsim,false,true,path);
+
 }
 
 int main() {
     srand(time(NULL));
 
-    //bunch_of_run(10);
-    parameters sp;
-    sp.REUSE = true;
-    sp.FAILURE_PROBABILITY = 0.;
-    sp.MODEL_FAILURE_PROBABILITY = 0.;
-    sp.EPSILON = 0.;
-    sp.UCT_CST = 10.;
-    run_with(sp,1e2,true,true,"data/test_false.csv");
+    bunch_of_run(1000);
 }
