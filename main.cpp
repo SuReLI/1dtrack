@@ -95,19 +95,12 @@ void run_with(
 /**
  * @brief Bunch of run with different parameters
  *
- * Run a bunch of run with different parameters. The latter are set in this function.
+ * Run a bunch of run with different parameters. The latter are set in this function, you
+ * can modify it as you wish.
  * @param {const unsigned &} nbsim; number of simulations
  */
 void bunch_of_run(unsigned nbsim) {
     parameters sp("main.cfg");
-    /*
-    sp.REUSE = false;
-    sp.FAILURE_PROBABILITY = .4;
-    sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
-    sp.DISCOUNT_FACTOR = .9;
-    sp.EPSILON = 0.;
-    sp.UCT_CST = 2.;
-    */
     std::string path = get_backup_path(sp);
     std::cout << path << std::endl;
     run_with(sp,nbsim,false,true,path);
