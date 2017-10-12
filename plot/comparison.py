@@ -17,11 +17,11 @@ ORNG = '#ff6600';
 GREE = '#00cc66';
 
 take_log = True # Take the log of the data or not
-repo = "data/backup/" # Path to the saved data
+repo = "data/backup/short_track/" # Path to the saved data
 fp_range = [ # Different failure probabilities (wrt the files names)
     "00", "01", "02", "03",
-    "04", "05"]
-pl_range = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5] # Same with real values for plotting
+    "04"]
+pl_range = [0.0, 0.1, 0.2, 0.3, 0.4] # Same with real values for plotting
 
 # Initialisation
 loss1_means = [] # List of the means, to be completed
@@ -35,8 +35,8 @@ cput2_means = []
 cput2_stdev = []
 
 for fp in fp_range:
-    path1 = repo + "0_25_0_" + fp + "_20_50_07_09.csv"
-    path2 = repo + "1_25_0_" + fp + "_20_50_07_09.csv"
+	path1 = repo + "0_2_00_" + fp + "_20_10_2_09_00_2_00_" + fp + ".csv"
+	path2 = repo + "1_2_00_" + fp + "_20_10_2_09_00_2_00_" + fp + ".csv"
 
     d1 = pd.read_csv(path1,sep = ',')
     loss1 = d1["score"]

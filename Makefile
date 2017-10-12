@@ -15,6 +15,9 @@ compile : main.cpp
 run :
 	./${EXEC} ${NBSIM}
 
-plot_hist :
+hist :
 	python3 plot/histogram.py
+
+comparison :
+	python3 plot/comparison.py
 

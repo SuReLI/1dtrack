@@ -17,9 +17,9 @@ ORANGE = '#ff6600';
 GREEN = '#00cc66';
 
 #path = "data/backup/short_track/"
-path = "data/"
-path1 = path + "0_2_00_02_20_10_2_09_00_2_00_02.csv"
-path2 = path + "1_2_00_02_20_10_2_09_00_2_00_02.csv"
+path = "data/backup/long_track/"
+path1 = path + "0_25_00_03_100_40_2_09_00_25_00_03.csv" # Vanilla UCT
+path2 = path + "1_25_00_03_100_40_2_09_00_25_00_03.csv" # OLUCT
 
 d1 = pd.read_csv(path1,sep = ',')
 scr1 = d1["score"]
