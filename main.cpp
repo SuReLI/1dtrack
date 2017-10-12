@@ -45,7 +45,7 @@ void simulate_episode(
 	}
     std::clock_t c_end = std::clock();
     if(prnt) {print(tr,ag);}
-    if(bckp) { // warning refers to this section
+    if(bckp) { // warning in comments refers to this section
         double time_elapsed_ms = 1000. * (c_end-c_start) / CLOCKS_PER_SEC;
         std::vector<double> simulation_backup = { //
             (double) tr.time,
@@ -102,12 +102,34 @@ void run_with(
 void bunch_of_run(unsigned nbsim) {
     parameters sp("main.cfg");
     std::string path = get_backup_path(sp);
-    std::cout << path << std::endl;
+    std::cout << "Output file: " << path << std::endl;
     run_with(sp,nbsim,false,true,path);
 }
 
-int main() {
+/**
+ * @brief Main function
+ *
+ * Use first argument to set the number of simulations to perform.
+ * Example: ./exe 1000 will produce 1000 simulations performed with the parameters initialized
+ * by the user in the function.
+ * Default is 100 simulations, set if nothing is specified.
+ */
+int main(int argc, char* argv[]) {
     srand(time(NULL));
 
-    bunch_of_run(1000);
+    switch(argc) {
+    case 1: { //default
+        std::cout << "Run 100 simulations\n";
+        bunch_of_run(100);
+        break;
+    }
+    case 2: {
+        std::cout << "Run " << argv[1] << " simulations\n";
+        bunch_of_run(atoi(argv[1]));
+        break;
+    }
+    default: {
+        std::cout << "Error: number of input arguments unknown, see main function.";
+    }
+    }
 }
