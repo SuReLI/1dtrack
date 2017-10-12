@@ -1,7 +1,6 @@
 #ifndef PARAMETERS_HPP_
 #define PARAMETERS_HPP_
 
-//#include <string>
 #include <libconfig.h++>
 
 /**
@@ -14,7 +13,6 @@ struct parameters {
     double STDDEV; ///< Environment noise standard deviation
     double FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied (randomness of the transition function)
     double INIT_S; ///< Initial state
-
     std::vector<int> ACTION_SPACE; ///< Action space used by every nodes (bandit arms)
     unsigned BUDGET; ///< Algorithm budget (number of expanded nodes)
     unsigned HORIZON; ///< Algorithm horizon for the default policy
@@ -77,7 +75,6 @@ struct parameters {
         && cfg.lookupValue("stddev",STDDEV)
         && cfg.lookupValue("failure_probability",FAILURE_PROBABILITY)
         && cfg.lookupValue("init_s",INIT_S)
-        //&& cfg.lookupValue("...",ACTION_SPACE)
         && cfg.lookupValue("nb_actions",nbac)
         && cfg.lookupValue("budget",BUDGET)
         && cfg.lookupValue("horizon",HORIZON)
@@ -94,7 +91,6 @@ struct parameters {
                 int action = 0;
                 if(cfg.lookupValue(name,action)) {
                     ACTION_SPACE.push_back(action);
-                    //std::cout << name << " " << action << std::endl;
                 } else { // Error in action names syntax
                     std::cout << "Error in config file: actions names do not match.\n";
                 }
