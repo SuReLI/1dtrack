@@ -79,7 +79,7 @@ void run_with(
         initialize_backup(get_saved_values_names(),outpth,sep);
     }
     for(unsigned i=0; i<nbsim; ++i) {
-        std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
+        std::cout << "\nSimulation " << i+1 << "/" << nbsim << std::endl;
         track tr(sp.TRACK_LEN, sp.STDDEV, sp.FAILURE_PROBABILITY);
         policy_parameters p(sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.EPSILON, sp.REUSE, sp.ACTION_SPACE, sp.INIT_S);
         model m(sp.MODEL_TRACK_LEN, sp.MODEL_STDDEV, sp.MODEL_FAILURE_PROBABILITY);
@@ -110,15 +110,15 @@ void bunch_of_run(unsigned nbsim) {
     }
     */
     parameters sp;
-    sp.REUSE = true;
-    sp.FAILURE_PROBABILITY = .1;
+    sp.REUSE = false;
+    sp.FAILURE_PROBABILITY = 0.;
     sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
-    sp.EPSILON = 1.;
-    sp.UCT_CST = 10.;
+    sp.DISCOUNT_FACTOR = .9;
+    sp.EPSILON = 0.;
+    sp.UCT_CST = 2.;
     std::string path = get_backup_path(sp);
     std::cout << path << std::endl;
-    run_with(sp,nbsim,false,true,path);
-
+    run_with(sp,nbsim,true,true,path);
 }
 
 int main() {

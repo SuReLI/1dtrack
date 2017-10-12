@@ -20,8 +20,8 @@ repo = "data/backup/"
 fp = "06" # Failure probability
 #path1 = repo+"0_25_0_"+fp+"_20_50_07_09.csv"
 #path2 = repo+"1_25_0_"+fp+"_20_50_07_09.csv"
-path1 = "data/test_false.csv"
-path2 = "data/test_true.csv"
+path1 = "data/0_2_00_03_20_50_10_1_00_2_00_03.csv"
+path2 = "data/1_2_00_03_20_50_10_1_00_2_00_03.csv"
 
 d1 = pd.read_csv(path1,sep = ',')
 scr1 = d1["score"]

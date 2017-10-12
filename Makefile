@@ -13,3 +13,6 @@ compile : main.cpp
 run :
 	./${EXEC}
 
+plot_hist :
+	python3 plot/histogram.py
+

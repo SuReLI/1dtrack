@@ -35,7 +35,7 @@ struct parameters {
         double init_s = 0.,
         std::vector<int> action_space = std::vector<int>{-1,1},
         unsigned budget = 20,
-        unsigned horizon = 50,
+        unsigned horizon = 10,
         double uct_cst = .7,
         double discount_factor = 1.,
         double epsilon = 1.,
