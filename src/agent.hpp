@@ -319,8 +319,6 @@ struct agent {
         for(auto &ch: v.children) {
             values.push_back(ch.get_value());
         }
-        //std::cout << "argmax_score among "; //TRM
-        //printv(values); //TRM
         return argmax(values);
     }
 
@@ -334,13 +332,6 @@ struct agent {
      * value).
      */
     int get_recommended_action(const node &v) {
-        /*
-        std::cout << "START recommended action ------>" << std::endl; //TRM
-        std::cout << "nb child of v: " << v.get_nb_children() << std::endl;
-        int ac = v.get_action_at(argmax_score(v)); //TRM
-        std::cout << "END   recommended action <------" << std::endl; //TRM
-        return ac; //TRM
-        */
         return v.get_action_at(argmax_score(v));
     }
 
@@ -362,8 +353,6 @@ struct agent {
             ind = argmax_score(p.root_node);
         }
         node * ptr = p.root_node.get_child_at(ind);
-        //std::cout << "new root nb child: " << ptr->get_nb_children() << std::endl; //TRM
-        //std::cout << "new root nb ac   : " << ptr->get_nb_of_actions() << std::endl; //TRM
         return ptr->is_fully_expanded(); // naive implementation: keep the tree if it is built
     }
 
@@ -394,17 +383,12 @@ struct agent {
      * @return Return the recommended action.
      */
     int oluct(double s) {
-        unsigned new_root_indice = 0; // defalut
+        unsigned new_root_indice = 0; // will be modified
         if(plain_decision_criterion(s,new_root_indice)) { // keep the subtree and use it
-            //std::cout << "case keep" << std::endl; //TRM
-            //std::cout << "root nbch = " << p.root_node.get_nb_children() << std::endl; //TRM
             p.root_node.move_to_child(new_root_indice,s);
-            //std::cout << "root nbch = " << p.root_node.get_nb_children() << std::endl; //TRM
         } else { // build or rebuild the subtree
-            //std::cout << "case build" << std::endl; //TRM
             build_uct_tree(s);
         }
-        //std::cout << "root nbch = " << p.root_node.get_nb_children() << std::endl; //TRM
         return get_recommended_action(p.root_node);
     }
 
@@ -440,7 +424,6 @@ struct agent {
      */
     void take_action() {
         if(p.reuse) {
-            //std::cout << std::endl; //TRM
             a = oluct(s);
         } else {
             a = vanilla_uct(s);
