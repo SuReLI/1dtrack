@@ -102,7 +102,7 @@ void run_with(
 void bunch_of_run(unsigned nbsim) {
     parameters sp("main.cfg");
     std::string path = get_backup_path(sp);
-    std::cout << "Output file: " << path << std::endl;
+    std::cout << "Output: " << path << std::endl;
     run_with(sp,nbsim,false,true,path);
 }
 

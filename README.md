@@ -12,17 +12,19 @@ Header only library.
 
 # Use
 
-First download the code and compile it with the provided Makefile (type 
-'make compile' in the command prompt). There should be no exotic requirements in
-order to do so since it only uses standard c++ libraries. Once done, you can 
-directly modify the 'main.cpp' file in order to select the parameters of the 
-simulations. The different methods the user has to deal with are the following:
-- The method 'simulate_episode' runs a single episode given every parameters set
-in the arguments;
-- The method 'run_with' runs a given number of simulations with every parameters
-set in the arguments;
-- The method 'bunch_of_run' does multiple calls to 'run_with' method that allow
-the user to modify some parameters between simulations for comparison purpose.
+First download the code and compile it with the provided Makefile (you can type 
+'make compile' in the command prompt). The only non standard c++ library used
+in this project is 'libconfig.h++'. You can install it via your package manager
+or from source via https://github.com/hyperrealm/libconfig
+
+Once the code compiled, you can set the parameters of the simulations via the
+configuration file 'main.cfg'.
+
+Running the code will run 100 simulations, this is default. To set the number of
+simulations, for instance to 1000, you can execute './exe 1000' or type
+'make NBSIM=1000' using the Makefile.
+
+Python scripts for plotting are provided in 'plot/' repository.
 
 # Files details
 Short explanation of the content of each file:

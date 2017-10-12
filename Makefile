@@ -2,6 +2,7 @@ CCC=g++
 CCFLAGS=-std=c++11 -Wall -Wextra -I./src -O2 -g
 LDFLAGS=-lm -lconfig++
 EXEC=exe
+NBSIM=100
 
 all : clean compile run
 
@@ -12,7 +13,7 @@ compile : main.cpp
 	${CCC} ${CCFLAGS} main.cpp -o ${EXEC} ${LDFLAGS}
 
 run :
-	./${EXEC}
+	./${EXEC} ${NBSIM}
 
 plot_hist :
 	python3 plot/histogram.py
