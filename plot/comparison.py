@@ -22,8 +22,8 @@ fp_range = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045"
 pl_range = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.] # Same with real values for plotting
 
 # Initialisation
-loss1_means = [] # List of the means, to be completed
-loss1_stdev = [] # List of the standard deviations, to be completed
+loss1_means = [] # List of the means
+loss1_stdev = [] # List of the standard deviations
 loss2_means = []
 loss2_stdev = []
 
@@ -38,11 +38,11 @@ calls2_means = []
 calls2_stdev = []
 
 for fp in fp_range:
-	repo = "data/backup/short/" # Path to the saved data
+	repo = "data/backup/long/" # Path to the saved data
 	# Vanilla UCT
-	path1 =	 repo + "0_2_000_" + fp + "_20_10_2_090_000_2_000_" + fp + ".csv"
+	path1 =	 repo + "0_25_000_" + fp + "_20_10_2_090_000_25_000_" + fp + ".csv"
 	# OLUCT
-	path2 = repo + "1_2_000_" + fp + "_20_10_2_090_000_2_000_" + fp + ".csv"
+	path2 = repo + "1_25_000_" + fp + "_20_10_2_090_000_25_000_" + fp + ".csv"
 
 	# Open files
 	d1 = pd.read_csv(path1,sep = ',')

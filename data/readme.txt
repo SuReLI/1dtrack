@@ -3,14 +3,14 @@
 Code explanation for the data file (.csv files) saved in this repository.
 The saved files follow the syntax written below:
 
-{REUSE}_{TRACK_LEN}_{STDDEV}_{FAILURE_PROBABILITY}_{BUDGET}_{HORIZON}_...
+{POLICY_SELECTOR}_{TRACK_LEN}_{STDDEV}_{FAILURE_PROBABILITY}_{BUDGET}_{HORIZON}_...
 {UCT_CST}_{DISCOUNT_FACTOR}_{EPSILON}_{MODEL_TRACK_LEN}_{MODEL_STDDEV}_...
 {MODEL_FAILURE_PROBABILITY}.csv
 
 For instance, with the parameters written below, the file would be named:
 1_2_020_005_15_5_070_1_010_2_020_005.csv
 
-REUSE = true
+POLICY_SELECTOR = 1
 TRACK_LEN = 2.0
 STDDEV = 0.2
 FAILURE_PROBABILITY = 0.05
