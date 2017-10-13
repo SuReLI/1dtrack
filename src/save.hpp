@@ -97,13 +97,13 @@ std::vector<std::string> get_saved_values_names() {
 void append_double(std::string &path, double d, std::string sep) {
     assert(!is_less_than(d,0.));
     if(is_equal_to(d,0.)) {
-        path += "0";
+        path += "00";
     } else if(is_less_than(d,.1)) {
         path += "00";
         d = 100.*d;
     } else if (is_less_than(d,1.)) {
         path += "0";
-        d = 10.*d;
+        d = 100.*d;
     }
     path += std::to_string((int) d);
     path += sep;

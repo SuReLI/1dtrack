@@ -100,10 +100,25 @@ void run_with(
  * @param {const unsigned &} nbsim; number of simulations
  */
 void bunch_of_run(unsigned nbsim) {
-    parameters sp("main.cfg");
-    std::string path = get_backup_path(sp);
-    std::cout << "Output: " << path << std::endl;
-    run_with(sp,nbsim,false,true,path);
+    std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4};
+    for(auto fp : fp_range) {
+        parameters sp("main.cfg");
+        sp.REUSE = true;
+        sp.FAILURE_PROBABILITY = fp;
+        sp.MODEL_FAILURE_PROBABILITY = fp;
+        std::string path = get_backup_path(sp);
+        std::cout << "Output: " << path << std::endl;
+        run_with(sp,nbsim,false,true,path);
+    }
+    for(auto fp : fp_range) {
+        parameters sp("main.cfg");
+        sp.REUSE = false;
+        sp.FAILURE_PROBABILITY = fp;
+        sp.MODEL_FAILURE_PROBABILITY = fp;
+        std::string path = get_backup_path(sp);
+        std::cout << "Output: " << path << std::endl;
+        run_with(sp,nbsim,false,true,path);
+    }
 }
 
 /**

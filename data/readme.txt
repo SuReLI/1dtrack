@@ -8,7 +8,7 @@ The saved files follow the syntax written below:
 {MODEL_FAILURE_PROBABILITY}.csv
 
 For instance, with the parameters written below, the file would be named:
-1_2_02_005_15_5_07_1_01_2_02_005.csv
+1_2_020_005_15_5_070_1_010_2_020_005.csv
 
 REUSE = true
 TRACK_LEN = 2.0
@@ -27,8 +27,6 @@ MODEL_FAILURE_PROBABILITY = 0.05
 
 Double variables are made integer.
 No negative values.
-Double below .1 are multiplied by 100 and made integer. Zeros are added so
-that we keep track of the order of magnitude.
-Double below 1. are multiplied by 10 and made integer. Zeros are added so
+Double below 0. are multiplied by 100 and made integer. Zeros are added so
 that we keep track of the order of magnitude.
 
