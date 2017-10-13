@@ -1,7 +1,8 @@
 
 """
-Plot the reached losses and computational costs means and standard deviation for a bunch of
-different groups of simulations.
+Plot the reached losses and computational costs means and standard deviation for
+a bunch of different groups of simulations.
+Set the correct paths and run this script.
 
 edit: 26/09/2017
 """
@@ -17,11 +18,8 @@ ORNG = '#ff6600';
 GREE = '#00cc66';
 
 take_log = False # Take the log of the data or not
-repo = "data/backup/long_track/" # Path to the saved data
-fp_range = [ # Different failure probabilities (wrt the files names)
-    "00", "01", "02", "03",
-    "04"]
-pl_range = [0.0, 0.1, 0.2, 0.3, 0.4] # Same with real values for plotting
+fp_range = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045", "050", "055", "060", "065", "070", "075", "080", "085", "090", "095", "1"] # Different failure probabilities (wrt the files names)
+pl_range = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.] # Same with real values for plotting
 
 # Initialisation
 loss1_means = [] # List of the means, to be completed
@@ -40,8 +38,11 @@ calls2_means = []
 calls2_stdev = []
 
 for fp in fp_range:
-	path1 =	 repo + "0_25_00_" + fp + "_100_40_2_09_00_25_00_" + fp + ".csv" # Vanilla UCT
-	path2 = repo + "1_25_00_" + fp + "_100_40_2_09_00_25_00_" + fp + ".csv" # OLUCT
+	repo = "data/backup/short/" # Path to the saved data
+	# Vanilla UCT
+	path1 =	 repo + "0_2_000_" + fp + "_20_10_2_090_000_2_000_" + fp + ".csv"
+	# OLUCT
+	path2 = repo + "1_2_000_" + fp + "_20_10_2_090_000_2_000_" + fp + ".csv"
 
 	# Open files
 	d1 = pd.read_csv(path1,sep = ',')
@@ -80,23 +81,64 @@ for fp in fp_range:
 
 f, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
 
-l1 = ax1.errorbar(pl_range, loss1_means, color=BLUE, yerr=loss1_stdev, fmt='o')
+# Plot 1
+
+l2 = ax1.errorbar(pl_range, loss2_means, color=ORNG, yerr=loss2_stdev)
 l2 = ax1.errorbar(pl_range, loss2_means, color=ORNG, yerr=loss2_stdev, fmt='o')
+v = np.copy(loss2_stdev)
+ax1.fill_between(pl_range, np.add(loss2_means,v), np.add(loss2_means,-v), color=ORNG, alpha=0.2)
+
+l1 = ax1.errorbar(pl_range, loss1_means, color=BLUE, yerr=loss1_stdev)
+l1 = ax1.errorbar(pl_range, loss1_means, color=BLUE, yerr=loss1_stdev, fmt='o')
+v = np.copy(loss1_stdev)
+ax1.fill_between(pl_range, np.add(loss1_means,v), np.add(loss1_means,-v), color=BLUE, alpha=0.2)
+
 ax1.set_xlabel('Transition failure probability')
-ax1.set_ylabel('Loss')
-ax1.legend([l1,l2],['Vanilla UCT','OLUCT'],numpoints=1,loc='upper left')
+if take_log:
+	ax1.set_ylabel('Log of the loss (time steps to the goal)')
+else:
+	ax1.set_ylabel('Loss (time steps to the goal)')
+ax1.legend([l1,l2],['Vanilla UCT','Plain OLUCT'],numpoints=1,loc='upper left')
 
+# Plot 2
+
+l1 = ax2.errorbar(pl_range, cput1_means, color=BLUE, yerr=cput1_stdev)
 l1 = ax2.errorbar(pl_range, cput1_means, color=BLUE, yerr=cput1_stdev, fmt='o')
-l2 = ax2.errorbar(pl_range, cput2_means, color=ORNG, yerr=cput2_stdev, fmt='o')
-ax2.set_xlabel('Transition failure probability')
-ax2.set_ylabel('Computational cost')
-ax2.legend([l1,l2],['Vanilla UCT','OLUCT'],numpoints=1,loc='upper left')
+v = np.copy(cput1_stdev)
+ax2.fill_between(pl_range, np.add(cput1_means,v), np.add(cput1_means,-v), color=BLUE, alpha=0.2)
 
+l2 = ax2.errorbar(pl_range, cput2_means, color=ORNG, yerr=cput2_stdev)
+l2 = ax2.errorbar(pl_range, cput2_means, color=ORNG, yerr=cput2_stdev, fmt='o')
+v = np.copy(cput2_stdev)
+ax2.fill_between(pl_range, np.add(cput2_means,v), np.add(cput2_means,-v), color=ORNG, alpha=0.2)
+
+ax2.set_xlabel('Transition failure probability')
+if take_log:
+	ax2.set_ylabel('Log of the computational cost (ms)')
+else:
+	ax2.set_ylabel('Computational cost (ms)')
+ax2.legend([l1,l2],['Vanilla UCT','Plain OLUCT'],numpoints=1,loc='upper left')
+
+# Plot 3
+
+l1 = ax3.errorbar(pl_range, calls1_means, color=BLUE, yerr=calls1_stdev)
 l1 = ax3.errorbar(pl_range, calls1_means, color=BLUE, yerr=calls1_stdev, fmt='o')
+v = np.copy(calls1_stdev)
+ax3.fill_between(pl_range, np.add(calls1_means,v), np.add(calls1_means,-v), color=BLUE, alpha=0.2)
+
+l2 = ax3.errorbar(pl_range, calls2_means, color=ORNG, yerr=calls2_stdev)
 l2 = ax3.errorbar(pl_range, calls2_means, color=ORNG, yerr=calls2_stdev, fmt='o')
+v = np.copy(calls2_stdev)
+ax3.fill_between(pl_range, np.add(calls2_means,v), np.add(calls2_means,-v), color=ORNG, alpha=0.2)
+
 ax3.set_xlabel('Transition failure probability')
-ax3.set_ylabel('Number of calls')
-ax3.legend([l1,l2],['Vanilla UCT','OLUCT'],numpoints=1,loc='upper left')
+if take_log:
+	ax3.set_ylabel('Log of the number of calls')
+else:
+	ax3.set_ylabel('Number of calls')
+ax3.legend([l1,l2],['Vanilla UCT','Plain OLUCT'],numpoints=1,loc='upper left')
+
+#ax1.set_xlim(0.,0.4)
 
 plt.show()
 

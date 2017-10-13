@@ -18,6 +18,6 @@ run :
 hist :
 	python3 plot/histogram.py
 
-meanstd :
+meanstddev :
 	python3 plot/comparison.py
 

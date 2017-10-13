@@ -44,31 +44,40 @@ if lg:
 
 rng = max(scr1.max(),scr2.max())
 bins1 = np.linspace(0, rng, 20)
-ax1.hist(scr1,bins1,color=BLUE,alpha=0.5)
-ax1.hist(scr2,bins1,color=ORANGE,alpha=0.5)
-ax1.set_xlabel('Loss')
+ax1.hist(scr1,bins1,color=BLUE,alpha=0.3)
+ax1.hist(scr2,bins1,color=ORANGE,alpha=0.3)
+if take_log:
+	ax1.set_xlabel('Log of the loss (time steps to the goal)')
+else:
+	ax1.set_xlabel('Loss (time steps to the goal)')
 ax1.set_ylabel('Frequency')
 handles, labels = ax1.get_legend_handles_labels()
-ax1.legend(handles, ["Vanilla UCT","OLUCT"])
+ax1.legend(handles, ["Vanilla UCT","Plain OLUCT"])
 
 rngmin = min(cpu1.min(),cpu2.min(),0.0)
 rngmax = max(cpu1.max(),cpu2.max())
 bins2 = np.linspace(rngmin, rngmax, 20)
-ax2.hist(cpu1,bins2,color=BLUE,alpha=0.5)
-ax2.hist(cpu2,bins2,color=ORANGE,alpha=0.5)
-ax2.set_xlabel('Computational cost')
+ax2.hist(cpu1,bins2,color=BLUE,alpha=0.3)
+ax2.hist(cpu2,bins2,color=ORANGE,alpha=0.3)
+if take_log:
+	ax2.set_xlabel('Log of the computational cost (ms)')
+else:
+	ax2.set_xlabel('Computational cost (ms)')
 ax2.set_ylabel('Frequency')
 handles, labels = ax2.get_legend_handles_labels()
-ax2.legend(handles, ["Vanilla UCT","OLUCT"])
+ax2.legend(handles, ["Vanilla UCT","Plain OLUCT"])
 
 rngmin = min(calls1.min(),calls2.min(),0.0)
 rngmax = max(calls1.max(),calls2.max())
 bins3 = np.linspace(rngmin, rngmax, 20)
-ax3.hist(calls1,bins3,color=BLUE,alpha=0.5)
-ax3.hist(calls2,bins3,color=ORANGE,alpha=0.5)
-ax3.set_xlabel('Number of calls')
+ax3.hist(calls1,bins3,color=BLUE,alpha=0.3)
+ax3.hist(calls2,bins3,color=ORANGE,alpha=0.3)
+if take_log:
+	ax3.set_xlabel('Log of the number of calls')
+else:
+	ax3.set_xlabel('Number of calls')
 ax3.set_ylabel('Frequency')
 handles, labels = ax3.get_legend_handles_labels()
-ax3.legend(handles, ["Vanilla UCT","OLUCT"])
+ax3.legend(handles, ["Vanilla UCT","Plain OLUCT"])
 
 plt.show()

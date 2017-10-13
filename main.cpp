@@ -100,9 +100,9 @@ void run_with(
  * @param {const unsigned &} nbsim; number of simulations
  */
 void bunch_of_run(unsigned nbsim) {
-    std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4};
+    std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9, .95, 1.};
     for(auto fp : fp_range) {
-        parameters sp("main.cfg");
+        parameters sp("data/backup/long/main.cfg");
         sp.POLICY_SELECTOR = 0; // Vanilla UCT
         sp.FAILURE_PROBABILITY = fp;
         sp.MODEL_FAILURE_PROBABILITY = fp;
@@ -111,7 +111,7 @@ void bunch_of_run(unsigned nbsim) {
         run_with(sp,nbsim,false,true,path);
     }
     for(auto fp : fp_range) {
-        parameters sp("main.cfg");
+        parameters sp("data/backup/long/main.cfg");
         sp.POLICY_SELECTOR = 1; // OLUCT
         sp.FAILURE_PROBABILITY = fp;
         sp.MODEL_FAILURE_PROBABILITY = fp;
