@@ -81,7 +81,7 @@ void run_with(
     for(unsigned i=0; i<nbsim; ++i) {
         //std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
         track tr(sp.TRACK_LEN, sp.STDDEV, sp.FAILURE_PROBABILITY);
-        policy_parameters p(sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.EPSILON, sp.REUSE, sp.ACTION_SPACE, sp.INIT_S);
+        policy_parameters p(sp.POLICY_SELECTOR, sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.EPSILON, sp.ACTION_SPACE, sp.INIT_S);
         model m(sp.MODEL_TRACK_LEN, sp.MODEL_STDDEV, sp.MODEL_FAILURE_PROBABILITY);
         agent ag(sp.INIT_S,p,m);
 
@@ -103,7 +103,7 @@ void bunch_of_run(unsigned nbsim) {
     std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4};
     for(auto fp : fp_range) {
         parameters sp("main.cfg");
-        sp.REUSE = true;
+        sp.POLICY_SELECTOR = 0; // Vanilla UCT
         sp.FAILURE_PROBABILITY = fp;
         sp.MODEL_FAILURE_PROBABILITY = fp;
         std::string path = get_backup_path(sp);
@@ -112,7 +112,7 @@ void bunch_of_run(unsigned nbsim) {
     }
     for(auto fp : fp_range) {
         parameters sp("main.cfg");
-        sp.REUSE = false;
+        sp.POLICY_SELECTOR = 1; // OLUCT
         sp.FAILURE_PROBABILITY = fp;
         sp.MODEL_FAILURE_PROBABILITY = fp;
         std::string path = get_backup_path(sp);

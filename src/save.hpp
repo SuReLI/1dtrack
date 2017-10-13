@@ -119,7 +119,7 @@ void append_double(std::string &path, double d, std::string sep) {
 std::string get_backup_path(const parameters &sp) {
     std::string sep = "_";
     std::string path = "data/";
-    path += std::to_string(sp.REUSE);
+    path += std::to_string(sp.POLICY_SELECTOR);
     path += sep;
     append_double(path,sp.TRACK_LEN,sep);
     append_double(path,sp.STDDEV,sep);

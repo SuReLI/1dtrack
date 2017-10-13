@@ -10,13 +10,13 @@
  * This class is a parameters container.
  */
 struct policy_parameters {
+    unsigned policy_selector; ///< Policy selector (0: vanilla UCT; 1: plain OLUCT; default: epsilon-optimal policy)
     unsigned budget; ///< Algorithm budget (number of expanded nodes).
     unsigned horizon; ///< Algorithm horizon for the default policy.
     unsigned trials_count; ///< Trial count for the expansion in {0,budget-1}.
     double uct_cst; ///< UCT constant factor.
     double discount_factor; ///< Discount factor for the MDP.
     double epsilon; ///< Epsilon for the epsilon-optimal default policy.
-    bool reuse; ///< Set to true if open loop.
     std::vector<int> action_space; ///< Action space used by the policy.
     node root_node; ///< Root node of the tree.
 
@@ -28,20 +28,20 @@ struct policy_parameters {
      * Edit: 22/09/2017
      */
     policy_parameters(
+        unsigned _policy_selector,
         unsigned _budget,
         unsigned _horizon,
         double _uct_cst,
         double _discount_factor,
         double _epsilon,
-        bool _reuse,
         std::vector<int> _action_space,
         double initial_state) :
+        policy_selector(_policy_selector),
         budget(_budget),
         horizon(_horizon),
         uct_cst(_uct_cst),
         discount_factor(_discount_factor),
         epsilon(_epsilon),
-        reuse(_reuse),
         action_space(_action_space),
         root_node(initial_state,action_space)
     {
@@ -423,10 +423,19 @@ struct agent {
      * memory.
      */
     void take_action() {
-        if(p.reuse) {
-            a = oluct(s);
-        } else {
-            a = vanilla_uct(s);
+        switch(p.policy_selector) {
+            case 0: { // vanilla UCT
+                a = vanilla_uct(s);
+                break;
+            }
+            case 1: { // plain OLUCT
+                a = oluct(s);
+                break;
+            }
+            default : { // epsilon-optimal policy
+                a = epsilon_optimal_policy(s);
+                break;
+            }
         }
     }
 };

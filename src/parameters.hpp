@@ -14,6 +14,7 @@ struct parameters {
     double FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied (randomness of the transition function)
     double INIT_S; ///< Initial state
     std::vector<int> ACTION_SPACE; ///< Action space used by every nodes (bandit arms)
+    unsigned POLICY_SELECTOR; ///< Policy selector (0: vanilla UCT; 1: plain OLUCT; default: epsilon-optimal policy)
     unsigned BUDGET; ///< Algorithm budget (number of expanded nodes)
     unsigned HORIZON; ///< Algorithm horizon for the default policy
     double UCT_CST; ///< UCT constant factor
@@ -22,7 +23,6 @@ struct parameters {
     double MODEL_TRACK_LEN; ///< Model track length (half of the length of the track)
     double MODEL_STDDEV; ///< Model noise standard deviation
     double MODEL_FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function)
-    bool REUSE; ///< Set to true if the policy is able to reuse the tree
 
     /**
      * @brief Simulation parameters 'default' constructor
@@ -35,6 +35,7 @@ struct parameters {
         double failure_probability = .1,
         double init_s = 0.,
         std::vector<int> action_space = std::vector<int>{-1,1},
+        unsigned policy_selector = 0,
         unsigned budget = 20,
         unsigned horizon = 10,
         double uct_cst = .7,
@@ -42,13 +43,13 @@ struct parameters {
         double epsilon = 1.,
         double model_track_len = 2.,
         double model_stddev = 0.,
-        double model_failure_probability = .1,
-        bool reuse = false) :
+        double model_failure_probability = .1) :
         TRACK_LEN(track_len),
         STDDEV(stddev),
         FAILURE_PROBABILITY(failure_probability),
         INIT_S(init_s),
         ACTION_SPACE(action_space),
+        POLICY_SELECTOR(policy_selector),
         BUDGET(budget),
         HORIZON(horizon),
         UCT_CST(uct_cst),
@@ -56,8 +57,7 @@ struct parameters {
         EPSILON(epsilon),
         MODEL_TRACK_LEN(model_track_len),
         MODEL_STDDEV(model_stddev),
-        MODEL_FAILURE_PROBABILITY(model_failure_probability),
-        REUSE(reuse)
+        MODEL_FAILURE_PROBABILITY(model_failure_probability)
     {}
 
     /**
@@ -76,6 +76,7 @@ struct parameters {
         && cfg.lookupValue("failure_probability",FAILURE_PROBABILITY)
         && cfg.lookupValue("init_s",INIT_S)
         && cfg.lookupValue("nb_actions",nbac)
+        && cfg.lookupValue("policy_selector",POLICY_SELECTOR)
         && cfg.lookupValue("budget",BUDGET)
         && cfg.lookupValue("horizon",HORIZON)
         && cfg.lookupValue("uct_cst",UCT_CST)
@@ -83,8 +84,7 @@ struct parameters {
         && cfg.lookupValue("epsilon",EPSILON)
         && cfg.lookupValue("model_track_len",MODEL_TRACK_LEN)
         && cfg.lookupValue("model_stddev",MODEL_STDDEV)
-        && cfg.lookupValue("model_failure_probability",MODEL_FAILURE_PROBABILITY)
-        && cfg.lookupValue("reuse",REUSE)) {
+        && cfg.lookupValue("model_failure_probability",MODEL_FAILURE_PROBABILITY)) {
             for(unsigned i=0; i<nbac; ++i) { // actions parsing
                 std::string name = "a";
                 name += std::to_string(i);
