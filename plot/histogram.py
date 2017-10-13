@@ -16,10 +16,10 @@ BLUE = '#333399';
 ORANGE = '#ff6600';
 GREEN = '#00cc66';
 
-#path = "data/backup/short_track/"
-path = "data/backup/long_track/"
-path1 = path + "0_25_00_03_100_40_2_09_00_25_00_03.csv" # Vanilla UCT
-path2 = path + "1_25_00_03_100_40_2_09_00_25_00_03.csv" # OLUCT
+repo = "data/backup/short_track/"
+fp = "00" # failure probability
+path1 = repo + "0_2_00_" + fp + "_20_10_2_09_00_2_00_" + fp + ".csv" # Vanilla UCT
+path2 = repo + "1_2_00_" + fp + "_20_10_2_09_00_2_00_" + fp + ".csv" # OLUCT
 
 d1 = pd.read_csv(path1,sep = ',')
 scr1 = d1["score"]
@@ -31,7 +31,7 @@ scr2 = d2["score"]
 cpu2 = d2["computational_cost"]
 calls2 = d2["nb_calls"]
 
-f, (ax1, ax2, ax3) = plt.subplots(3, 1, sharey=True)
+f, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
 
 lg = False
 if lg:
