@@ -432,6 +432,10 @@ struct agent {
                 a = oluct(s);
                 break;
             }
+            case 2: {
+                //a = oluct(s,/* new decision criterion */)
+                break;
+            }
             default : { // epsilon-optimal policy
                 a = epsilon_optimal_policy(s);
                 break;

@@ -17,7 +17,7 @@ BLUE = '#333399';
 ORNG = '#ff6600';
 GREE = '#00cc66';
 
-take_log = False # Take the log of the data or not
+take_log = True # Take the log of the data or not
 fp_range = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045", "050", "055", "060", "065", "070", "075", "080", "085", "090", "095", "1"] # Different failure probabilities (wrt the files names)
 pl_range = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.] # Same with real values for plotting
 
@@ -40,9 +40,9 @@ calls2_stdev = []
 for fp in fp_range:
 	repo = "data/backup/long/" # Path to the saved data
 	# Vanilla UCT
-	path1 =	 repo + "0_25_000_" + fp + "_20_10_2_090_000_25_000_" + fp + ".csv"
+	path1 =	 repo + "0_25_000_" + fp + "_100_40_2_090_000_25_000_" + fp + ".csv"
 	# OLUCT
-	path2 = repo + "1_25_000_" + fp + "_20_10_2_090_000_25_000_" + fp + ".csv"
+	path2 = repo + "1_25_000_" + fp + "_100_40_2_090_000_25_000_" + fp + ".csv"
 
 	# Open files
 	d1 = pd.read_csv(path1,sep = ',')
