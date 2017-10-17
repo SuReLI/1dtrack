@@ -2,6 +2,7 @@
 #define PARAMETERS_HPP_
 
 #include <libconfig.h++>
+#include <exceptions.hpp>
 
 /**
  * @brief Simulation parameters
@@ -92,12 +93,12 @@ struct parameters {
                 if(cfg.lookupValue(name,action)) {
                     ACTION_SPACE.push_back(action);
                 } else { // Error in action names syntax
-                    std::cout << "Error in config file: actions names do not match.\n";
+                    throw action_names_configuration_file_exception();
                 }
             }
         }
         else { // Error in config file
-            std::cout << "Error in config file: please make sure that the syntaxes match.\n";
+            throw wrong_syntax_configuration_file_exception();
         }
     }
 };
