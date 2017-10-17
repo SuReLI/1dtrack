@@ -3,6 +3,7 @@
 
 #include <node.hpp>
 #include <test.hpp>
+#include <exceptions.hpp>
 
 /**
  * @brief Parameters of the policy
@@ -376,6 +377,28 @@ struct agent {
     }
 
     /**
+     * @brief Switch on decision criterion
+     *
+     * Select the decision criterion according to the chosen algorithm.
+     * @param {double} s; the current state of the agent
+     * @param {unsigned &} ind; indice of the potential future root node, set by this method
+     * @return Return 'true' if the sub-tree is kept.
+     */
+    bool decision_criterion(double s, unsigned &ind) {
+        switch(p.policy_selector) {
+            case 1: {
+                return plain_decision_criterion(s,ind);
+            }
+            case 2: { // another OLUCT // TODO
+                //return todo(s,ind);
+            }
+            default: { // Exception
+                throw decision_criterion_selector_exception();
+            }
+        }
+    }
+
+    /**
      * @brief Open Loop UCT
      *
      * Open Loop UCT policy which has the possibility to reuse a sub-tree.
@@ -384,7 +407,7 @@ struct agent {
      */
     int oluct(double s) {
         unsigned new_root_indice = 0; // will be modified
-        if(plain_decision_criterion(s,new_root_indice)) { // keep the subtree and use it
+        if(decision_criterion(s,new_root_indice)) { // keep the subtree and use it
             p.root_node.move_to_child(new_root_indice,s);
         } else { // build or rebuild the subtree
             build_uct_tree(s);
@@ -432,8 +455,8 @@ struct agent {
                 a = oluct(s);
                 break;
             }
-            case 2: {
-                //a = oluct(s,/* new decision criterion */)
+            case 2: { // another OLUCT // TODO
+                a = oluct(s);
                 break;
             }
             default : { // epsilon-optimal policy
