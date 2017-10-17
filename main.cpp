@@ -130,21 +130,28 @@ void bunch_of_run(unsigned nbsim) {
  * Default is 100 simulations, set if nothing is specified.
  */
 int main(int argc, char* argv[]) {
-    srand(time(NULL));
-
-    switch(argc) {
-    case 1: { //default
-        std::cout << "Run 100 simulations\n";
-        bunch_of_run(100);
-        break;
+    try {
+        srand(time(NULL));
+        switch(argc) {
+            case 1: { //default
+                std::cout << "Run 100 simulations\n";
+                bunch_of_run(100);
+                break;
+            }
+            case 2: {
+                std::cout << "Run " << argv[1] << " simulations\n";
+                bunch_of_run(atoi(argv[1]));
+                break;
+            }
+            default: {
+                std::cout << "Error: number of input arguments unknown, see main function.";
+            }
+        }
     }
-    case 2: {
-        std::cout << "Run " << argv[1] << " simulations\n";
-        bunch_of_run(atoi(argv[1]));
-        break;
+    catch(const std::exception &e) {
+        std::cerr<<"Error in main(): standard exception caught: "<<e.what()<<std::endl;
     }
-    default: {
-        std::cout << "Error: number of input arguments unknown, see main function.";
-    }
+    catch(...) {
+        std::cerr<<"Error in main(): unknown exception caught"<<std::endl;
     }
 }
