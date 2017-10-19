@@ -103,7 +103,7 @@ for fp in fp_range:
 
 f, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
 
-# Plot 1
+# Plot 1 - loss
 
 l2 = ax1.errorbar(pl_range, loss2_means, color=ORNG, yerr=loss2_stdev)
 l2 = ax1.errorbar(pl_range, loss2_means, color=ORNG, yerr=loss2_stdev, fmt='o')
@@ -127,7 +127,7 @@ else:
 	ax1.set_ylabel('Loss (time steps to the goal)')
 ax1.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper right')
 
-# Plot 2
+# Plot 2 - computational cost
 
 l1 = ax2.errorbar(pl_range, cput1_means, color=BLUE, yerr=cput1_stdev)
 l1 = ax2.errorbar(pl_range, cput1_means, color=BLUE, yerr=cput1_stdev, fmt='o')
@@ -151,7 +151,7 @@ else:
 	ax2.set_ylabel('Computational cost (ms)')
 ax2.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper right')
 
-# Plot 3
+# Plot 3 - number of calls
 
 l1 = ax3.errorbar(pl_range, calls1_means, color=BLUE, yerr=calls1_stdev)
 l1 = ax3.errorbar(pl_range, calls1_means, color=BLUE, yerr=calls1_stdev, fmt='o')
