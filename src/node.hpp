@@ -224,8 +224,7 @@ public :
         assert(is_root());
         actions = children[indice].get_actions();
         states = children[indice].get_states();
-        auto tmp = std::move(children[indice].children);
-        // Temporary variable to prevent from overwriting
+        auto tmp = std::move(children[indice].children); // Temporary variable to prevent from overwriting
         for(auto &elt : tmp) {
             elt.parent = this;
         }
