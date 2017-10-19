@@ -339,22 +339,11 @@ struct agent {
     /**
      * @brief Plain decision criterion
      *
-     * The decision criterion of keeping the tree or not. 'Keeping' the tree means moving the
-     * root to its 'best' child (edit 22/09/2017). The method also set the given indice
-     * argument to the value of the indice of the potential future root node.
-     * @param {double} s; the current state of the agent
-     * @param {unsigned &} ind; indice of the potential future root node, set by this method
-     * @return Return 'true' if the sub-tree is kept.
+     * Systematically keep the sub-tree.
+     * @return Return 'true'.
      */
-    bool plain_decision_criterion(double s, unsigned &ind) {
-        (void) s;
-        if(!p.root_node.is_fully_expanded()) {
-            return false;
-        } else {
-            ind = argmax_score(p.root_node);
-        }
-        node * ptr = p.root_node.get_child_at(ind);
-        return ptr->is_fully_expanded(); // naive implementation: keep the tree if it is built
+    bool plain_decision_criterion() {
+        return true; // naive implementation: keep the tree if root is expanded
     }
 
     /**
@@ -380,17 +369,17 @@ struct agent {
      * @brief Switch on decision criterion
      *
      * Select the decision criterion according to the chosen algorithm.
+     * The tested tree is the current tree saved in the parameters.
      * @param {double} s; the current state of the agent
-     * @param {unsigned &} ind; indice of the potential future root node, set by this method
      * @return Return 'true' if the sub-tree is kept.
      */
-    bool decision_criterion(double s, unsigned &ind) {
+    bool decision_criterion(double s) {
         switch(p.policy_selector) {
-            case 1: {
-                return plain_decision_criterion(s,ind);
+            case 1: { // plain
+                return plain_decision_criterion();
             }
             case 2: { // another OLUCT // TODO
-                //return todo(s,ind);
+                return todo(s);
             }
             default: { // Exception
                 throw decision_criterion_selector_exception();
@@ -406,6 +395,15 @@ struct agent {
      * @return Return the recommended action.
      */
     int oluct(double s) {
+        if(p.root_node.is_fully_expanded() // necessary condiftion
+        && decision_criterion(s)) { // Open Loop control
+            return get_recommended_action(p.root_node);
+            p.root_node.move_to_child(argmax_score(p.root_node),s);
+        } else { // Closed Loop control
+            build_uct_tree(s);
+            return get_recommended_action(p.root_node);
+        }
+        /* // outdated
         unsigned new_root_indice = 0; // will be modified
         if(decision_criterion(s,new_root_indice)) { // keep the subtree and use it
             p.root_node.move_to_child(new_root_indice,s);
@@ -413,6 +411,7 @@ struct agent {
             build_uct_tree(s);
         }
         return get_recommended_action(p.root_node);
+        */
     }
 
     /**

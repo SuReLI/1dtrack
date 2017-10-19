@@ -38,11 +38,11 @@ calls2_means = []
 calls2_stdev = []
 
 for fp in fp_range:
-	repo = "data/backup/long/" # Path to the saved data
+	repo = "data/" # Path to the saved data
 	# Vanilla UCT
-	path1 =	 repo + "0_25_000_" + fp + "_100_40_2_090_000_25_000_" + fp + ".csv"
+	path1 =	 repo + "0_2_000_" + fp + "_20_10_2_090_000_2_000_" + fp + ".csv"
 	# OLUCT
-	path2 = repo + "1_25_000_" + fp + "_100_40_2_090_000_25_000_" + fp + ".csv"
+	path2 = repo + "1_2_000_" + fp + "_20_10_2_090_000_2_000_" + fp + ".csv"
 
 	# Open files
 	d1 = pd.read_csv(path1,sep = ',')
