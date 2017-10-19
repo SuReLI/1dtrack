@@ -351,8 +351,9 @@ struct agent {
      *
      * Keep the sub-tree if there is only one state mode, up to a certain precision.
      * Also discard the tree if the current state does not lie in this mode.
+     * The test is implemented for the discrete case.
      * @param {double} s; current state of the agent
-     * @return Return the result of the test.
+     * @return Return 'true' if the tree is kept.
      */
     bool state_multimodality_test(double s) {
         std::vector<double> modes_values;
@@ -373,6 +374,31 @@ struct agent {
                         modes_counters.at(j)++;
                     }
                 }
+            }
+        }
+        if(modes_values.size() == 1) { // mono-modal
+            if(s == modes_values[0]) { // state within the unique mode
+                return true;
+            } else { // state out of the unique mode
+                return false;
+            }
+        } else { // multi-modal
+            std::vector<double> modes_ratio;
+            for(auto &elt: modes_counters) { // build modes ratio vector
+                modes_ratio.push_back(((double) elt) / ((double) modes_counters.size()));
+            }
+            unsigned state_mode_indice = 0;
+            for(unsigned j=0; j<modes_values.size(); ++j) {
+                if(s == modes_values[j]) {
+                    state_mode_indice = j;
+                    break;
+                }
+            }
+            double tolerance = .2;
+            if(is_less_than(modes_ratio.at(state_mode_indice),tolerance)) {
+                return true;
+            } else {
+                return false;
             }
         }
     }
