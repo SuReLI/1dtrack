@@ -347,6 +347,37 @@ struct agent {
     }
 
     /**
+     * @brief State multimodality test decision criterion
+     *
+     * Keep the sub-tree if there is only one state mode, up to a certain precision.
+     * Also discard the tree if the current state does not lie in this mode.
+     * @param {double} s; current state of the agent
+     * @return Return the result of the test.
+     */
+    bool state_multimodality_test(double s) {
+        std::vector<double> modes_values;
+        std::vector<unsigned> modes_counters;
+        for(auto &si : p.root_node.get_states()) {
+            bool is_new_mode = true;
+            for(auto &m : modes_values) {
+                if(is_equal_to(si,m)) {
+                    is_new_mode = false;
+                }
+            }
+            if(is_new_mode) {
+                modes_values.push_back(si);
+                modes_counters.push_back(1);
+            } else {
+                for(unsigned j=0; j<modes_values.size(); ++j) {
+                    if(is_equal_to(si,modes_values[j])) {
+                        modes_counters.at(j)++;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * @brief Build UCT tree
      *
      * Build a tree starting from the root attribute of the parameters using the
@@ -378,8 +409,8 @@ struct agent {
             case 1: { // plain
                 return plain_decision_criterion();
             }
-            case 2: { // another OLUCT // TODO
-                return todo(s);
+            case 2: { // state multimodality test
+                return state_multimodality_test(s);
             }
             default: { // Exception
                 throw decision_criterion_selector_exception();

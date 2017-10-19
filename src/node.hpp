@@ -110,7 +110,7 @@ public :
 
     /** @brief Get a copy of the states vector of the node (non-root node) */
     std::vector<double> get_states() const {
-        assert(!root);
+        assert(!root); //TRM
         return states;
     }
 
