@@ -358,7 +358,6 @@ struct agent {
     bool state_multimodality_test(double s) {
         std::vector<double> modes_values;
         std::vector<unsigned> modes_counters;
-        std::cout << "\nBEGIN" <<std::endl; //TRM
         for(auto &si : p.root_node.get_states()) {
             bool is_new_mode = true;
             for(auto &m : modes_values) {
@@ -377,20 +376,10 @@ struct agent {
                 }
             }
         }
-        std::cout << "Modes built" <<std::endl; //TRM
-        std::cout << "State: " << s <<std::endl; //TRM
-        std::cout << "States:" <<std::endl; //TRM
-        printv(p.root_node.get_states()); //TRM
-        std::cout << "Values:" <<std::endl; //TRM
-        printv(modes_values); //TRM
-        std::cout << "Counters:" <<std::endl; //TRM
-        printv(modes_counters); //TRM
         if(modes_values.size() == 1) { // mono-modal
             if(s == modes_values[0]) { // state within the unique mode
-                std::cout << "END TRUE 1 keep" <<std::endl;//TRM
                 return true;
             } else { // state out of the unique mode
-                std::cout << "END FALSE 1 rebuild" <<std::endl;//TRM
                 return false;
             }
         } else { // multi-modal
@@ -398,8 +387,6 @@ struct agent {
             for(auto &elt: modes_counters) { // build modes ratio vector
                 modes_ratio.push_back(((double) elt) / ((double)p.root_node.get_states().size()));
             }
-            std::cout << "Ratio:" <<std::endl; //TRM
-            printv(modes_ratio); //TRM
             unsigned state_mode_indice = 0;
             for(unsigned j=0; j<modes_values.size(); ++j) {
                 if(s == modes_values[j]) {
@@ -408,13 +395,9 @@ struct agent {
                 }
             }
             double ratio_min = .8; // ratio under which we discard the tree
-            std::cout << "Final test, rebuild if ";//TRM
-            std::cout << modes_ratio.at(state_mode_indice) << " < " << ratio_min << std::endl;//TRM
             if(is_less_than(modes_ratio.at(state_mode_indice),ratio_min)) {
-                std::cout << "END FALSE 2 rebuild" <<std::endl;//TRM
                 return false;
             } else {
-                std::cout << "END TRUE 2 keep" <<std::endl;//TRM
                 return true;
             }
         }
@@ -428,7 +411,6 @@ struct agent {
      * @param {double} s; current state of the agent
      */
     void build_uct_tree(double s) {
-        std::cout << "--------------------------------------------------------------------> Build" << std::endl;//TRM
         p.root_node.clear_node();
         p.root_node.set_state(s);
         p.trials_count = 0;

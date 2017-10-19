@@ -101,24 +101,17 @@ void run_with(
  */
 void bunch_of_run(unsigned nbsim) {
     std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9, .95, 1.};
-    //std::vector<double> fp_range = {.0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1.};
-    for(auto fp : fp_range) {
-        parameters sp("data/backup/short/main.cfg");
-        sp.POLICY_SELECTOR = 0; // Vanilla UCT
-        sp.FAILURE_PROBABILITY = fp;
-        sp.MODEL_FAILURE_PROBABILITY = fp;
-        std::string path = get_backup_path(sp);
-        std::cout << "Output: " << path << std::endl;
-        run_with(sp,nbsim,false,true,path);
-    }
-    for(auto fp : fp_range) {
-        parameters sp("data/backup/short/main.cfg");
-        sp.POLICY_SELECTOR = 1; // Plain OLUCT
-        sp.FAILURE_PROBABILITY = fp;
-        sp.MODEL_FAILURE_PROBABILITY = fp;
-        std::string path = get_backup_path(sp);
-        std::cout << "Output: " << path << std::endl;
-        run_with(sp,nbsim,false,true,path);
+    std::vector<unsigned> ps_range = {0, 1, 2}; // policy selector range
+    for(auto ps : ps_range) {
+        for(auto fp : fp_range) {
+            parameters sp("data/backup/short/main.cfg");
+            sp.POLICY_SELECTOR = ps;
+            sp.FAILURE_PROBABILITY = fp;
+            sp.MODEL_FAILURE_PROBABILITY = fp;
+            std::string path = get_backup_path(sp);
+            std::cout << "Output: " << path << std::endl;
+            run_with(sp,nbsim,false,true,path);
+        }
     }
 }
 
@@ -133,14 +126,6 @@ void bunch_of_run(unsigned nbsim) {
 int main(int argc, char* argv[]) {
     try {
         srand(time(NULL));
-        ///
-        parameters sp("data/backup/short/main.cfg");
-        sp.POLICY_SELECTOR = 2; // Plain OLUCT
-        sp.FAILURE_PROBABILITY = .2;
-        sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
-        run_with(sp,1,true,false,"");
-        ///
-        /*
         switch(argc) {
             case 1: { //default
                 std::cout << "Run 100 simulations\n";
@@ -156,7 +141,6 @@ int main(int argc, char* argv[]) {
                 throw wrong_nb_input_argument_exception();
             }
         }
-        */
     }
     catch(const std::exception &e) {
         std::cerr<<"Error in main(): standard exception caught: "<<e.what()<<std::endl;
