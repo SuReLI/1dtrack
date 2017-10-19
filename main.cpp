@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
                 break;
             }
             default: {
-                std::cout << "Error: number of input arguments unknown, see main function.";
+                throw wrong_nb_input_argument_exception();
             }
         }
     }

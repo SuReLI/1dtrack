@@ -2,6 +2,20 @@
 #define EXCEPTIONS_HPP_
 
 /**
+ * @brief Wrong number of input argument exception
+ *
+ * Exception for wrong number of input arguments in main function.
+ */
+struct wrong_nb_input_argument_exception : std::exception {
+    explicit wrong_nb_input_argument_exception() noexcept {}
+    virtual ~wrong_nb_input_argument_exception() noexcept {}
+
+    virtual const char * what() const noexcept override {
+        return "number of input arguments unknown, see main function.\n";
+    }
+};
+
+/**
  * @brief Decision criterion selector exception
  *
  * Exception for wrong decision criterion selector choice.
