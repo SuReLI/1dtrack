@@ -113,7 +113,7 @@ void bunch_of_run(unsigned nbsim) {
     }
     for(auto fp : fp_range) {
         parameters sp("data/backup/short/main.cfg");
-        sp.POLICY_SELECTOR = 1; // OLUCT
+        sp.POLICY_SELECTOR = 1; // Plain OLUCT
         sp.FAILURE_PROBABILITY = fp;
         sp.MODEL_FAILURE_PROBABILITY = fp;
         std::string path = get_backup_path(sp);
@@ -133,13 +133,21 @@ void bunch_of_run(unsigned nbsim) {
 int main(int argc, char* argv[]) {
     try {
         srand(time(NULL));
+        ///
+        parameters sp("data/backup/short/main.cfg");
+        sp.POLICY_SELECTOR = 2; // Plain OLUCT
+        sp.FAILURE_PROBABILITY = .2;
+        sp.MODEL_FAILURE_PROBABILITY = sp.FAILURE_PROBABILITY;
+        run_with(sp,1,true,false,"");
+        ///
+        /*
         switch(argc) {
             case 1: { //default
                 std::cout << "Run 100 simulations\n";
                 bunch_of_run(100);
                 break;
             }
-            case 2: {
+            case 2: { // number of simulation given
                 std::cout << "Run " << argv[1] << " simulations\n";
                 bunch_of_run(atoi(argv[1]));
                 break;
@@ -148,6 +156,7 @@ int main(int argc, char* argv[]) {
                 throw wrong_nb_input_argument_exception();
             }
         }
+        */
     }
     catch(const std::exception &e) {
         std::cerr<<"Error in main(): standard exception caught: "<<e.what()<<std::endl;

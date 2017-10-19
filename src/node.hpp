@@ -108,9 +108,8 @@ public :
         return states.size();
     }
 
-    /** @brief Get a copy of the states vector of the node (non-root node) */
+    /** @brief Get a copy of the states vector of the node */
     std::vector<double> get_states() const {
-        assert(!root); //TRM
         return states;
     }
 
@@ -216,14 +215,15 @@ public :
     /**
      * @brief Move to child
      *
-     * The current root node takes the children and action vector of one of its children and
-     * updates its state.
+     * The current root node takes the children, states and action vector of one of its
+     * children and updates its state.
      * @param {unsigned} indice; indice of the moved child
      * @param {double} new_state; new labelling state
      */
     void move_to_child(unsigned indice, double new_state) {
         assert(is_root());
         actions = children[indice].get_actions();
+        states = children[indice].get_states();
         auto tmp = std::move(children[indice].children);
         // Temporary variable to prevent from overwriting
         for(auto &elt : tmp) {
