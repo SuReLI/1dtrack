@@ -104,7 +104,7 @@ void bunch_of_run(unsigned nbsim) {
     std::vector<unsigned> ps_range = {0, 1, 2};
     for(auto ps : ps_range) {
         for(auto fp : fp_range) {
-            parameters sp("data/backup/short/main.cfg");
+            parameters sp("data/backup/long/main.cfg");
             sp.POLICY_SELECTOR = ps;
             sp.FAILURE_PROBABILITY = fp;
             sp.MODEL_FAILURE_PROBABILITY = fp;
