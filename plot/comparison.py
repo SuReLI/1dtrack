@@ -25,19 +25,23 @@ def plot_error_bar(ax, rng, mean, stddev, cl):
 	ax.fill_between(rng, up, dw, color=cl, alpha=0.1)
 	return l
 
-def extract(repo, pth1, fp_range, pth2):
+def extract(repo, pth1, fp_rng, pth2, take_log):
 	lomns = []
 	lostd = []
 	cpmns = []
 	cpstd = []
 	camns = []
 	castd = []
-	for fp in fp_range:
+	for fp in fp_rng:
 		path =	 repo + pth1 + fp + pth2 + fp + ".csv"
 		data = pd.read_csv(path,sep = ',')
 		lo = data["score"]
 		cp = data["computational_cost"]
 		ca = data["nb_calls"]
+		if take_log:
+			lo = np.log(lo)
+			cp = np.log(cp)
+			ca = np.log(ca)
 		lomns.append(lo.mean())
 		lostd.append(lo.std())
 		cpmns.append(cp.mean())
@@ -46,17 +50,24 @@ def extract(repo, pth1, fp_range, pth2):
 		castd.append(ca.std())
 	return [lomns, lostd, cpmns, cpstd, camns, castd]
 
-take_log = False # Take the log of the data or not
-fprng = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045", "050", "055", "060", "065", "070", "075", "080", "085", "090", "095", "1"] # Different failure probabilities (wrt the files names)
-rng = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.] # Same with real values for plotting
+# Variables ####################################################################
+
+# Take the log of the data or not
+take_log = True
+
+# Different failure probabilities (wrt the files names)
+fp_range = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045", "050", "055", "060", "065", "070", "075", "080", "085", "090", "095", "1"]
+
+# Same with real values for plotting
+fp_range_values = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.]
 
 # Initialisation ###############################################################
 
 repo = "data/backup/short/"
 pth = "_20_10_2_090_000_2_000_"
-[lo1_mns, lo1_std, cp1_mns, cp1_std, ca1_mns, ca1_std] = extract(repo, "0_2_000_", fprng, pth)
-[lo2_mns, lo2_std, cp2_mns, cp2_std, ca2_mns, ca2_std] = extract(repo, "1_2_000_", fprng, pth)
-[lo3_mns, lo3_std, cp3_mns, cp3_std, ca3_mns, ca3_std] = extract(repo, "1_2_000_", fprng, pth)
+[lo1_mns, lo1_std, cp1_mns, cp1_std, ca1_mns, ca1_std] = extract(repo, "0_2_000_", fp_range, pth, take_log)
+[lo2_mns, lo2_std, cp2_mns, cp2_std, ca2_mns, ca2_std] = extract(repo, "1_2_000_", fp_range, pth, take_log)
+[lo3_mns, lo3_std, cp3_mns, cp3_std, ca3_mns, ca3_std] = extract(repo, "1_2_000_", fp_range, pth, take_log)
 
 plt.close('all')
 f, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
@@ -65,9 +76,9 @@ f, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
 
 # Plot 1 - loss
 
-l1 = plot_error_bar(ax1,rng,lo1_mns,lo1_std,BLUE)
-l2 = plot_error_bar(ax1,rng,lo2_mns,lo2_std,ORNG)
-l3 = plot_error_bar(ax1,rng,lo3_mns,lo3_std,GREE)
+l1 = plot_error_bar(ax1,fp_range_values,lo1_mns,lo1_std,BLUE)
+l2 = plot_error_bar(ax1,fp_range_values,lo2_mns,lo2_std,ORNG)
+l3 = plot_error_bar(ax1,fp_range_values,lo3_mns,lo3_std,GREE)
 
 ax1.set_xlabel('Transition failure probability')
 if take_log:
@@ -78,9 +89,9 @@ ax1.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],nump
 
 # Plot 2 - computational cost
 
-l1 = plot_error_bar(ax2,rng,cp1_mns,cp1_std,BLUE)
-l2 = plot_error_bar(ax2,rng,cp2_mns,cp2_std,ORNG)
-l3 = plot_error_bar(ax2,rng,cp3_mns,cp3_std,GREE)
+l1 = plot_error_bar(ax2,fp_range_values,cp1_mns,cp1_std,BLUE)
+l2 = plot_error_bar(ax2,fp_range_values,cp2_mns,cp2_std,ORNG)
+l3 = plot_error_bar(ax2,fp_range_values,cp3_mns,cp3_std,GREE)
 
 ax2.set_xlabel('Transition failure probability')
 if take_log:
@@ -91,9 +102,9 @@ ax2.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],nump
 
 # Plot 3 - number of call
 
-l1 = plot_error_bar(ax3,rng,ca1_mns,ca1_std,BLUE)
-l2 = plot_error_bar(ax3,rng,ca2_mns,ca2_std,ORNG)
-l3 = plot_error_bar(ax3,rng,ca3_mns,ca3_std,GREE)
+l1 = plot_error_bar(ax3,fp_range_values,ca1_mns,ca1_std,BLUE)
+l2 = plot_error_bar(ax3,fp_range_values,ca2_mns,ca2_std,ORNG)
+l3 = plot_error_bar(ax3,fp_range_values,ca3_mns,ca3_std,GREE)
 
 ax3.set_xlabel('Transition failure probability')
 if take_log:
