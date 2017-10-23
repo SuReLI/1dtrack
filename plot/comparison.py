@@ -53,21 +53,23 @@ def extract(repo, pth1, fp_rng, pth2, take_log):
 # Variables ####################################################################
 
 # Take the log of the data or not
-take_log = True
+take_log = False
 
 # Different failure probabilities (wrt the files names)
-fp_range = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045", "050", "055", "060", "065", "070", "075", "080", "085", "090", "095", "1"]
+#fp_range = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045", "050", "055", "060", "065", "070", "075", "080", "085", "090", "095", "1"]
+fp_range = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045", "050"]
 
 # Same with real values for plotting
-fp_range_values = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.]
+#fp_range_values = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.]
+fp_range_values = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
 
 # Initialisation ###############################################################
 
-repo = "data/backup/short/"
-pth = "_20_10_2_090_000_2_000_"
-[lo1_mns, lo1_std, cp1_mns, cp1_std, ca1_mns, ca1_std] = extract(repo, "0_2_000_", fp_range, pth, take_log)
-[lo2_mns, lo2_std, cp2_mns, cp2_std, ca2_mns, ca2_std] = extract(repo, "1_2_000_", fp_range, pth, take_log)
-[lo3_mns, lo3_std, cp3_mns, cp3_std, ca3_mns, ca3_std] = extract(repo, "1_2_000_", fp_range, pth, take_log)
+repo = "data/backup/long/"
+pth = "_100_40_2_090_000_25_000_"
+[lo1_mns, lo1_std, cp1_mns, cp1_std, ca1_mns, ca1_std] = extract(repo, "0_25_000_", fp_range, pth, take_log)
+[lo2_mns, lo2_std, cp2_mns, cp2_std, ca2_mns, ca2_std] = extract(repo, "1_25_000_", fp_range, pth, take_log)
+[lo3_mns, lo3_std, cp3_mns, cp3_std, ca3_mns, ca3_std] = extract(repo, "2_25_000_", fp_range, pth, take_log)
 
 plt.close('all')
 f, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
@@ -85,7 +87,7 @@ if take_log:
 	ax1.set_ylabel('Log of the loss (time steps to the goal)')
 else:
 	ax1.set_ylabel('Loss (time steps to the goal)')
-ax1.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper right')
+ax1.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper left')
 
 # Plot 2 - computational cost
 
@@ -98,7 +100,7 @@ if take_log:
 	ax2.set_ylabel('Log of the computational cost (ms)')
 else:
 	ax2.set_ylabel('Computational cost (ms)')
-ax2.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper right')
+ax2.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper left')
 
 # Plot 3 - number of call
 
@@ -111,7 +113,7 @@ if take_log:
 	ax3.set_ylabel('Log of the number of call')
 else:
 	ax3.set_ylabel('Number of call')
-ax3.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper right')
+ax3.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper left')
 
 plt.show()
 
