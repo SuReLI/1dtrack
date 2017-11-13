@@ -15,7 +15,7 @@ void print_node_complete(node &v) {
         std::cout << "Val: " << v.get_value() << " ";
         std::cout << "IncAction: " << v.get_incoming_action() << " ";
         std::cout << "States: ";
-        for(auto & elt : v.get_states()) {
+        for(auto & elt : v.get_sampled_states()) {
             std::cout << elt << " ";
         }
     } else {
@@ -23,7 +23,7 @@ void print_node_complete(node &v) {
         std::cout << "Val: " << v.get_value() << " ";
         std::cout << "IncAction: " << v.get_incoming_action() << " ";
         std::cout << "States: ";
-        for(auto & elt : v.get_states()) {
+        for(auto & elt : v.get_sampled_states()) {
             std::cout << elt << " ";
         }
     }
@@ -47,7 +47,7 @@ void print_node(node &v) {
         std::cout << "ROOT: s:" << v.get_state();
     } else {
         std::cout << "s:";
-        for(auto &elt : v.get_states()) {
+        for(auto &elt : v.get_sampled_states()) {
             std::cout << elt << " ";
         }
     }
@@ -65,7 +65,7 @@ void print_node_bis(node &v) {
     std::cout << " a:" << v.get_action_at(0) << v.get_action_at(1);
     std::cout << "  v:" << v.get_value();
     std::cout << "  s:";
-    for(auto &si : v.get_states()) {
+    for(auto &si : v.get_sampled_states()) {
         std::cout << si;
     }
     std::cout << std::endl;

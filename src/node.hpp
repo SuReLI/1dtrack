@@ -9,12 +9,12 @@
 struct node {
 private :
     bool root; ///< True if the node is root i.e. labeled by a unique state instead of a family of states
-    double value; ///< Value function estimate
+    std::vector<double> sampled_outcomes; ///< Value function estimate
     int incoming_action; ///< Action of the parent node that led to this node
     unsigned visits_count; ///< Number of visits during the tree expansion
     double state; ///<Unique labelling state for a root node
-    std::vector<double> states; ///< Sampled states for a standard node
-    std::vector<int> actions; ///< Possible actions at this node (bandit arms)
+    std::vector<double> sampled_states; ///< Sampled states for a standard node
+    std::vector<int> local_action_space; ///< Possible actions at this node (bandit arms)
 
 public :
     node *parent; ///< Pointer to the parent node
@@ -28,10 +28,10 @@ public :
      * @param {std::vector<int>} action_space; copied then shuffled in actions of the node
      * (bandit arms)
      */
-    node(double _state, std::vector<int> action_space) : state(_state) {
+    node(double _state, std::vector<int> _local_action_space) : state(_state) {
         root = true;
-        actions = action_space;
-        shuffle(actions);
+        local_action_space = _local_action_space;
+        shuffle(local_action_space);
         visits_count = 0;
     }
 
@@ -46,33 +46,32 @@ public :
         node * _parent,
         int _incoming_action,
         double _new_state,
-        std::vector<int> action_space) :
+        std::vector<int> _local_action_space) :
         incoming_action(_incoming_action),
         parent(_parent)
     {
         root = false;
-        value = 0.;
         visits_count = 0;
-        states.push_back(_new_state);
-        actions = action_space;
-        shuffle(actions);
+        sampled_states.push_back(_new_state);
+        local_action_space = _local_action_space;
+        shuffle(local_action_space);
     }
 
     /**
      * @brief Clear method
      *
-     * Clear the value; the parent; the incoming action; the state/states; the visit count
+     * Clear the sampled outcomes; the parent; the incoming action; the state/states; the visit count
      * and the children vector of the node. Do not change the value of 'root' attribute,
      * hence the status of the node. Do not clear actions vector, hence the available actions
      * still remain in the same organisation order.
      */
     void clear_node() {
-        value = 0;
         parent = nullptr;
         incoming_action = 0;
         state = 0.;
         visits_count = 0;
-        states.clear();
+        sampled_outcomes.clear();
+        sampled_states.clear();
         children.clear();
     }
 
@@ -93,7 +92,11 @@ public :
 
     /** @brief Get the value of the node */
     double get_value() const {
-        return value;
+        double value = 0.;
+        for(auto &r : sampled_outcomes) {
+            value += r;
+        }
+        return value / ((double) visits_count);
     }
 
     /** @brief Get the state of the node (root node) */
@@ -105,18 +108,23 @@ public :
     /** @brief Get the number of sampled states (non-root node) */
     unsigned get_nb_sampled_states() const {
         assert(!root);
-        return states.size();
+        return sampled_states.size();
     }
 
     /** @brief Get a copy of the states vector of the node */
-    std::vector<double> get_states() const {
-        return states;
+    std::vector<double> get_sampled_states() const {
+        return sampled_states;
+    }
+
+    /** @brief Get a copy of the sampled outcomes of the node */
+    std::vector<double> get_sampled_outcomes() const {
+        return sampled_outcomes;
     }
 
     /** @brief Get a copy of the last sampled state among the states family (non-root node) */
     double get_last_sampled_state() const {
         assert(!root);
-        return states.back();
+        return sampled_states.back();
     }
 
     /** @brief Get the incoming action of the node (non-root node) */
@@ -133,20 +141,20 @@ public :
 
     /** @brief Get a copy of the actions vector */
     std::vector<int> get_actions() const {
-        return actions;
+        return local_action_space;
     }
 
     /** @brief Get one action of the node given its indice in the actions vector */
-    int get_action_at(unsigned indice) const {return actions.at(indice);}
+    int get_action_at(unsigned indice) const {return local_action_space.at(indice);}
 
     /** @brief Get the next expansion action among the available actions */
     int get_next_expansion_action() const {
-        return actions.at(children.size());
+        return local_action_space.at(children.size());
     }
 
     /** @brief Get the number of actions (arms of the bandit) */
     unsigned get_nb_of_actions() const {
-        return actions.size();
+        return local_action_space.size();
     }
 
     /** @brief Is fully expanded @return Return true if the node is fully expanded */
@@ -167,7 +175,7 @@ public :
      * @param {double} new_state; first sampled state of the new child
      */
     void create_child(int inc_ac, double new_state) {
-        children.emplace_back(node(this,inc_ac,new_state,actions));
+        children.emplace_back(node(this,inc_ac,new_state,local_action_space));
     }
 
     /**
@@ -187,9 +195,9 @@ public :
      * Add a new sampled state to the states. Node should not be root.
      * @param {double} s; added state
      */
-    void add_to_states(double s) {
+    void add_to_sampled_states(double s) {
         assert(!root);
-        states.push_back(s);
+        sampled_states.push_back(s);
     }
 
     /**
@@ -204,12 +212,13 @@ public :
     /**
      * @brief Add to value
      *
-     * Add a value to the nodes value. Node should not be root.
-     * @param {double} r; value to be added
+     * Add a sample to the sampled outcome.
+     * Node should not be root.
+     * @param {double} r; outcome sample value to be added
      */
     void add_to_value(double r) {
         assert(!root);
-        value += r;
+        sampled_outcomes.push_back(r);
     }
 
     /**
@@ -222,8 +231,10 @@ public :
      */
     void move_to_child(unsigned indice, double new_state) {
         assert(is_root());
-        actions = children[indice].get_actions();
-        states = children[indice].get_states();
+        local_action_space = children[indice].get_actions();
+        sampled_states = children[indice].get_sampled_states();
+        visits_count = children[indice].get_visits_count();
+        sampled_outcomes = children[indice].get_sampled_outcomes();
         auto tmp = std::move(children[indice].children); // Temporary variable to prevent from overwriting
         for(auto &elt : tmp) {
             elt.parent = this;

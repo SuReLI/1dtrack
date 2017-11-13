@@ -215,7 +215,7 @@ struct agent {
         } else {
             s = (v->parent)->get_last_sampled_state();
         }
-        v->add_to_states(m.transition_model(s,a));
+        v->add_to_sampled_states(m.transition_model(s,a));
     }
 
     /**
@@ -232,7 +232,7 @@ struct agent {
         if(v.is_root()) {
             return m.is_terminal(v.get_state());
         } else {
-            for(auto &elt: v.get_states()) {
+            for(auto &elt: v.get_sampled_states()) {
                 if(!m.is_terminal(elt)) {
                     return false;
                 }
@@ -377,7 +377,7 @@ struct agent {
     bool state_multimodality_test(double s) {
         std::vector<double> modes_values;
         std::vector<unsigned> modes_counters;
-        for(auto &si : p.root_node.get_states()) {
+        for(auto &si : p.root_node.get_sampled_states()) {
             bool is_new_mode = true;
             for(auto &m : modes_values) {
                 if(is_equal_to(si,m)) {
@@ -404,7 +404,7 @@ struct agent {
         } else { // multi-modal
             std::vector<double> modes_ratio;
             for(auto &elt: modes_counters) { // build modes ratio vector
-                modes_ratio.push_back(((double) elt) / ((double)p.root_node.get_states().size()));
+                modes_ratio.push_back(((double) elt) / ((double)p.root_node.get_sampled_states().size()));
             }
             unsigned state_mode_indice = 0;
             for(unsigned j=0; j<modes_values.size(); ++j) {
