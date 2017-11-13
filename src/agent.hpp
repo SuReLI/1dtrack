@@ -12,14 +12,15 @@
  */
 struct policy_parameters {
     unsigned policy_selector; ///< Policy selector (0: vanilla UCT; 1: plain OLUCT; default: epsilon-optimal policy)
-    unsigned budget; ///< Algorithm budget (number of expanded nodes).
-    unsigned horizon; ///< Algorithm horizon for the default policy.
-    unsigned trials_count; ///< Trial count for the expansion in {0,budget-1}.
-    double uct_cst; ///< UCT constant factor.
-    double discount_factor; ///< Discount factor for the MDP.
-    double epsilon; ///< Epsilon for the epsilon-optimal default policy.
-    std::vector<int> action_space; ///< Action space used by the policy.
-    node root_node; ///< Root node of the tree.
+    unsigned budget; ///< Algorithm budget (number of expanded nodes)
+    unsigned horizon; ///< Algorithm horizon for the default policy
+    unsigned expd_counter; ///< Counter of the number of expanded nodes
+    double uct_cst; ///< UCT constant factor
+    double discount_factor; ///< Discount factor for the MDP
+    double epsilon; ///< Epsilon for the epsilon-optimal default policy
+    std::vector<int> action_space; ///< Action space used by the policy
+    std::vector<bool> decision_criteria_selector; ///< Decision criterion selector
+    node root_node; ///< Root node of the tree
 
     /**
      * @brief Constructor
@@ -27,6 +28,7 @@ struct policy_parameters {
      * Standard constructor. The root node constructor is called with the initial state
      * defined in the 'main.cpp' file (see parameters definition).
      * Edit: 22/09/2017
+     * @deprecated
      */
     policy_parameters(
         unsigned _policy_selector,
@@ -46,7 +48,27 @@ struct policy_parameters {
         action_space(_action_space),
         root_node(initial_state,action_space)
     {
-        trials_count = 0;
+        expd_counter = 0;
+    }
+
+    /**
+     * @brief Constructor
+     *
+     * Constructor via simulation parameters.
+     */
+    policy_parameters(
+        parameters &sp) :
+        policy_selector(sp.POLICY_SELECTOR),
+        budget(sp.BUDGET),
+        horizon(sp.HORIZON),
+        uct_cst(sp.UCT_CST),
+        discount_factor(sp.DISCOUNT_FACTOR),
+        epsilon(sp.EPSILON),
+        action_space(sp.ACTION_SPACE),
+        root_node(sp.INIT_S,action_space)
+    {
+        expd_counter = 0;
+        sp.parse_decision_criterion(decision_criteria_selector);
     }
 };
 
@@ -148,10 +170,10 @@ struct agent {
         std::vector<double> uct_scores;
         for(auto &elt : v.children) {
             assert(elt.get_visits_count() != 0);
-            assert(p.trials_count > 0);
+            assert(p.expd_counter > 0);
             uct_scores.emplace_back(
                 elt.get_value() + 2 * p.uct_cst *
-                sqrt(log((double) p.trials_count)/ ((double) elt.get_visits_count()))
+                sqrt(log((double) p.expd_counter)/ ((double) elt.get_visits_count()))
             );
         }
         unsigned ind = argmax(uct_scores);
@@ -272,7 +294,7 @@ struct agent {
     double default_policy(node * ptr) {
         if(is_node_terminal(*ptr)) {
             double s = ptr->get_last_sampled_state();
-            return m.reward_model(s,0,0.);
+            return m.reward_model(s,0,s);
         }
         double total_return = 0.;
         double s = ptr->get_last_sampled_state();
@@ -294,15 +316,22 @@ struct agent {
      * @brief Backup method
      *
      * Increment all the visited nodes visits counters and update their values w.r.t. the
-     * given discounted return. This method is recursive.
+     * given discounted return.
+     * This method is recursive.
      * @param {double &} total_return; return to be backed up, iteratively discounted
      * @param {node *} ptr; pointer to the node, first the leaf node, then to the parents
-     * (recursive method)
      */
     void backup(double &total_return, node * ptr) {
         ptr->increment_visits_count();
         ptr->add_to_value(total_return);
         total_return *= p.discount_factor; // apply the discount for the parent node
+        /* //TODO: test
+        total_return += envt->reward_function( // add the reward of the transition
+            ptr->parent->get_last_sampled_state(),
+            ptr->get_incoming_action(),
+            ptr->get_last_sampled_state()
+        );
+        */
         if(!ptr->parent->is_root()) {
             backup(total_return,ptr->parent);
         }
@@ -334,16 +363,6 @@ struct agent {
      */
     int get_recommended_action(const node &v) {
         return v.get_action_at(argmax_score(v));
-    }
-
-    /**
-     * @brief Plain decision criterion
-     *
-     * Systematically keep the sub-tree.
-     * @return Return 'true'.
-     */
-    bool plain_decision_criterion() {
-        return true; // naive implementation: keep the tree if root is expanded
     }
 
     /**
@@ -404,6 +423,27 @@ struct agent {
     }
 
     /**
+     * @brief TODO
+     */
+    bool state_distribution_variance_test() {
+        //
+    }
+
+    /**
+     * @brief TODO
+     */
+    bool distance_to_state_distribution_mean_test(double s) {
+        //
+    }
+
+    /**
+     * @brief TODO
+     */
+    bool outcome_distribution_variance_test() {
+        //
+    }
+
+    /**
      * @brief Build UCT tree
      *
      * Build a tree starting from the root attribute of the parameters using the
@@ -413,12 +453,12 @@ struct agent {
     void build_uct_tree(double s) {
         p.root_node.clear_node();
         p.root_node.set_state(s);
-        p.trials_count = 0;
+        p.expd_counter = 0;
         for(unsigned i=0; i<p.budget; ++i) {
             node *ptr = tree_policy(p.root_node);
             double total_return = default_policy(ptr);
             backup(total_return,ptr);
-            p.trials_count += 1;
+            p.expd_counter += 1;
         }
     }
 
@@ -431,17 +471,20 @@ struct agent {
      * @return Return 'true' if the sub-tree is kept.
      */
     bool decision_criterion(double s) {
-        switch(p.policy_selector) {
-            case 1: { // plain
-                return plain_decision_criterion();
-            }
-            case 2: { // state multimodality test
-                return state_multimodality_test(s);
-            }
-            default: { // Exception
-                throw decision_criterion_selector_exception();
-            }
+        bool keep_tree = true;
+        if(p.decision_criteria_selector[1]) { // state multi-modality
+            keep_tree *= state_multimodality_test(s);
         }
+        if(p.decision_criteria_selector[2]) { // state distribution variance
+            keep_tree *= state_distribution_variance_test();
+        }
+        if(p.decision_criteria_selector[3]) { // distance to state distribution mean
+            keep_tree *= distance_to_state_distribution_mean_test(s);
+        }
+        if(p.decision_criteria_selector[4]) { // outcome distribution variance
+            keep_tree *= outcome_distribution_variance_test();
+        }
+        return keep_tree;
     }
 
     /**
@@ -452,8 +495,9 @@ struct agent {
      * @return Return the recommended action.
      */
     int oluct(double s) {
+        /* deprecated
         int ra = 0;
-        if(p.root_node.is_fully_expanded() // necessary condiftion
+        if(p.root_node.is_fully_expanded() // necessary condition
         && decision_criterion(s)) { // Open Loop control
             ra = get_recommended_action(p.root_node);
         } else { // Closed Loop control
@@ -461,16 +505,13 @@ struct agent {
             ra = get_recommended_action(p.root_node);
         }
         p.root_node.move_to_child(argmax_score(p.root_node),s);
-        return ra;
-        /* // outdated
-        unsigned new_root_indice = 0; // will be modified
-        if(decision_criterion(s,new_root_indice)) { // keep the subtree and use it
-            p.root_node.move_to_child(new_root_indice,s);
-        } else { // build or rebuild the subtree
+        */
+        if(!p.root_node.is_fully_expanded() || !decision_criterion(s)) {
             build_uct_tree(s);
         }
-        return get_recommended_action(p.root_node);
-        */
+        int ra = get_recommended_action(p.root_node);
+        p.root_node.move_to_child(argmax_score(p.root_node),s);
+        return ra;
     }
 
     /**
@@ -513,7 +554,7 @@ struct agent {
                 a = oluct(s);
                 break;
             }
-            case 2: { // another OLUCT // TODO
+            case 2: { // another OLUCT
                 a = oluct(s);
                 break;
             }

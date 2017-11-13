@@ -10,6 +10,7 @@
  * Parameters container for a simulation
  */
 struct parameters {
+    std::string MAIN_CFG_PATH;
     double TRACK_LEN; ///< Track length (half of the length of the track)
     double STDDEV; ///< Environment noise standard deviation
     double FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied (randomness of the transition function)
@@ -68,9 +69,14 @@ struct parameters {
      * The used library for parsing is libconfig.
      * @param {const char *} cfg_path; path of the configuration file
      */
-    parameters(const char *cfg_path) {
+    parameters(const char *cfg_path) : MAIN_CFG_PATH(cfg_path) {
         libconfig::Config cfg;
-        cfg.readFile(cfg_path);
+        try {
+            cfg.readFile(cfg_path);
+        }
+        catch(const libconfig::ParseException &e) {
+            display_libconfig_parse_exception(e);
+        }
         unsigned nbac= 0;
         if(cfg.lookupValue("track_len",TRACK_LEN)
         && cfg.lookupValue("stddev",STDDEV)
@@ -98,6 +104,49 @@ struct parameters {
             }
         }
         else { // Error in config file
+            throw wrong_syntax_configuration_file_exception();
+        }
+    }
+
+    /**
+     * @brief Display libconfig ParseException
+     *
+     * @param {const libconfig::ParseException &} e; displayed exception
+     */
+    void display_libconfig_parse_exception(const libconfig::ParseException &e) {
+        std::cerr << "Error in parameters(const char *cfg_path): ParseException ";
+        std::cerr << "in file " << e.getFile() << " ";
+        std::cerr << "at line " << e.getLine() << ": ";
+        std::cerr << e.getError() << std::endl;
+    }
+
+    /**
+     * @brief Parse decision criterion
+     *
+     * Parse the decision criteria boolean.
+     * @param {std::vector<bool> &} v; vector containing every boolean
+     */
+    void parse_decision_criterion(std::vector<bool> &v) {
+        libconfig::Config cfg;
+        try {
+            cfg.readFile(MAIN_CFG_PATH.c_str());
+        }
+        catch(const libconfig::ParseException &e) {
+            display_libconfig_parse_exception(e);
+        }
+        v.reserve(5);
+        bool b0, b1, b2, b3, b4;
+        if(cfg.lookupValue("b0",b0)
+        && cfg.lookupValue("b1",b1)
+        && cfg.lookupValue("b2",b2)
+        && cfg.lookupValue("b3",b3)
+        && cfg.lookupValue("b4",b4)) {
+            v.push_back(b0);
+            v.push_back(b1);
+            v.push_back(b2);
+            v.push_back(b3);
+            v.push_back(b4);
+        } else {
             throw wrong_syntax_configuration_file_exception();
         }
     }

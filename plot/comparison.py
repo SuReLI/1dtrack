@@ -15,6 +15,7 @@ import sys
 BLUE = '#333399';
 ORNG = '#ff6600';
 GREE = '#00cc66';
+GREY = '#b8b8b8';
 
 def plot_error_bar(ax, rng, mean, stddev, cl):
 	l = ax.errorbar(rng, mean, color=cl, yerr=stddev)
@@ -50,10 +51,22 @@ def extract(repo, pth1, fp_rng, pth2, take_log):
 		castd.append(ca.std())
 	return [lomns, lostd, cpmns, cpstd, camns, castd]
 
-# Variables ####################################################################
+# Variables --------------------------------------------------------------------
+
+labsz = 15
+xlab = 'Transition misstep probability'
+ylab1 = 'Loss (time steps to the goal)'
+ylab1_log = 'Log of the loss\n(time steps to the goal)'
+ylab2 = 'Computational cost (ms)'
+ylab2_log = 'Log of the\ncomputational cost (ms)'
+ylab3 = 'Number of call'
+ylab3_log = 'Log of the\nnumber of call'
+leg1 = 'Vanilla UCT'
+leg2 = 'Plain OLUCT'
+leg3 = 'SDC-OLUCT'
 
 # Take the log of the data or not
-take_log = False
+take_log = True
 
 # Different failure probabilities (wrt the files names)
 #fp_range = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045", "050", "055", "060", "065", "070", "075", "080", "085", "090", "095", "1"]
@@ -63,18 +76,18 @@ fp_range = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045"
 #fp_range_values = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.]
 fp_range_values = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
 
-# Initialisation ###############################################################
+# Initialisation ---------------------------------------------------------------
 
-repo = "data/backup/long/"
-pth = "_100_40_2_090_000_25_000_"
-[lo1_mns, lo1_std, cp1_mns, cp1_std, ca1_mns, ca1_std] = extract(repo, "0_25_000_", fp_range, pth, take_log)
-[lo2_mns, lo2_std, cp2_mns, cp2_std, ca2_mns, ca2_std] = extract(repo, "1_25_000_", fp_range, pth, take_log)
-[lo3_mns, lo3_std, cp3_mns, cp3_std, ca3_mns, ca3_std] = extract(repo, "2_25_000_", fp_range, pth, take_log)
+repo = "data/backup/short_track/"
+pth = "_20_10_2_090_000_2_000_"
+[lo1_mns, lo1_std, cp1_mns, cp1_std, ca1_mns, ca1_std] = extract(repo, "0_2_000_", fp_range, pth, take_log)
+[lo2_mns, lo2_std, cp2_mns, cp2_std, ca2_mns, ca2_std] = extract(repo, "1_2_000_", fp_range, pth, take_log)
+[lo3_mns, lo3_std, cp3_mns, cp3_std, ca3_mns, ca3_std] = extract(repo, "2_2_000_", fp_range, pth, take_log)
 
 plt.close('all')
 f, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
 
-### Plot #######################################################################
+### Plot -----------------------------------------------------------------------
 
 # Plot 1 - loss
 
@@ -82,12 +95,12 @@ l1 = plot_error_bar(ax1,fp_range_values,lo1_mns,lo1_std,BLUE)
 l2 = plot_error_bar(ax1,fp_range_values,lo2_mns,lo2_std,ORNG)
 l3 = plot_error_bar(ax1,fp_range_values,lo3_mns,lo3_std,GREE)
 
-ax1.set_xlabel('Transition failure probability')
+ax1.set_xlabel(xlab,{'fontsize':labsz})
 if take_log:
-	ax1.set_ylabel('Log of the loss (time steps to the goal)')
+	ax1.set_ylabel(ylab1_log,{'fontsize':labsz})
 else:
-	ax1.set_ylabel('Loss (time steps to the goal)')
-ax1.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper left')
+	ax1.set_ylabel(ylab1,{'fontsize':labsz})
+ax1.legend([l1,l2,l3],[leg1,leg2,leg3],numpoints=1,loc='upper left')
 
 # Plot 2 - computational cost
 
@@ -95,12 +108,12 @@ l1 = plot_error_bar(ax2,fp_range_values,cp1_mns,cp1_std,BLUE)
 l2 = plot_error_bar(ax2,fp_range_values,cp2_mns,cp2_std,ORNG)
 l3 = plot_error_bar(ax2,fp_range_values,cp3_mns,cp3_std,GREE)
 
-ax2.set_xlabel('Transition failure probability')
+ax2.set_xlabel(xlab,{'fontsize':labsz})
 if take_log:
-	ax2.set_ylabel('Log of the computational cost (ms)')
+	ax2.set_ylabel(ylab2_log,{'fontsize':labsz})
 else:
-	ax2.set_ylabel('Computational cost (ms)')
-ax2.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper left')
+	ax2.set_ylabel(ylab2,{'fontsize':labsz})
+ax2.legend([l1,l2,l3],[leg1,leg2,leg3],numpoints=1,loc='upper left')
 
 # Plot 3 - number of call
 
@@ -108,12 +121,12 @@ l1 = plot_error_bar(ax3,fp_range_values,ca1_mns,ca1_std,BLUE)
 l2 = plot_error_bar(ax3,fp_range_values,ca2_mns,ca2_std,ORNG)
 l3 = plot_error_bar(ax3,fp_range_values,ca3_mns,ca3_std,GREE)
 
-ax3.set_xlabel('Transition failure probability')
+ax3.set_xlabel(xlab,{'fontsize':labsz})
 if take_log:
-	ax3.set_ylabel('Log of the number of call')
+	ax3.set_ylabel(ylab3_log,{'fontsize':labsz})
 else:
-	ax3.set_ylabel('Number of call')
-ax3.legend([l1,l2,l3],['Vanilla UCT','Plain OLUCT','State mode-test OLUCT'],numpoints=1,loc='upper left')
+	ax3.set_ylabel(ylab3,{'fontsize':labsz})
+ax3.legend([l1,l2,l3],[leg1,leg2,leg3],numpoints=1,loc='upper left')
 
 plt.show()
 

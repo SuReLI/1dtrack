@@ -10,7 +10,7 @@ struct node {
 private :
     bool root; ///< True if the node is root i.e. labeled by a unique state instead of a family of states
     double value; ///< Value function estimate
-    int incoming_action; ///< Action of the parent node that leaded to this node
+    int incoming_action; ///< Action of the parent node that led to this node
     unsigned visits_count; ///< Number of visits during the tree expansion
     double state; ///<Unique labelling state for a root node
     std::vector<double> states; ///< Sampled states for a standard node

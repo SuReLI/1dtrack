@@ -21,7 +21,7 @@
  * @brief Simulate a single episode
  *
  * Run a single 1D track simulation given its parameters.
- * @warning The values should be saved in the same ordering as in the 'get_saved_values_names'
+ * @warning The values should be saved in the same order as in the 'get_saved_values_names'
  * method (edit 22/09/2017).
  * @param {track &} tr; environment
  * @param {agent &} ag; agent
@@ -60,14 +60,14 @@ void simulate_episode(
  * @brief Bunch of run with the same parameters
  *
  * Bunch of run with the same parameters.
- * @param {const parameters &} sp; parameters used for all the simulations
+ * @param {parameters &} sp; parameters used for all the simulations
  * @param {unsigned} nbsim; number of simulations
  * @param {bool} prnt; if true, print some informations during the simulation
  * @param {bool} bckp; if true, save some informations in the end of the simulation
  * @param {const std::string &} outpth; output saving path is backup
  */
 void run_with(
-    const parameters &sp,
+    parameters &sp,
     unsigned nbsim,
     bool prnt,
     bool bckp,
@@ -81,7 +81,7 @@ void run_with(
     for(unsigned i=0; i<nbsim; ++i) {
         //std::cout << "Simulation " << i+1 << "/" << nbsim << std::endl;
         track tr(sp.TRACK_LEN, sp.STDDEV, sp.FAILURE_PROBABILITY);
-        policy_parameters p(sp.POLICY_SELECTOR, sp.BUDGET, sp.HORIZON, sp.UCT_CST, sp.DISCOUNT_FACTOR, sp.EPSILON, sp.ACTION_SPACE, sp.INIT_S);
+        policy_parameters p(sp);
         model m(sp.MODEL_TRACK_LEN, sp.MODEL_STDDEV, sp.MODEL_FAILURE_PROBABILITY);
         agent ag(sp.INIT_S,p,m);
 
@@ -100,11 +100,12 @@ void run_with(
  * @param {const unsigned &} nbsim; number of simulations
  */
 void bunch_of_run(unsigned nbsim) {
+    /*
     std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9, .95, 1.};
     std::vector<unsigned> ps_range = {0, 1, 2};
     for(auto ps : ps_range) {
         for(auto fp : fp_range) {
-            parameters sp("data/backup/long/main.cfg");
+            parameters sp("main.cfg");
             sp.POLICY_SELECTOR = ps;
             sp.FAILURE_PROBABILITY = fp;
             sp.MODEL_FAILURE_PROBABILITY = fp;
@@ -113,6 +114,11 @@ void bunch_of_run(unsigned nbsim) {
             run_with(sp,nbsim,false,true,path);
         }
     }
+    */
+    parameters sp("main.cfg");
+    std::string path = get_backup_path(sp);
+    std::cout << "Output: " << path << std::endl;
+    run_with(sp,nbsim,true,true,path);
 }
 
 /**
@@ -133,7 +139,7 @@ int main(int argc, char* argv[]) {
                 break;
             }
             case 2: { // number of simulation given
-                std::cout << "Run " << argv[1] << " simulations\n";
+                std::cout << "Run " << argv[1] << " simulation(s)\n";
                 bunch_of_run(atoi(argv[1]));
                 break;
             }
