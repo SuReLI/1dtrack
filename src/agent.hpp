@@ -21,6 +21,9 @@ struct policy_parameters {
     std::vector<int> action_space; ///< Action space used by the policy
     std::vector<bool> decision_criteria_selector; ///< Decision criterion selector
     node root_node; ///< Root node of the tree
+    double state_variance_threshold; ///< Upper threshold for state distribution vmr test
+    double distance_threshold; ///< Upper threshold for state distribution distance test
+    double outcome_variance_threshold; ///< Upper threshold for outcome distribution variance test
 
     /**
      * @brief Constructor
@@ -65,7 +68,10 @@ struct policy_parameters {
         discount_factor(sp.DISCOUNT_FACTOR),
         epsilon(sp.EPSILON),
         action_space(sp.ACTION_SPACE),
-        root_node(sp.INIT_S,action_space)
+        root_node(sp.INIT_S,action_space),
+        state_variance_threshold(sp.STATE_VARIANCE_THRESHOLD),
+        distance_threshold(sp.DISTANCE_THRESHOLD),
+        outcome_variance_threshold(sp.OUTCOME_VARIANCE_THRESHOLD)
     {
         expd_counter = 0;
         sp.parse_decision_criterion(decision_criteria_selector);
@@ -426,6 +432,7 @@ struct agent {
      * @brief TODO
      */
     bool state_distribution_variance_test() {
+        std::cout << "2\n";//TRM
         //
     }
 
@@ -433,6 +440,7 @@ struct agent {
      * @brief TODO
      */
     bool distance_to_state_distribution_mean_test(double s) {
+        std::cout << "3\n";//TRM
         //
     }
 
@@ -440,7 +448,16 @@ struct agent {
      * @brief TODO
      */
     bool outcome_distribution_variance_test() {
-        //
+        std::cout << "4\n";//TRM
+        std::vector<double> outcomes = p.root_node.get_sampled_outcomes();
+        double variance = 0.;
+        for(unsigned i=0; i<outcomes.size(); ++i) {
+            for(unsigned j=0; j<i; ++j) {
+                variance += pow(outcomes[i] = outcomes[j], 2.);
+            }
+        }
+        variance /= pow(((double) outcomes.size()),2.);
+        return is_less_than(variance,p.outcome_variance_threshold);
     }
 
     /**
