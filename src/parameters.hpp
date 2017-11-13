@@ -25,6 +25,9 @@ struct parameters {
     double MODEL_TRACK_LEN; ///< Model track length (half of the length of the track)
     double MODEL_STDDEV; ///< Model noise standard deviation
     double MODEL_FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function)
+    double STATE_VARIANCE_THRESHOLD;
+    double DISTANCE_THRESHOLD;
+    double OUTCOME_VARIANCE_THRESHOLD;
 
     /**
      * @brief Simulation parameters 'default' constructor
@@ -91,7 +94,10 @@ struct parameters {
         && cfg.lookupValue("epsilon",EPSILON)
         && cfg.lookupValue("model_track_len",MODEL_TRACK_LEN)
         && cfg.lookupValue("model_stddev",MODEL_STDDEV)
-        && cfg.lookupValue("model_failure_probability",MODEL_FAILURE_PROBABILITY)) {
+        && cfg.lookupValue("model_failure_probability",MODEL_FAILURE_PROBABILITY)
+        && cfg.lookupValue("state_variance_threshold",STATE_VARIANCE_THRESHOLD)
+        && cfg.lookupValue("distance_threshold",DISTANCE_THRESHOLD)
+        && cfg.lookupValue("outcome_variance_threshold",OUTCOME_VARIANCE_THRESHOLD)) {
             for(unsigned i=0; i<nbac; ++i) { // actions parsing
                 std::string name = "a";
                 name += std::to_string(i);
