@@ -429,27 +429,42 @@ struct agent {
     }
 
     /**
-     * @brief TODO
+     * @brief State distribution variance test
+     *
+     * Test whether the variance of the state distribution at the node reached by the
+     * recommended action is small enough.
+     * @return Return true if the test does not discard the tree.
      */
     bool state_distribution_variance_test() {
-        std::cout << "2\n";//TRM
-        //
+        std::vector<double> states = p.root_node.get_sampled_states();
+        assert(states.size() > 0);
+        double variance = 0.;
+        for(unsigned i=0; i<states.size(); ++i) {
+            for(unsigned j=0; j<i; ++j) {
+                variance += pow(states[i] = states[j], 2.);
+            }
+        }
+        variance /= pow(((double) states.size()),2.);
+        return is_less_than(variance,p.outcome_variance_threshold);
     }
 
     /**
      * @brief TODO
      */
     bool distance_to_state_distribution_mean_test(double s) {
-        std::cout << "3\n";//TRM
         //
     }
 
     /**
-     * @brief TODO
+     * @brief Outcome distribution variance test
+     *
+     * Test whether the variance of the outcome distribution at the node reached by the
+     * recommended action is small enough.
+     * @return Return true if the test does not discard the tree.
      */
     bool outcome_distribution_variance_test() {
-        std::cout << "4\n";//TRM
         std::vector<double> outcomes = p.root_node.get_sampled_outcomes();
+        assert(outcomes.size() > 0);
         double variance = 0.;
         for(unsigned i=0; i<outcomes.size(); ++i) {
             for(unsigned j=0; j<i; ++j) {
