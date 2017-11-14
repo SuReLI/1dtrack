@@ -195,12 +195,7 @@ struct agent {
      */
     node * expand(node &v) {
         int nodes_action = v.get_next_expansion_action();
-        double nodes_state = 0.;
-        if(v.is_root()) {
-            nodes_state = v.get_state();
-        } else {
-            nodes_state = v.get_last_sampled_state();
-        }
+        double nodes_state = v.get_state_or_last();
         double new_state = m.transition_model(nodes_state,nodes_action);
         v.create_child(nodes_action,new_state);
         return v.get_last_child();
@@ -216,12 +211,7 @@ struct agent {
     void sample_new_state(node * v) {
         assert(!v->is_root());
         int a = v->get_incoming_action();
-        double s = 0.;
-        if((v->parent)->is_root()) {
-            s = (v->parent)->get_state();
-        } else {
-            s = (v->parent)->get_last_sampled_state();
-        }
+        double s = (v->parent)->get_state_or_last();
         v->add_to_sampled_states(m.transition_model(s,a));
     }
 
@@ -332,7 +322,7 @@ struct agent {
         ptr->increment_visits_count();
         ptr->add_to_value(total_return);
         total_return *= p.discount_factor; // apply the discount for the parent node
-        total_return += envt->reward_function( // add the reward of the transition
+        total_return += m.reward_model( // add the reward of the transition
             ptr->parent->get_state_or_last(),
             ptr->get_incoming_action(),
             ptr->get_last_sampled_state()

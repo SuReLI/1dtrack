@@ -133,7 +133,7 @@ public :
      * Get either the unique labelling state if node is root, or the last sampled state
      * if non-root.
      */
-    state get_state_or_last() const {
+    double get_state_or_last() const {
         if(is_root()) {
             return get_state();
         } else {
