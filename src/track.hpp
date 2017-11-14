@@ -32,7 +32,7 @@ struct track {
      * @return Return 'true' if the state is terminal.
      */
     bool is_terminal(const double &s) {
-        return !is_less_than(std::abs(s),track_length);
+        return !is_less_than(std::fabs(s),track_length);
     }
 
     /**
@@ -44,13 +44,12 @@ struct track {
      * @return The resulting state
      */
     double transition(double s, int a) {
-        double noise = normal_double(0.,stddev);
         double action_effect = (double) a;
         if(is_less_than(uniform_double(0.,1.),failure_probability)) {
             action_effect *= (-1.);
         }
         ++time;
-        return s + action_effect + noise;
+        return s + action_effect + normal_double(0.,stddev);
     }
 
     /**

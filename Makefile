@@ -2,7 +2,7 @@ CCC=g++
 CCFLAGS=-std=c++11 -Wall -Wextra -I./src -O2 -g
 LDFLAGS=-lm -lconfig++
 EXEC=exe
-NBSIM=100
+NBSIM=1
 
 all : clean compile run
 

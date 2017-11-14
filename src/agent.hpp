@@ -113,12 +113,11 @@ struct model {
      */
     double transition_model(double s, int a) {
         nb_calls++;
-        double noise = normal_double(0.,model_stddev);
         double action_effect = (double) a;
         if(is_less_than(uniform_double(0.,1.),model_failure_probability)) {
             action_effect *= (-1.);
         }
-        return s + action_effect + noise;
+        return s + action_effect + normal_double(0.,model_stddev);
     }
 
     /**
@@ -143,7 +142,7 @@ struct model {
      * @return Return 'true' if terminal
      */
     bool is_terminal(double s) {
-        return !is_less_than(std::abs(s),model_track_length);
+        return !is_less_than(std::fabs(s),model_track_length);
     }
 };
 
