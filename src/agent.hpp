@@ -438,15 +438,8 @@ struct agent {
      */
     bool state_distribution_variance_test() {
         std::vector<double> states = p.root_node.get_sampled_states();
-        assert(states.size() > 0);
-        double variance = 0.;
-        for(unsigned i=0; i<states.size(); ++i) {
-            for(unsigned j=0; j<i; ++j) {
-                variance += pow(states[i] = states[j], 2.);
-            }
-        }
-        variance /= pow(((double) states.size()),2.);
-        return is_less_than(variance,p.outcome_variance_threshold);
+        double var = var1d_estimator(states);
+        return is_less_than(var,p.outcome_variance_threshold);
     }
 
     /**
@@ -465,15 +458,8 @@ struct agent {
      */
     bool outcome_distribution_variance_test() {
         std::vector<double> outcomes = p.root_node.get_sampled_outcomes();
-        assert(outcomes.size() > 0);
-        double variance = 0.;
-        for(unsigned i=0; i<outcomes.size(); ++i) {
-            for(unsigned j=0; j<i; ++j) {
-                variance += pow(outcomes[i] = outcomes[j], 2.);
-            }
-        }
-        variance /= pow(((double) outcomes.size()),2.);
-        return is_less_than(variance,p.outcome_variance_threshold);
+        double var = var1d_estimator(outcomes);
+        return is_less_than(var,p.outcome_variance_threshold);
     }
 
     /**

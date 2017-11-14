@@ -42,7 +42,7 @@ double var1d_estimator(
 		for(auto &v : data) {
 			var += pow(v-mean,2.);
 		}
-		var /= ((double) data.size() - 1.);
+		var /= pow(((double) data.size()),2.);
 	}
 	return var;
 }
