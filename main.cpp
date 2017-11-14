@@ -134,8 +134,8 @@ int main(int argc, char* argv[]) {
         srand(time(NULL));
         switch(argc) {
             case 1: { //default
-                std::cout << "Run 100 simulations\n";
-                bunch_of_run(100);
+                std::cout << "Run 1 simulation\n";
+                bunch_of_run(1);
                 break;
             }
             case 2: { // number of simulation given
