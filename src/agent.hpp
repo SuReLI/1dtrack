@@ -4,6 +4,7 @@
 #include <node.hpp>
 #include <test.hpp>
 #include <exceptions.hpp>
+#include <linear_algebra.hpp>
 
 /**
  * @brief Parameters of the policy
@@ -452,7 +453,7 @@ struct agent {
      * @brief TODO
      */
     bool distance_to_state_distribution_mean_test(double s) {
-        //
+        std::vector<double> states = p.root_node.get_sampled_states();
     }
 
     /**
