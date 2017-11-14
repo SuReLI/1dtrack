@@ -443,10 +443,18 @@ struct agent {
     }
 
     /**
-     * @brief TODO
+     * @brief Distance to state distribution mean test
+     *
+     * Compute the distances between the current state and the mean of the sampled state
+     * distribution.
+     * Reject the tree if the minimum distance is greater than a selected threshold.
+     * The used distance is the Mahalanobis distance (edit 14/11/2017).
+     * @param {double} s; the current state of the agent
+     * @return Return true if the sub-tree is kept.
      */
     bool distance_to_state_distribution_mean_test(double s) {
         std::vector<double> states = p.root_node.get_sampled_states();
+        return is_less_than(mahalanobis1d_distance(s,states,1e-30),p.distance_threshold);
     }
 
     /**
