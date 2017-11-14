@@ -20,7 +20,7 @@ or from source via https://github.com/hyperrealm/libconfig
 Once the code compiled, you can set the parameters of the simulations via the
 configuration file 'main.cfg'.
 
-Running the code will run 100 simulations, this is default. To set the number of
+Running the code will run 1 simulation, this is default. To set the number of
 simulations, for instance to 1000, you can execute './exe 1000' or type
 'make NBSIM=1000' using the Makefile.
 
