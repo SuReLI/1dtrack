@@ -332,13 +332,11 @@ struct agent {
         ptr->increment_visits_count();
         ptr->add_to_value(total_return);
         total_return *= p.discount_factor; // apply the discount for the parent node
-        /* //TODO: test
         total_return += envt->reward_function( // add the reward of the transition
-            ptr->parent->get_last_sampled_state(),
+            ptr->parent->get_state_or_last(),
             ptr->get_incoming_action(),
             ptr->get_last_sampled_state()
         );
-        */
         if(!ptr->parent->is_root()) {
             backup(total_return,ptr->parent);
         }

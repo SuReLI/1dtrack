@@ -127,6 +127,20 @@ public :
         return sampled_states.back();
     }
 
+    /**
+     * @brief Get state or last sampled state
+     *
+     * Get either the unique labelling state if node is root, or the last sampled state
+     * if non-root.
+     */
+    state get_state_or_last() const {
+        if(is_root()) {
+            return get_state();
+        } else {
+            return get_last_sampled_state();
+        }
+    }
+
     /** @brief Get the incoming action of the node (non-root node) */
     int get_incoming_action() const {
         assert(!root);
