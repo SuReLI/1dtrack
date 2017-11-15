@@ -25,6 +25,7 @@ struct parameters {
     double MODEL_TRACK_LEN; ///< Model track length (half of the length of the track)
     double MODEL_STDDEV; ///< Model noise standard deviation
     double MODEL_FAILURE_PROBABILITY; ///< Probability with chich the oposite action effect is applied in the model (randomness of the transition function)
+    std::vector<bool> DECISION_CRITERIA;
     double STATE_VARIANCE_THRESHOLD;
     double DISTANCE_THRESHOLD;
     double OUTCOME_VARIANCE_THRESHOLD;
@@ -108,6 +109,7 @@ struct parameters {
                     throw action_names_configuration_file_exception();
                 }
             }
+            parse_decision_criterion(DECISION_CRITERIA);
         }
         else { // Error in config file
             throw wrong_syntax_configuration_file_exception();

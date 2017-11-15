@@ -75,7 +75,7 @@ struct policy_parameters {
         outcome_variance_threshold(sp.OUTCOME_VARIANCE_THRESHOLD)
     {
         expd_counter = 0;
-        sp.parse_decision_criterion(decision_criteria_selector);
+        decision_criteria_selector = sp.DECISION_CRITERIA;
     }
 };
 
@@ -349,14 +349,17 @@ struct agent {
     /**
      * @brief Get the recommended action at a certain node
      *
-     * This is the policy decision after the tree construction (recommended action). It gets
-     * the greedy action wrt the values of the subsequent nodes.
+     * This is the policy decision after the tree construction (recommended action).
+     * Get the greedy action wrt the values of the subsequent nodes.
+     * The indice of the selected action given as argument is modified consequently.
      * @param {const node &} v; root node of the tree
-     * @return Return the action with the highest score (leading to the child with the higher
-     * value).
+     * @param {unsigned &} indice; indice of the selected action
+     * @return Return the action with the highest score (leading to the child node with the
+     * higher value).
      */
-    int get_recommended_action(const node &v) {
-        return v.get_action_at(argmax_score(v));
+    int get_recommended_action(const node &v, unsigned &indice) {
+        indice = argmax_score(v);
+        return v.get_action_at(indice);
     }
 
     /**
@@ -426,7 +429,10 @@ struct agent {
     bool state_distribution_variance_test() {
         std::vector<double> states = p.root_node.get_sampled_states();
         double var = var1d_estimator(states);
-        return is_less_than(var,p.outcome_variance_threshold);
+        //std::cout << "    nb states : " << states.size() << std::endl;//TRM
+        //std::cout << "    variance  : " << var << std::endl;//TRM
+        //std::cout << "    result    : " << is_less_than(var,p.state_variance_threshold) << std::endl;//TRM
+        return is_less_than(var,p.state_variance_threshold);
     }
 
     /**
@@ -441,6 +447,9 @@ struct agent {
      */
     bool distance_to_state_distribution_mean_test(double s) {
         std::vector<double> states = p.root_node.get_sampled_states();
+        //std::cout << "    nb states : " << states.size() << std::endl;//TRM
+        //std::cout << "    dist      : " << mahalanobis1d_distance(s,states,1e-30) << std::endl;//TRM
+        //std::cout << "    result    : " << is_less_than(mahalanobis1d_distance(s,states,1e-30),p.distance_threshold) << std::endl;//TRM
         return is_less_than(mahalanobis1d_distance(s,states,1e-30),p.distance_threshold);
     }
 
@@ -454,6 +463,9 @@ struct agent {
     bool outcome_distribution_variance_test() {
         std::vector<double> outcomes = p.root_node.get_sampled_outcomes();
         double var = var1d_estimator(outcomes);
+        //std::cout << "    nb outcomes : " << outcomes.size() << std::endl;//TRM
+        //std::cout << "    var         : " << var << std::endl;//TRM
+        //std::cout << "    result      : " << is_less_than(var,p.outcome_variance_threshold) << std::endl;//TRM
         return is_less_than(var,p.outcome_variance_threshold);
     }
 
@@ -498,6 +510,7 @@ struct agent {
         if(p.decision_criteria_selector[4]) { // outcome distribution variance
             keep_tree *= outcome_distribution_variance_test();
         }
+        std::cout << "keep? " << keep_tree << std::endl;//TRM
         return keep_tree;
     }
 
@@ -509,23 +522,19 @@ struct agent {
      * @return Return the recommended action.
      */
     int oluct(double s) {
-        /* deprecated
-        int ra = 0;
-        if(p.root_node.is_fully_expanded() // necessary condition
-        && decision_criterion(s)) { // Open Loop control
-            ra = get_recommended_action(p.root_node);
-        } else { // Closed Loop control
-            build_uct_tree(s);
-            ra = get_recommended_action(p.root_node);
-        }
-        p.root_node.move_to_child(argmax_score(p.root_node),s);
-        */
+        std::cout << std::endl;//TRM
         if(!p.root_node.is_fully_expanded() || !decision_criterion(s)) {
+            std::cout << "-> Build\n";//TRM
             build_uct_tree(s);
         }
-        int ra = get_recommended_action(p.root_node);
-        p.root_node.move_to_child(argmax_score(p.root_node),s);
-        return ra;
+        std::cout << "Best plan: ";
+        print_best_plan(p.root_node);//TRM
+        std::cout << std::endl;//TRM
+        print_tree_base(p.root_node);//TRM
+        unsigned indice = 0;
+        int recommended_action = get_recommended_action(p.root_node,indice);
+        p.root_node.move_to_child(indice,s);
+        return recommended_action;
     }
 
     /**
@@ -535,7 +544,8 @@ struct agent {
      */
     int vanilla_uct(double s) {
         build_uct_tree(s);
-        return get_recommended_action(p.root_node);
+        unsigned indice = 0;
+        return get_recommended_action(p.root_node,indice);
     }
 
     /**
@@ -545,9 +555,20 @@ struct agent {
      */
     void print_best_plan(node v) {
         if(v.is_fully_expanded()) {
-            std::cout << get_recommended_action(v) << " ";
+            unsigned indice = 0;
+            std::cout << get_recommended_action(v,indice) << " ";
             print_best_plan(v.children.at(argmax_score(v)));
         }
+    }
+
+    void print_tree_base(node &v) { // for debug
+        std::cout << "   nb children : " << v.get_nb_children() << "\n";
+        std::cout << "   inc actions : ";
+        std::cout << v.children[0].get_incoming_action() << " ";
+        std::cout << v.children[1].get_incoming_action() << "\n";
+        std::cout << "   values      : ";
+        std::cout << v.children[0].get_value() << " ";
+        std::cout << v.children[1].get_value() << "\n";
     }
 
     /**

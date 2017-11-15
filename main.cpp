@@ -66,12 +66,12 @@ void simulate_episode(
  * @param {bool} bckp; if true, save some informations in the end of the simulation
  * @param {const std::string &} outpth; output saving path is backup
  */
-void run_with(
+void run(
     parameters &sp,
     unsigned nbsim,
     bool prnt,
     bool bckp,
-    const std::string &outpth)
+    const std::string &outpth = "data/test.csv")
 {
     std::vector<std::vector<double>> bckp_vector;
     std::string sep = ",";
@@ -99,9 +99,10 @@ void run_with(
  * can modify it as you wish.
  * @param {const unsigned &} nbsim; number of simulations
  */
-void bunch_of_run(unsigned nbsim) {
+void test(unsigned nbsim) {
+    //std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9, .95, 1.};
+    std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4, .45, .5};
     /*
-    std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9, .95, 1.};
     std::vector<unsigned> ps_range = {0, 1, 2};
     for(auto ps : ps_range) {
         for(auto fp : fp_range) {
@@ -111,14 +112,49 @@ void bunch_of_run(unsigned nbsim) {
             sp.MODEL_FAILURE_PROBABILITY = fp;
             std::string path = get_backup_path(sp);
             std::cout << "Output: " << path << std::endl;
-            run_with(sp,nbsim,false,true,path);
+            run(sp,nbsim,false,true,path);
         }
     }
     */
+    std::string root_path = "data/long_";
     parameters sp("main.cfg");
-    std::string path = get_backup_path(sp);
-    std::cout << "Output: " << path << std::endl;
-    run_with(sp,nbsim,true,true,path);
+    sp.POLICY_SELECTOR = 1;
+    // OLUCT
+    for(unsigned i=0; i<5; ++i) { // for every decision criterion
+        for(unsigned j=0; j<sp.DECISION_CRITERIA.size(); ++j) { // every decision criterion off
+            sp.DECISION_CRITERIA[j] = false;
+        }
+        sp.DECISION_CRITERIA[i] = true; // tested decision criterion on
+        for(auto fp : fp_range) { // for every failure probability
+            sp.FAILURE_PROBABILITY = fp;
+            sp.MODEL_FAILURE_PROBABILITY = fp;
+            std::string path = root_path + "plc1_b";
+            path += std::to_string(i);
+            path += "_fp";
+            path += std::to_string((int)(fp*100.));
+            path += ".csv";
+            std::cout << "Output: " << path << std::endl;
+            std::cout << "  fp  : " << fp << std::endl;
+            std::cout << "  crit: ";
+            for(unsigned j=0; j<sp.DECISION_CRITERIA.size(); ++j) { // every decision criterion off
+                std::cout << sp.DECISION_CRITERIA[j] << " ";
+            }
+            std::cout << std::endl;
+            run(sp,nbsim,false,true,path);
+        }
+    }
+    // UCT
+    sp.POLICY_SELECTOR = 0;
+    for(auto fp : fp_range) { // for every failure probability
+            sp.FAILURE_PROBABILITY = fp;
+            sp.MODEL_FAILURE_PROBABILITY = fp;
+            std::string path = "data/long_plc0_fp";
+            path += std::to_string((int)(fp*100.));
+            path += ".csv";
+            std::cout << "Output: " << path << std::endl;
+            std::cout << "  fp  : " << fp << std::endl;
+            run(sp,nbsim,false,true,path);
+        }
 }
 
 /**
@@ -134,13 +170,16 @@ int main(int argc, char* argv[]) {
         srand(time(NULL));
         switch(argc) {
             case 1: { //default
+                std::string cfg_path = "main.cfg";
                 std::cout << "Run 1 simulation\n";
-                bunch_of_run(1);
+                std::cout << "Parameters taken at \'" << cfg_path << "\'\n";
+                parameters sp(cfg_path.c_str());
+                run(sp,1,true,false);
                 break;
             }
             case 2: { // number of simulation given
                 std::cout << "Run " << argv[1] << " simulation(s)\n";
-                bunch_of_run(atoi(argv[1]));
+                test(atoi(argv[1]));
                 break;
             }
             default: {
