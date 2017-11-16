@@ -116,11 +116,12 @@ void test(unsigned nbsim) {
         }
     }
     */
-    std::string root_path = "data/long_";
+    std::string root_path = "data/short_";
     parameters sp("main.cfg");
     sp.POLICY_SELECTOR = 1;
     // OLUCT
-    for(unsigned i=0; i<5; ++i) { // for every decision criterion
+    //for(unsigned i=0; i<5; ++i) { // for every decision criterion
+	for(unsigned i=2; i<3; ++i) { // for return-var decision criterion
         for(unsigned j=0; j<sp.DECISION_CRITERIA.size(); ++j) { // every decision criterion off
             sp.DECISION_CRITERIA[j] = false;
         }
@@ -144,17 +145,19 @@ void test(unsigned nbsim) {
         }
     }
     // UCT
+	/*
     sp.POLICY_SELECTOR = 0;
     for(auto fp : fp_range) { // for every failure probability
-            sp.FAILURE_PROBABILITY = fp;
-            sp.MODEL_FAILURE_PROBABILITY = fp;
-            std::string path = "data/long_plc0_fp";
-            path += std::to_string((int)(fp*100.));
-            path += ".csv";
-            std::cout << "Output: " << path << std::endl;
-            std::cout << "  fp  : " << fp << std::endl;
-            run(sp,nbsim,false,true,path);
-        }
+        sp.FAILURE_PROBABILITY = fp;
+        sp.MODEL_FAILURE_PROBABILITY = fp;
+        std::string path = root_path + "plc0_fp";
+        path += std::to_string((int)(fp*100.));
+        path += ".csv";
+        std::cout << "Output: " << path << std::endl;
+        std::cout << "  fp  : " << fp << std::endl;
+        run(sp,nbsim,false,true,path);
+    }
+	*/
 }
 
 /**

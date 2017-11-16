@@ -244,7 +244,6 @@ public :
      * @param {double} new_state; new labelling state
      */
     void move_to_child(unsigned indice, double new_state) {
-        std::cout << "move to children with inc ac " << children[indice].get_incoming_action() << std::endl;//TRM
         assert(is_root());
         local_action_space = children[indice].get_actions();
         sampled_states = children[indice].get_sampled_states();

@@ -26,9 +26,9 @@ PL3 = '#03007e';
 PL4 = '#0045ff';
 PL5 = '#6699ff';
 
-def plot_error_bar(ax, rng, mean, stddev, cl, mrk):
+def plot_error_bar(ax, rng, mean, stddev, cl, mrk, fcc):
 	l = ax.errorbar(rng, mean, color=cl, yerr=stddev)
-	l = ax.errorbar(rng, mean, color=cl, yerr=stddev, fmt=mrk, markersize=8)
+	l = ax.errorbar(rng, mean, color=cl, yerr=stddev, fmt=mrk, markersize=8, markerfacecolor=fcc)
 	v = np.copy(stddev)
 	up = np.add(mean, +v)
 	dw = np.add(mean, -v)
@@ -60,7 +60,7 @@ def extract(path, failure_probability_range, take_log):
 		castd.append(ca.std())
 	return [lomns, lostd, cpmns, cpstd, camns, castd]
 
-def plot(path, args, color, mrk):
+def plot(path, args, color, mrk, fcc):
 	fp_range        = args[0]
 	fp_range_val = args[1]
 	take_log        = args[2]
@@ -68,15 +68,15 @@ def plot(path, args, color, mrk):
 	ax2             = args[4]
 	ax3             = args[5]
 	[lo_mea, lo_std, cp_mea, cp_std, ca_mea, ca_std] = extract(path,fp_range,take_log)
-	l = plot_error_bar(ax1, fp_range_val, lo_mea, lo_std, color, mrk)
-	l = plot_error_bar(ax2, fp_range_val, cp_mea, cp_std, color, mrk)
-	l = plot_error_bar(ax3, fp_range_val, ca_mea, ca_std, color, mrk)
+	l = plot_error_bar(ax1, fp_range_val, lo_mea, lo_std, color, mrk, fcc)
+	l = plot_error_bar(ax2, fp_range_val, cp_mea, cp_std, color, mrk, fcc)
+	l = plot_error_bar(ax3, fp_range_val, ca_mea, ca_std, color, mrk, fcc)
 	return l
 
 # Variables --------------------------------------------------------------------
 
 # Take the log of the data or not
-take_log = False
+take_log = True
 
 # Different failure probabilities (wrt the files names)
 #fp_range = ["000", "005", "010", "015", "020", "025", "030", "035", "040", "045", "050", "055", "060", "065", "070", "075", "080", "085", "090", "095", "1"]
@@ -92,14 +92,15 @@ plt.close('all')
 
 f, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
 
-root_path = 'data/backup/short_plc';
+root_path = 'data/backup/discrete/short_plc';
+#root_path = 'data/backup/discrete/short_plc';
 args = [fp_range, fp_range_val, take_log, ax1, ax2, ax3]
-l1 = plot(root_path + '1_b0', args, PL1, '^')
-l2 = plot(root_path + '1_b1', args, PL2, 's')
-l3 = plot(root_path + '1_b2', args, PL3, 'x')
-l4 = plot(root_path + '1_b3', args, PL4, '.')
-l5 = plot(root_path + '1_b4', args, PL5, '|')
-l0 = plot(root_path + '0',    args, PL0, 'o')
+l1 = plot(root_path + '1_b0', args, PL1, 's', PL1)
+l2 = plot(root_path + '1_b1', args, PL2, '^', PL2)
+l3 = plot(root_path + '1_b2', args, PL3, 'o', 'none')
+l4 = plot(root_path + '1_b3', args, PL4, 's', 'none')
+l5 = plot(root_path + '1_b4', args, PL5, '^', 'none')
+l0 = plot(root_path + '0',    args, PL0, 'o', PL0)
 
 
 # Label ------------------------------------------------------------------------

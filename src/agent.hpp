@@ -510,7 +510,6 @@ struct agent {
         if(p.decision_criteria_selector[4]) { // outcome distribution variance
             keep_tree *= outcome_distribution_variance_test();
         }
-        std::cout << "keep? " << keep_tree << std::endl;//TRM
         return keep_tree;
     }
 
@@ -522,15 +521,9 @@ struct agent {
      * @return Return the recommended action.
      */
     int oluct(double s) {
-        std::cout << std::endl;//TRM
         if(!p.root_node.is_fully_expanded() || !decision_criterion(s)) {
-            std::cout << "-> Build\n";//TRM
             build_uct_tree(s);
         }
-        std::cout << "Best plan: ";
-        print_best_plan(p.root_node);//TRM
-        std::cout << std::endl;//TRM
-        print_tree_base(p.root_node);//TRM
         unsigned indice = 0;
         int recommended_action = get_recommended_action(p.root_node,indice);
         p.root_node.move_to_child(indice,s);
@@ -561,7 +554,7 @@ struct agent {
         }
     }
 
-    void print_tree_base(node &v) { // for debug
+    void print_tree_base(node &v) {
         std::cout << "   nb children : " << v.get_nb_children() << "\n";
         std::cout << "   inc actions : ";
         std::cout << v.children[0].get_incoming_action() << " ";
