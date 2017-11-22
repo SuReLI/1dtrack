@@ -102,6 +102,7 @@ void run(
 void test(unsigned nbsim) {
     //std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9, .95, 1.};
     std::vector<double> fp_range = {.0, .05, .1, .15, .2, .25, .3, .35, .4, .45, .5};
+	//std::vector<double> fp_range = {.0};
     /*
     std::vector<unsigned> ps_range = {0, 1, 2};
     for(auto ps : ps_range) {
@@ -116,12 +117,12 @@ void test(unsigned nbsim) {
         }
     }
     */
-    std::string root_path = "data/short_";
+    std::string root_path = "data/long_";
     parameters sp("main.cfg");
     sp.POLICY_SELECTOR = 1;
     // OLUCT
     //for(unsigned i=0; i<5; ++i) { // for every decision criterion
-	for(unsigned i=2; i<3; ++i) { // for return-var decision criterion
+    for(unsigned i=4; i<5; ++i) { // SDSD
         for(unsigned j=0; j<sp.DECISION_CRITERIA.size(); ++j) { // every decision criterion off
             sp.DECISION_CRITERIA[j] = false;
         }
@@ -137,7 +138,7 @@ void test(unsigned nbsim) {
             std::cout << "Output: " << path << std::endl;
             std::cout << "  fp  : " << fp << std::endl;
             std::cout << "  crit: ";
-            for(unsigned j=0; j<sp.DECISION_CRITERIA.size(); ++j) { // every decision criterion off
+            for(unsigned j=0; j<sp.DECISION_CRITERIA.size(); ++j) {
                 std::cout << sp.DECISION_CRITERIA[j] << " ";
             }
             std::cout << std::endl;

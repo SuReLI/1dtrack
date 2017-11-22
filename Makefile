@@ -18,6 +18,6 @@ run :
 hist :
 	python3 plot/histogram.py
 
-multi :
-	python3 plot/multi.py
+graph :
+	python3 plot/graph.py
 

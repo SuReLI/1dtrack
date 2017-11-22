@@ -450,7 +450,7 @@ struct agent {
         //std::cout << "    nb states : " << states.size() << std::endl;//TRM
         //std::cout << "    dist      : " << mahalanobis1d_distance(s,states,1e-30) << std::endl;//TRM
         //std::cout << "    result    : " << is_less_than(mahalanobis1d_distance(s,states,1e-30),p.distance_threshold) << std::endl;//TRM
-        return is_less_than(mahalanobis1d_distance(s,states,1e-30),p.distance_threshold);
+        return is_less_than(mahalanobis1d_distance(s,states,1e-1),p.distance_threshold);
     }
 
     /**
