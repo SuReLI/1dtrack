@@ -429,9 +429,6 @@ struct agent {
     bool state_distribution_variance_test() {
         std::vector<double> states = p.root_node.get_sampled_states();
         double var = var1d_estimator(states);
-        //std::cout << "    nb states : " << states.size() << std::endl;//TRM
-        //std::cout << "    variance  : " << var << std::endl;//TRM
-        //std::cout << "    result    : " << is_less_than(var,p.state_variance_threshold) << std::endl;//TRM
         return is_less_than(var,p.state_variance_threshold);
     }
 
@@ -447,9 +444,6 @@ struct agent {
      */
     bool distance_to_state_distribution_mean_test(double s) {
         std::vector<double> states = p.root_node.get_sampled_states();
-        //std::cout << "    nb states : " << states.size() << std::endl;//TRM
-        //std::cout << "    dist      : " << mahalanobis1d_distance(s,states,1e-30) << std::endl;//TRM
-        //std::cout << "    result    : " << is_less_than(mahalanobis1d_distance(s,states,1e-30),p.distance_threshold) << std::endl;//TRM
         return is_less_than(mahalanobis1d_distance(s,states,1e-1),p.distance_threshold);
     }
 
@@ -463,9 +457,6 @@ struct agent {
     bool outcome_distribution_variance_test() {
         std::vector<double> outcomes = p.root_node.get_sampled_outcomes();
         double var = var1d_estimator(outcomes);
-        //std::cout << "    nb outcomes : " << outcomes.size() << std::endl;//TRM
-        //std::cout << "    var         : " << var << std::endl;//TRM
-        //std::cout << "    result      : " << is_less_than(var,p.outcome_variance_threshold) << std::endl;//TRM
         return is_less_than(var,p.outcome_variance_threshold);
     }
 
