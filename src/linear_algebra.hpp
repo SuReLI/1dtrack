@@ -79,14 +79,24 @@ double mahalanobis1d_distance(
 	double var,
 	double precision = 1e-30)
 {
-	if(is_equal_to(v,mean)) {
+/*
+	std::cout << "val  : " << v << std::endl;//TRM
+	std::cout << "mean : " << mean << std::endl;//TRM
+	std::cout << "var  : " << var << std::endl;//TRM
+	std::cout << "dist : " << sqrt(pow(v-mean,2.) / var) << std::endl;//TRM
+*/
+	if(is_equal_to(v,mean,precision)) {
 		return 0.;
-	}
-	if(is_equal_to(var,0.,precision)) {
-		return 9e99;
 	} else {
 		return sqrt(pow(v-mean,2.) / var);
 	}
+	/*
+	else if(is_equal_to(var,0.,precision)) {
+		return 9e99;//TRM
+	} else {
+		return sqrt(pow(v-mean,2.) / var);
+	}
+	*/
 }
 
 /**
