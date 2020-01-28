@@ -1,0 +1,9 @@
+# Untracked files:
+exe
+todo.txt
+*.sh
+
+outdated/
+data/*.csv
+data/backup/*
+
